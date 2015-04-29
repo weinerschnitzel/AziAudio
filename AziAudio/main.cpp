@@ -294,15 +294,17 @@ EXPORT void CALL RomClosed (void){
 
 EXPORT void CALL AiDacrateChanged (int  SystemType) {
 	DWORD Frequency;
-	if (Dacrate != *AudioInfo.AI_DACRATE_REG) {
-		Dacrate = *AudioInfo.AI_DACRATE_REG;
-		switch (SystemType) {
-			case SYSTEM_NTSC: Frequency = 48681812 / (Dacrate + 1); break;
-			case SYSTEM_PAL:  Frequency = 49656530 / (Dacrate + 1); break;
-			case SYSTEM_MPAL: Frequency = 48628316 / (Dacrate + 1); break;
-		}
-		if (audioIsInitialized == TRUE) snd.SetFrequency(Frequency);
+
+	if (Dacrate == *AudioInfo.AI_DACRATE_REG)
+		return;
+
+	Dacrate = *AudioInfo.AI_DACRATE_REG;
+	switch (SystemType) {
+		case SYSTEM_NTSC: Frequency = 48681812 / (Dacrate + 1); break;
+		case SYSTEM_PAL:  Frequency = 49656530 / (Dacrate + 1); break;
+		case SYSTEM_MPAL: Frequency = 48628316 / (Dacrate + 1); break;
 	}
+	if (audioIsInitialized == TRUE) snd.SetFrequency(Frequency);
 }
 
 EXPORT void CALL AiLenChanged (void){
