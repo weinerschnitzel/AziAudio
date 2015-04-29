@@ -1,0 +1,128 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CONFIG DIALOGEX 0, 0, 417, 251
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Audio Options"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Disable if the emulator handles its own AI emulation.",IDC_STATIC,36,172,177,14
+    CONTROL         "Prevent Buffer Overruns",IDC_AUDIOSYNC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,41,95,8
+    CONTROL         "Force Old Audio Sync",IDC_OLDSYNC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,87,86,10
+    CONTROL         "Emulate Audio Interface",IDC_AI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,24,161,116,9
+    CONTROL         "Enable HLE Audio",IDC_HLE,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,24,182,74,10
+    CONTROL         "Enable RSP Emulation",IDC_RSP,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,24,201,87,10
+    COMBOBOX        IDC_DEVICE,229,32,165,132,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_DIRECTORY,261,66,134,14,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "Start",IDC_START,227,89,50,14,WS_DISABLED
+    PUSHBUTTON      "Stop",IDC_STOP,285,89,50,14,WS_DISABLED
+    PUSHBUTTON      "&Browse",IDC_BROWSE,343,89,50,14,WS_DISABLED
+    EDITTEXT        IDC_EDIT2,282,134,66,12,ES_AUTOHSCROLL | WS_DISABLED,WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT3,282,151,66,12,ES_AUTOHSCROLL | WS_DISABLED,WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT1,282,169,66,12,ES_AUTOHSCROLL | WS_DISABLED,WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT5,282,185,66,12,ES_AUTOHSCROLL | WS_DISABLED,WS_EX_STATICEDGE
+    EDITTEXT        IDC_EDIT6,282,201,66,12,ES_AUTOHSCROLL | WS_DISABLED,WS_EX_STATICEDGE
+    CONTROL         "",IDC_VOLUME,"msctls_trackbar32",TBS_AUTOTICKS | TBS_VERT | TBS_BOTH | WS_BORDER | WS_TABSTOP,362,132,32,67,WS_EX_STATICEDGE
+    DEFPUSHBUTTON   "OK",IDOK,23,222,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,84,223,50,14
+    LTEXT           "Designed for use with Project64 2.1.0.1",IDC_STATIC,24,10,163,10
+    GROUPBOX        "Playback Options",IDC_STATIC,17,23,200,120
+    GROUPBOX        "Volume",IDC_STATIC,357,121,45,94
+    CONTROL         "Mute",IDC_MUTE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,362,201,32,10
+    LTEXT           "Mute:",IDC_STATIC,228,169,53,8
+    LTEXT           "Volume Up:",IDC_STATIC,228,137,53,8
+    LTEXT           "Volume Down:",IDC_STATIC,228,153,53,8
+    GROUPBOX        "Emulation Options",IDC_STATIC,16,148,200,70
+    GROUPBOX        "Audio Logging",IDC_STATIC,221,52,181,68
+    LTEXT           "Directory:",IDC_STATIC,229,68,31,8
+    GROUPBOX        "Shortcut Keys",IDC_STATIC,221,121,132,96
+    LTEXT           "Start Audio Log:",IDC_STATIC,228,186,53,8
+    LTEXT           "Stop Audio Log:",IDC_STATIC,228,204,53,8
+    GROUPBOX        "Playback Device",IDC_STATIC,222,23,180,28
+    LTEXT           "Old school Audio Sync.  Works well for emulators with poor Speed Limiter but will not work with some other games.  Use is not recommended.",IDC_STATIC,37,99,133,35
+    LTEXT           "Gracefully services buffer overruns by waiting for space to be available rather than skipping the buffer completely.",IDC_STATIC,37,52,172,29
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_CONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 410
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 244
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
