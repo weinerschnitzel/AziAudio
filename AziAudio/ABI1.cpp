@@ -531,7 +531,7 @@ void RESAMPLE () {
 	}
 
 	if ((Flags & 0x2))
-		__asm int 3;
+		x86_interrupt();
 
 	for(int i=0;i < ((AudioCount+0xf)&0xFFF0)/2;i++)	{
 		//location = (((Accum * 0x40) >> 0x10) * 8);

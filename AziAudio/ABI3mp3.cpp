@@ -236,7 +236,21 @@ void MP3 () {
 	}
 }
 
-
+void x86_interrupt(void)
+{
+#if defined(_MSC_VER)
+__asm
+	int 3;
+#elif defined(__GNUC__)
+__asm__(
+	".intel_syntax;"
+	"INT     3;"
+);
+#else
+#error Not sure how to do an interrupt on this compiler.
+#endif
+	return;
+}
 
 void InnerLoop () {
 				int x;
@@ -282,7 +296,7 @@ void InnerLoop () {
 				RSP_Vect[0].DW[0] = 0x0002D4130005A827;
 */
 				if ((t1 | t2 | t3 | t5 | t6) & 0x1)
-					__asm int 3;
+					x86_interrupt();
 
 				// 0x13A8
 				v[1] = 0;
