@@ -293,16 +293,29 @@ EXPORT void CALL RomClosed (void){
 }
 
 EXPORT void CALL AiDacrateChanged (int  SystemType) {
-	DWORD Frequency;
-	if (Dacrate != *AudioInfo.AI_DACRATE_REG) {
-		Dacrate = *AudioInfo.AI_DACRATE_REG;
-		switch (SystemType) {
-			case SYSTEM_NTSC: Frequency = 48681812 / (Dacrate + 1); break;
-			case SYSTEM_PAL:  Frequency = 49656530 / (Dacrate + 1); break;
-			case SYSTEM_MPAL: Frequency = 48628316 / (Dacrate + 1); break;
-		}
-		if (audioIsInitialized == TRUE) snd.SetFrequency(Frequency);
+	DWORD Frequency, video_clock;
+
+	if (Dacrate == *AudioInfo.AI_DACRATE_REG)
+		return;
+
+	Dacrate = *AudioInfo.AI_DACRATE_REG & 0x00003FFF;
+#ifdef _DEBUG
+	if (Dacrate != *AudioInfo.AI_DACRATE_REG)
+		MessageBox(
+			NULL,
+			"Unknown/reserved bits in AI_DACRATE_REG set.",
+			"Warning",
+			MB_ICONWARNING
+		);
+#endif
+	switch (SystemType) {
+		default         :  MessageBox(NULL, "Invalid SystemType.", NULL, MB_ICONERROR);
+		case SYSTEM_NTSC:  video_clock = 48681812; break;
+		case SYSTEM_PAL :  video_clock = 49656530; break;
+		case SYSTEM_MPAL:  video_clock = 48628316; break;
 	}
+	Frequency = video_clock / (Dacrate + 1);
+	if (audioIsInitialized == TRUE) snd.SetFrequency(Frequency);
 }
 
 EXPORT void CALL AiLenChanged (void){
