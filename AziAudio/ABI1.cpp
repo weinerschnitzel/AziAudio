@@ -247,9 +247,6 @@ void ENVMIXER () {
 				mov eax, dword ptr [LRamp];
 				imul ecx;
 				shrd eax, edx, 16;
-				//shl edx, 16;
-				//shr eax, 16;
-				//add eax, edx;
 				mov dword ptr [LAdderEnd], eax;
 				mov eax, dword ptr [LAdderStart];
 				mov dword ptr [LAcc], eax;
@@ -272,9 +269,7 @@ void ENVMIXER () {
 				mov ecx, dword ptr [RAdderEnd];
 				mov eax, dword ptr [RRamp];
 				imul ecx;
-				shl edx, 16;
-				shr eax, 16;
-				add eax, edx;
+				shrd eax, edx, 16;
 				mov dword ptr [RAdderEnd], eax;
 				mov eax, dword ptr [RAdderStart];
 				mov dword ptr [RAcc], eax;
