@@ -77,7 +77,7 @@ BOOL WINAPI DllMain(
 BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, LPVOID lpContext )
 {
 	HWND hDlg = (HWND)lpContext;
-	strcpy_s(DSoundDeviceName[DSoundCnt], 99, lpszDesc);
+	safe_strcpy(DSoundDeviceName[DSoundCnt], 99, lpszDesc);
 	DSoundGUID[DSoundCnt] = lpGUID;
 	if (strcmp(lpszDesc, snd.configDevice) == 0)
 	{
@@ -129,7 +129,7 @@ BOOL CALLBACK ConfigProc(
 					snd.configHLE = SendMessage(GetDlgItem(hDlg,IDC_HLE      ),BM_GETSTATE, 0,0) == BST_CHECKED?true:false;
 					snd.configRSP = SendMessage(GetDlgItem(hDlg,IDC_RSP      ),BM_GETSTATE, 0,0) == BST_CHECKED?true:false;
 					SelectedDSound = SendMessage(GetDlgItem(hDlg, IDC_DEVICE), CB_GETCURSEL, 0, 0);
-					strcpy_s(snd.configDevice, 99, DSoundDeviceName[SelectedDSound]);
+					safe_strcpy(snd.configDevice, 99, DSoundDeviceName[SelectedDSound]);
 					EndDialog(hDlg, 0);
 				break;
 				case IDCANCEL:
@@ -215,7 +215,7 @@ EXPORT BOOL CALL InitiateAudio (AUDIO_INFO Audio_Info){
 	snd.configMute		  = false;
 	snd.configHLE		  = true;
 	snd.configRSP		  = true;
-	strcpy_s (snd.configAudioLogFolder, 499, "D:\\");
+	safe_strcpy(snd.configAudioLogFolder, 499, "D:\\");
 
 	//snd.configDevice = 0;
 	snd.configVolume = 0;
@@ -255,7 +255,7 @@ EXPORT void CALL CloseDLL (void){
 EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo ){
 	PluginInfo->MemoryBswaped = TRUE;
 	PluginInfo->NormalMemory  = FALSE;
-	strcpy_s (PluginInfo->Name, PLUGIN_VERSION);
+	safe_strcpy(PluginInfo->Name, 100, PLUGIN_VERSION);
 	PluginInfo->Type = PLUGIN_TYPE_AUDIO;
 	PluginInfo->Version = 0x0101; // Set this to retain backwards compatibility
 }
@@ -417,4 +417,28 @@ void RedirectIOToConsole() {
 	// make cout, wcout, cin, wcin, wcerr, cerr, wclog and clog 
 	// point to console as well
 	ios::sync_with_stdio();
+}
+
+int safe_strcpy(char* dst, size_t limit, const char* src)
+{
+#if defined(_MSC_VER)
+    return strcpy_s(dst, limit, src);
+#else
+    size_t bytes;
+    int failure;
+
+    if (dst == NULL || src == NULL)
+        return (failure = 22); /* EINVAL, from MSVC <errno.h> */
+
+    bytes = strlen(src) + 1; /* strlen("abc") + 1 == 4 bytes */
+    failure = 34; /* ERANGE, from MSVC <errno.h> */
+    if (bytes > limit)
+        bytes = limit;
+    else
+        failure = 0;
+
+    memcpy(dst, src, bytes);
+    dst[limit - 1] = '\0'; /* in case of ERANGE, may not be null-terminated */
+    return (failure);
+#endif
 }

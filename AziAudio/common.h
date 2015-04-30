@@ -108,3 +108,9 @@ unsigned long GenerateCRC (unsigned char *data, int size);
  * Currently it should compile in MSVC or MinGW/GCC.
  */
 extern void x86_interrupt(void);
+
+/*
+ * `strcpy` with bounds checking
+ * This basically is a portable variation of Microsoft's `strcpy_s`.
+ */
+extern int safe_strcpy(char* dst, size_t limit, const char* src);
