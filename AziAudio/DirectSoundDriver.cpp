@@ -181,7 +181,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 #ifdef STREAM_DMA
 			__try // PJ64 likes to close objects before it shuts down the DLLs completely...
 			{
-				if (play_pos > last_play_pos) bytesMoved = play_pos - last_play_pos; else bytesMoved = TOTAL_SIZE - last_play_pos + play_pos;
+			if (play_pos > last_play_pos) bytesMoved = play_pos - last_play_pos; else bytesMoved = TOTAL_SIZE - last_play_pos + play_pos;
 			last_play_pos = play_pos;
 			if (DMALen[0] != 0 && (*AudioInfo.AI_CONTROL_REG & 0x01) == 1)
 			{
