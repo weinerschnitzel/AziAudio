@@ -14,7 +14,7 @@
 
 #define	u8	unsigned char
 #define s8	signed char
-#define u16	unsigned short
+typedef unsigned short          u16;
 #define s16	signed short
 #define u32	unsigned long
 #define s32	signed long
