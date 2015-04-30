@@ -299,6 +299,15 @@ EXPORT void CALL AiDacrateChanged (int  SystemType) {
 		return;
 
 	Dacrate = *AudioInfo.AI_DACRATE_REG & 0x00003FFF;
+#ifdef _DEBUG
+	if (Dacrate != *AudioInfo.AI_DACRATE_REG)
+		MessageBox(
+			NULL,
+			"Unknown/reserved bits in AI_DACRATE_REG set.",
+			"Warning",
+			MB_ICONWARNING
+		);
+#endif
 	switch (SystemType) {
 		default         :  MessageBox(NULL, "Invalid SystemType.", NULL, MB_ICONERROR);
 		case SYSTEM_NTSC:  video_clock = 48681812; break;
