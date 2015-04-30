@@ -16,6 +16,10 @@
 
 //#define ENABLEPROFILING
 
+#if defined(_MSC_VER)
+#define SEH_SUPPORTED
+#endif
+
 #define USE_XAUDIO2
 
 #include "mytypes.h"

@@ -179,8 +179,10 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 
 
 #ifdef STREAM_DMA
+#ifdef SEH_SUPPORTED
 			__try // PJ64 likes to close objects before it shuts down the DLLs completely...
 			{
+#endif
 			if (play_pos > last_play_pos) bytesMoved = play_pos - last_play_pos; else bytesMoved = TOTAL_SIZE - last_play_pos + play_pos;
 			last_play_pos = play_pos;
 			if (DMALen[0] != 0 && (*AudioInfo.AI_CONTROL_REG & 0x01) == 1)
@@ -275,10 +277,12 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 			{
 				//if (last_pos == write_pos)	Sleep(1);
 			}
+#ifdef SEH_SUPPORTED
 			}
 			__except (EXCEPTION_EXECUTE_HANDLER)
 			{
 			}
+#endif
 #endif
 		}
 		// This means we had a buffer segment skipped skip
