@@ -12,12 +12,12 @@
 #ifndef __MYTYPES_DOT_H__
 #define __MYTYPES_DOT_H__
 
-#define	u8	unsigned char
-#define s8	signed char
+typedef unsigned char           u8;
+typedef signed char             s8;
 typedef unsigned short          u16;
-#define s16	signed short
-#define u32	unsigned long
-#define s32	signed long
+typedef signed short            s16;
+typedef unsigned long           u32;
+typedef signed long             s32;
 #define u64	unsigned __int64
 #define s64	signed __int64
 /*
