@@ -4,6 +4,10 @@
 #include "hle_internal.h"
 #include "../AudioSpec.h"
 
+#ifndef UNUSED
+#define UNUSED(name)    name
+#endif
+
 void HleWarnMessage(void* UNUSED(user_defined), const char *message, ...)
 {
 	va_list args;
