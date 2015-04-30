@@ -59,8 +59,13 @@ protected:
 		configHLE = true;
 		configRSP = true;
 		configVolume = 0;
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 		strcpy_s(configAudioLogFolder, 500, "D:\\");
 		strcpy_s(configDevice, 100, "");
+#else
+		strcpy(configAudioLogFolder, "D:\\");
+		strcpy(configDevice, "");
+#endif
 	}
 };
 
