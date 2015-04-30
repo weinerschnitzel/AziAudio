@@ -102,3 +102,9 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #	define PrintProfiles() //
 #	define ClearProfiles()//
 #endif
+
+/*
+ * in-line assembly that should execute `INT 3;`
+ * Currently it should compile in MSVC or MinGW/GCC.
+ */
+extern void x86_interrupt(void);

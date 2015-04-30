@@ -80,9 +80,3 @@ extern u32 t0, t1, t2, t3, t4, t5, t6, t7;
 extern u32 s0, s1, s2, s3, s4, s5, s6, s7;
 extern u32 t8, t9, k0, k1, gp, sp, s8, ra;
 */
-
-/*
- * in-line assembly that should execute `INT 3;`
- * Currently it should compile in MSVC or MinGW/GCC.
- */
-extern void x86_interrupt(void);

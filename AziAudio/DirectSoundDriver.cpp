@@ -363,7 +363,7 @@ void DirectSoundDriver::SetSegmentSize(DWORD length) {
 	dsbdesc.lpwfxFormat = &wfm;
 
 	if (FAILED(hr = IDirectSound_CreateSoundBuffer(lpds, &dsbdesc, &lpdsbuf, NULL))) {
-		__asm int 3;
+		x86_interrupt();
 		return;
 	}
 
@@ -389,7 +389,7 @@ BOOL DirectSoundDriver::Initialize(HWND hwnd) {
 	WaitForSingleObject(hMutex, INFINITE);
 
 	if (FAILED(hr = DirectSoundCreate8(NULL, &lpds, NULL))) {
-		__asm int 3;
+		x86_interrupt();
 		return -1;
 	}
 
