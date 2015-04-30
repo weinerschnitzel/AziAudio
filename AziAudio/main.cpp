@@ -30,8 +30,11 @@
 
 using namespace std;
 
-//DirectSoundDriver snd;// = AudioCode();
+#if defined(XAUDIO_LIBRARIES_UNAVAILABLE) && !defined(USE_XAUDIO2)
+DirectSoundDriver snd;// = AudioCode();
+#else
 XAudio2SoundDriver snd;// = AudioCode();
+#endif
 
 // Direct Sound selection
 char DSoundDeviceName[10][100];

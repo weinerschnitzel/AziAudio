@@ -20,7 +20,9 @@
 #define SEH_SUPPORTED
 #endif
 
+#ifndef XAUDIO_LIBRARIES_UNAVAILABLE
 #define USE_XAUDIO2
+#endif
 
 #include "mytypes.h"
 

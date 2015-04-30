@@ -13,6 +13,7 @@ mkdir Mupen64plusHLE
 
 set FLAGS_x86=-O3^
  -I%obj%/dx_mingw^
+ -DXAUDIO_LIBRARIES_UNAVAILABLE^
  -masm=intel^
  -msse2^
  -mstackrealign
@@ -71,5 +72,5 @@ set OBJ_LIST=^
 %obj%/Mupen64plusHLE/musyx.o
 
 ECHO Linking assembled object files...
-g++ -o %obj%/AziAudio.dll %OBJ_LIST% --shared -s
+g++ -o %obj%/AziAudio.dll %OBJ_LIST% -ldsound --shared -s
 PAUSE
