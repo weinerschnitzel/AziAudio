@@ -242,6 +242,7 @@ void ENVMIXER () {
 	for (int y = 0; y < AudioCount; y += 0x10) {
 
 		if (LAdderStart != LTrg) {
+#if defined(_MSC_VER)
 			__asm {
 				mov ecx, dword ptr [LAdderEnd];
 				mov eax, dword ptr [LRamp];
@@ -255,6 +256,22 @@ void ENVMIXER () {
 				sar ecx, 3;
 				mov dword ptr [LVol], ecx;
 			}
+#else
+			__asm__(
+				".intel_syntax;"
+				"MOV     ecx, DWORD PTR [LAdderEnd];"
+				"MOV     eax, DWORD PTR [LRamp];"
+				"IMUL    ecx;"
+				"SHRD    eax, edx, 16;"
+				"MOV     DWORD PTR [LAdderEnd], eax;"
+				"MOV     eax, DWORD PTR [LAdderStart];"
+				"MOV     DWORD PTR [LAcc], eax;"
+				"MOV     DWORD PTR [LAdderStart], ecx;"
+				"SUB     ecx, eax;"
+				"SAR     ecx, 3;"
+				"MOV     DWORD PTR [LVol], ecx;"
+			);
+#endif
 			//LAcc = LAdderStart;
 			//LVol = (LAdderEnd - LAdderStart) >> 3;
 			//LAdderEnd   = ((s64)LAdderEnd * (s64)LRamp) >> 16;
@@ -265,6 +282,7 @@ void ENVMIXER () {
 		}
 
 		if (RAdderStart != RTrg) {
+#if defined(_MSC_VER)
 			__asm {
 				mov ecx, dword ptr [RAdderEnd];
 				mov eax, dword ptr [RRamp];
@@ -278,6 +296,22 @@ void ENVMIXER () {
 				sar ecx, 3;
 				mov dword ptr [RVol], ecx;
 			}
+#else
+			__asm__(
+				".intel_syntax;"
+				"MOV     ecx, DWORD PTR [RAdderEnd];"
+				"MOV     eax, DWORD PTR [RRamp];"
+				"IMUL    ecx;"
+				"SHRD    eax, edx, 16;"
+				"MOV     DWORD PTR [RAdderEnd], eax;"
+				"MOV     eax, DWORD PTR [RAdderStart];"
+				"MOV     DWORD PTR [RAcc], eax;"
+				"MOV     DWORD PTR [RAdderStart], ecx;"
+				"SUB     ecx, eax;"
+				"SAR     ecx, 3;"
+				"MOV     DWORD PTR [RVol], ecx;"
+			);
+#endif
 			//RAcc = RAdderStart;
 			//RVol = (RAdderEnd - RAdderStart) >> 3;
 			//RAdderEnd   = ((s64)RAdderEnd * (s64)RRamp) >> 16;
