@@ -298,7 +298,7 @@ EXPORT void CALL AiDacrateChanged (int  SystemType) {
 	if (Dacrate == *AudioInfo.AI_DACRATE_REG)
 		return;
 
-	Dacrate = *AudioInfo.AI_DACRATE_REG;
+	Dacrate = *AudioInfo.AI_DACRATE_REG & 0x00003FFF;
 	switch (SystemType) {
 		default         :  MessageBox(NULL, "Invalid SystemType.", NULL, MB_ICONERROR);
 		case SYSTEM_NTSC:  video_clock = 48681812; break;
