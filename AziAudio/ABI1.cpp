@@ -952,7 +952,7 @@ void LOADADPCM () { // Loads an ADPCM table - Works 100% Now 03-13-01
 	v0 = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 #ifdef _DEBUG
 	if (v0 > (1024*1024*8))
-		v0 = (t9 & 0xffffff);*/
+		v0 = (t9 & 0xffffff);
 	memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
 	assert ((k0&0xffff) <= 0x80);
 #endif
