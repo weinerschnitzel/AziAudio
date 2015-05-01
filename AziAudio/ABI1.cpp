@@ -547,8 +547,7 @@ void RESAMPLE () {
 			src[(srcPtr+x)^1] = 0;//*(u16 *)(rdram+((addy+x)^2));
 	}
 
-	if ((Flags & 0x2))
-		x86_interrupt();
+	assert((Flags & 0x2) == 0);
 
 	for(int i=0;i < ((AudioCount+0xf)&0xFFF0)/2;i++)	{
 		//location = (((Accum * 0x40) >> 0x10) * 8);
@@ -646,17 +645,6 @@ void SETLOOP () {
 	//VolTrg_Left  = (s16)(loopval>>16);		// m_LeftVol
 	//VolRamp_Left = (s16)(loopval);	// m_LeftVolTarget
 }
-/*
-void assert(bool _a_)	{
-	if (!(_a_)) {
-		char szError [512];
-		sprintf(szError,"PC = %08X\n\nError localized at...\n\n  Line:\t %d\n  File:\t %s\n  Time:\t %s\n\nIgnore and continue?",sp_reg_pc, __LINE__,__FILE__,__TIMESTAMP__);
-		MessageBox (NULL, szError, "Assert", MB_OK);
-		__asm int 3;
-		rsp_reg.halt = 1;
-	}						
-}
-*/
 
 void ADPCM () { // Work in progress! :)
 	BYTE Flags=(u8)(k0>>16)&0xff;
@@ -945,8 +933,10 @@ void DMEMMOVE () { // Doesn't sound just right?... will fix when HLE is ready - 
 		return;
 	v0 = (k0 & 0xFFFF);
 	v1 = (t9 >> 0x10);
-	//assert ((v1 & 0x3) == 0);
-	//assert ((v0 & 0x3) == 0);
+#ifdef _DEBUG
+	assert((v1 & 0x3) == 0);
+	assert((v0 & 0x3) == 0);
+#endif
 	u32 count = ((t9+3) & 0xfffc);
 	//v0 = (v0) & 0xfffc;
 	//v1 = (v1) & 0xfffc;
@@ -960,10 +950,12 @@ void DMEMMOVE () { // Doesn't sound just right?... will fix when HLE is ready - 
 void LOADADPCM () { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u32 v0;
 	v0 = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
-/*	if (v0 > (1024*1024*8))
+#ifdef _DEBUG
+	if (v0 > (1024*1024*8))
 		v0 = (t9 & 0xffffff);*/
-	//memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
-	//assert ((k0&0xffff) <= 0x80);
+	memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
+	assert ((k0&0xffff) <= 0x80);
+#endif
 	u16 *table = (u16 *)(rdram+v0);
 	for (u32 x = 0; x < ((k0&0xffff)>>0x4); x++) {
 		adpcmtable[0x1+(x<<3)] = table[0];

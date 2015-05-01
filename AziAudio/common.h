@@ -14,6 +14,8 @@
 #include <windows.h>
 #include <stdio.h>
 
+#include <assert.h>
+
 //#define ENABLEPROFILING
 
 #if defined(_MSC_VER)
@@ -104,12 +106,6 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #	define PrintProfiles() //
 #	define ClearProfiles()//
 #endif
-
-/*
- * in-line assembly that should execute `INT 3;`
- * Currently it should compile in MSVC or MinGW/GCC.
- */
-extern void x86_interrupt(void);
 
 /*
  * `strcpy` with bounds checking

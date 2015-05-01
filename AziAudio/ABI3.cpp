@@ -128,9 +128,10 @@ void ENVMIXER3 () {
 		RVol   = *(s32 *)(hleMixerWorkArea + 18); // 18-19
 		LSig   = *(s16 *)(hleMixerWorkArea + 20); // 20-21
 		RSig   = *(s16 *)(hleMixerWorkArea + 22); // 22-23
-		//u32 test  = *(s32 *)(hleMixerWorkArea + 24); // 22-23
-		//if (test != 0x13371337)
-		//	__asm int 3;
+#ifdef _DEBUG
+		u32 test  = *(s32 *)(hleMixerWorkArea + 24); // 22-23
+		assert(test == 0x13371337);
+#endif
 	}
 
 
@@ -515,8 +516,10 @@ void SAVEBUFF3 () {
 void LOADADPCM3 () { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u32 v0;
 	v0 = (t9 & 0xffffff);
-	//memcpy (dmem+0x3f0, rdram+v0, k0&0xffff); 
-	//assert ((k0&0xffff) <= 0x80);
+#ifdef _DEBUG
+	memcpy (dmem+0x3f0, rdram+v0, k0&0xffff);
+	assert ((k0&0xffff) <= 0x80);
+#endif
 	u16 *table = (u16 *)(rdram+v0);
 	for (u32 x = 0; x < ((k0&0xffff)>>0x4); x++) {
 		adpcmtable[0x1+(x<<3)] = table[0];
@@ -843,8 +846,9 @@ void RESAMPLE3 () {
 			src[(srcPtr+x)^1] = 0;//*(u16 *)(rdram+((addy+x)^2));
 	}
 
-	//if ((Flags & 0x2))
-	//	__asm int 3;
+#ifdef _DEBUG
+	assert((Flags & 0x2) == 0);
+#endif
 
 	for(int i=0;i < 0x170/2;i++)	{
 		location = (((Accum * 0x40) >> 0x10) * 8);
@@ -974,7 +978,7 @@ void WHATISTHIS () {
 u32 setaddr;
 void MP3ADDY () {
 	setaddr = (t9 & 0xffffff);
-	//__asm int 3;
+	//assert(0);
 	//fprintf (fp, "mp3addy: k0: %08X, t9: %08X, loopval: %08X\n", k0, t9, loopval);
 }
 
@@ -1001,7 +1005,7 @@ void MP3 ();
 	((u32*)BufferSpace)[0x008/4] += base;
 	((u32*)BufferSpace)[0xFFC/4] = loopval;
 	((u32*)BufferSpace)[0xFF8/4] = dmembase;
-	//__asm int 3;
+	//assert(0);
 	memcpy (imem+0x238, rdram+((u32*)BufferSpace)[0x008/4], 0x9C0);
 	((u32*)BufferSpace)[0xFF4/4] = setaddr;
 	pDMEM = (char *)BufferSpace;

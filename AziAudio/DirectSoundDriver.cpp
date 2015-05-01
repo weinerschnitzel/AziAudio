@@ -362,10 +362,7 @@ void DirectSoundDriver::SetSegmentSize(DWORD length) {
 	dsbdesc.dwBufferBytes = SegmentSize * SEGMENTS;
 	dsbdesc.lpwfxFormat = &wfm;
 
-	if (FAILED(hr = IDirectSound_CreateSoundBuffer(lpds, &dsbdesc, &lpdsbuf, NULL))) {
-		x86_interrupt();
-		return;
-	}
+	assert(!FAILED(hr = IDirectSound_CreateSoundBuffer(lpds, &dsbdesc, &lpdsbuf, NULL)));
 
 	IDirectSoundBuffer_Play(lpdsbuf, 0, 0, DSBPLAY_LOOPING);
 	lpdsbuff = this->lpdsbuf;
@@ -388,10 +385,7 @@ BOOL DirectSoundDriver::Initialize(HWND hwnd) {
 
 	WaitForSingleObject(hMutex, INFINITE);
 
-	if (FAILED(hr = DirectSoundCreate8(NULL, &lpds, NULL))) {
-		x86_interrupt();
-		return -1;
-	}
+	assert(!FAILED(hr = DirectSoundCreate8(NULL, &lpds, NULL)));
 
 	if (FAILED(hr = IDirectSound_SetCooperativeLevel(lpds, hwnd, DSSCL_PRIORITY))) {
 		return -1;
