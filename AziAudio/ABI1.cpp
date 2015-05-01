@@ -165,6 +165,30 @@ isDoneNow:
 #endif
 }
 
+static inline s32 mixer_macc(s32* Acc, s32* AdderStart, s32* AdderEnd, s32 Ramp)
+{
+    s64 product, product_shifted;
+    s32 volume;
+
+#if 1
+/*** TODO!  It looks like my C translation of Azimer's assembly code ... ***/
+    product = (s64)(*AdderEnd) * (s64)Ramp;
+    product_shifted = product >> 16;
+
+    volume      = (*AdderEnd - *AdderStart) / 8;
+    *Acc        = *AdderStart;
+    *AdderStart = *AdderEnd;
+    *AdderEnd   = (s32)(product_shifted & 0xFFFFFFFFul);
+#else
+/*** ... comes out to something not the same as the C code he commented. ***/
+    volume      = (*AdderEnd - *AdderStart) >> 3;
+    *Acc        = *AdderStart;
+    *AdderEnd   = ((s64)(*AdderEnd) * (s64)Ramp) >> 16;
+    *AdderStart = ((s64)(*Acc)      * (s64)Ramp) >> 16;
+#endif
+    return (volume);
+}
+
 //FILE *dfile = fopen ("d:\\envmix.txt", "wt");
 
 void ENVMIXER () {
@@ -242,51 +266,14 @@ void ENVMIXER () {
 	for (int y = 0; y < AudioCount; y += 0x10) {
 
 		if (LAdderStart != LTrg) {
-			__asm {
-				mov ecx, dword ptr [LAdderEnd];
-				mov eax, dword ptr [LRamp];
-				imul ecx;
-				shrd eax, edx, 16;
-				//shl edx, 16;
-				//shr eax, 16;
-				//add eax, edx;
-				mov dword ptr [LAdderEnd], eax;
-				mov eax, dword ptr [LAdderStart];
-				mov dword ptr [LAcc], eax;
-				mov dword ptr [LAdderStart], ecx;
-				sub ecx, eax;
-				sar ecx, 3;
-				mov dword ptr [LVol], ecx;
-			}
-			//LAcc = LAdderStart;
-			//LVol = (LAdderEnd - LAdderStart) >> 3;
-			//LAdderEnd   = ((s64)LAdderEnd * (s64)LRamp) >> 16;
-			//LAdderStart = ((s64)LAcc * (s64)LRamp) >> 16;
+			LVol = mixer_macc(&LAcc, &LAdderStart, &LAdderEnd, LRamp);
 		} else {
 			LAcc = LTrg;
 			LVol = 0;
 		}
 
 		if (RAdderStart != RTrg) {
-			__asm {
-				mov ecx, dword ptr [RAdderEnd];
-				mov eax, dword ptr [RRamp];
-				imul ecx;
-				shl edx, 16;
-				shr eax, 16;
-				add eax, edx;
-				mov dword ptr [RAdderEnd], eax;
-				mov eax, dword ptr [RAdderStart];
-				mov dword ptr [RAcc], eax;
-				mov dword ptr [RAdderStart], ecx;
-				sub ecx, eax;
-				sar ecx, 3;
-				mov dword ptr [RVol], ecx;
-			}
-			//RAcc = RAdderStart;
-			//RVol = (RAdderEnd - RAdderStart) >> 3;
-			//RAdderEnd   = ((s64)RAdderEnd * (s64)RRamp) >> 16;
-			//RAdderStart = ((s64)RAcc * (s64)RRamp) >> 16;
+			RVol = mixer_macc(&RAcc, &RAdderStart, &RAdderEnd, RRamp);
 		} else {
 			RAcc = RTrg;
 			RVol = 0;
@@ -530,8 +517,7 @@ void RESAMPLE () {
 			src[(srcPtr+x)^1] = 0;//*(u16 *)(rdram+((addy+x)^2));
 	}
 
-	if ((Flags & 0x2))
-		__asm int 3;
+	assert((Flags & 0x2) == 0);
 
 	for(int i=0;i < ((AudioCount+0xf)&0xFFF0)/2;i++)	{
 		//location = (((Accum * 0x40) >> 0x10) * 8);
@@ -629,17 +615,6 @@ void SETLOOP () {
 	//VolTrg_Left  = (s16)(loopval>>16);		// m_LeftVol
 	//VolRamp_Left = (s16)(loopval);	// m_LeftVolTarget
 }
-/*
-void assert(bool _a_)	{
-	if (!(_a_)) {
-		char szError [512];
-		sprintf(szError,"PC = %08X\n\nError localized at...\n\n  Line:\t %d\n  File:\t %s\n  Time:\t %s\n\nIgnore and continue?",sp_reg_pc, __LINE__,__FILE__,__TIMESTAMP__);
-		MessageBox (NULL, szError, "Assert", MB_OK);
-		__asm int 3;
-		rsp_reg.halt = 1;
-	}						
-}
-*/
 
 void ADPCM () { // Work in progress! :)
 	BYTE Flags=(u8)(k0>>16)&0xff;
@@ -911,13 +886,13 @@ void SEGMENT () { // Should work
 
 void SETBUFF () { // Should work ;-)
 	if ((k0 >> 0x10) & 0x8) { // A_AUX - Auxillary Sound Buffer Settings
-		AudioAuxA		= u16(k0);
-		AudioAuxC		= u16((t9 >> 0x10));
-		AudioAuxE		= u16(t9);
+		AudioAuxA       = (u16)(k0);
+		AudioAuxC       = (u16)((t9 >> 0x10));
+		AudioAuxE       = (u16)(t9);
 	} else {		// A_MAIN - Main Sound Buffer Settings
-		AudioInBuffer   = u16(k0); // 0x00
-		AudioOutBuffer	= u16((t9 >> 0x10)); // 0x02
-		AudioCount		= u16(t9); // 0x04
+		AudioInBuffer   = (u16)(k0);           // 0x00
+		AudioOutBuffer  = (u16)((t9 >> 0x10)); // 0x02
+		AudioCount      = (u16)(t9);           // 0x04
 	}
 }
 
@@ -928,8 +903,9 @@ void DMEMMOVE () { // Doesn't sound just right?... will fix when HLE is ready - 
 		return;
 	v0 = (k0 & 0xFFFF);
 	v1 = (t9 >> 0x10);
-	//assert ((v1 & 0x3) == 0);
-	//assert ((v0 & 0x3) == 0);
+	//assert((v1 & 0x3) == 0);
+	//assert((v0 & 0x3) == 0);
+
 	u32 count = ((t9+3) & 0xfffc);
 	//v0 = (v0) & 0xfffc;
 	//v1 = (v1) & 0xfffc;
@@ -943,10 +919,10 @@ void DMEMMOVE () { // Doesn't sound just right?... will fix when HLE is ready - 
 void LOADADPCM () { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u32 v0;
 	v0 = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
-/*	if (v0 > (1024*1024*8))
-		v0 = (t9 & 0xffffff);*/
-	//memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
-	//assert ((k0&0xffff) <= 0x80);
+//	if (v0 > (1024*1024*8))
+//		v0 = (t9 & 0xffffff);
+//	memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
+//	assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram+v0);
 	for (u32 x = 0; x < ((k0&0xffff)>>0x4); x++) {
 		adpcmtable[0x1+(x<<3)] = table[0];

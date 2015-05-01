@@ -179,9 +179,11 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 
 
 #ifdef STREAM_DMA
+#ifdef SEH_SUPPORTED
 			__try // PJ64 likes to close objects before it shuts down the DLLs completely...
 			{
-				if (play_pos > last_play_pos) bytesMoved = play_pos - last_play_pos; else bytesMoved = TOTAL_SIZE - last_play_pos + play_pos;
+#endif
+			if (play_pos > last_play_pos) bytesMoved = play_pos - last_play_pos; else bytesMoved = TOTAL_SIZE - last_play_pos + play_pos;
 			last_play_pos = play_pos;
 			if (DMALen[0] != 0 && (*AudioInfo.AI_CONTROL_REG & 0x01) == 1)
 			{
@@ -275,10 +277,12 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 			{
 				//if (last_pos == write_pos)	Sleep(1);
 			}
+#ifdef SEH_SUPPORTED
 			}
 			__except (EXCEPTION_EXECUTE_HANDLER)
 			{
 			}
+#endif
 #endif
 		}
 		// This means we had a buffer segment skipped skip
@@ -358,10 +362,7 @@ void DirectSoundDriver::SetSegmentSize(DWORD length) {
 	dsbdesc.dwBufferBytes = SegmentSize * SEGMENTS;
 	dsbdesc.lpwfxFormat = &wfm;
 
-	if (FAILED(hr = IDirectSound_CreateSoundBuffer(lpds, &dsbdesc, &lpdsbuf, NULL))) {
-		__asm int 3;
-		return;
-	}
+	assert(!FAILED(hr = IDirectSound_CreateSoundBuffer(lpds, &dsbdesc, &lpdsbuf, NULL)));
 
 	IDirectSoundBuffer_Play(lpdsbuf, 0, 0, DSBPLAY_LOOPING);
 	lpdsbuff = this->lpdsbuf;
@@ -384,10 +385,7 @@ BOOL DirectSoundDriver::Initialize(HWND hwnd) {
 
 	WaitForSingleObject(hMutex, INFINITE);
 
-	if (FAILED(hr = DirectSoundCreate8(NULL, &lpds, NULL))) {
-		__asm int 3;
-		return -1;
-	}
+	assert(!FAILED(hr = DirectSoundCreate8(NULL, &lpds, NULL)));
 
 	if (FAILED(hr = IDirectSound_SetCooperativeLevel(lpds, hwnd, DSSCL_PRIORITY))) {
 		return -1;

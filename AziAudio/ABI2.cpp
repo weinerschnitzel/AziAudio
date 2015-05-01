@@ -65,9 +65,9 @@ void SETLOOP2 () {
 }
 
 void SETBUFF2 () {
-	AudioInBuffer   = u16(k0);			 // 0x00
-	AudioOutBuffer	= u16((t9 >> 0x10)); // 0x02
-	AudioCount		= u16(t9);			 // 0x04
+	AudioInBuffer   = (u16)(k0);           // 0x00
+	AudioOutBuffer  = (u16)(t9 >> 0x10);   // 0x02
+	AudioCount      = (u16)(t9);           // 0x04
 }
 
 void ADPCM2 () { // Verified to be 100% Accurate...

@@ -14,9 +14,17 @@
 #include <windows.h>
 #include <stdio.h>
 
+#include <assert.h>
+
 //#define ENABLEPROFILING
 
+#if defined(_MSC_VER)
+#define SEH_SUPPORTED
+#endif
+
+#ifndef XAUDIO_LIBRARIES_UNAVAILABLE
 #define USE_XAUDIO2
+#endif
 
 #include "mytypes.h"
 
@@ -98,3 +106,9 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #	define PrintProfiles() //
 #	define ClearProfiles()//
 #endif
+
+/*
+ * `strcpy` with bounds checking
+ * This basically is a portable variation of Microsoft's `strcpy_s`.
+ */
+extern int safe_strcpy(char* dst, size_t limit, const char* src);

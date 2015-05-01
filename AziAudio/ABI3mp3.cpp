@@ -236,8 +236,6 @@ void MP3 () {
 	}
 }
 
-
-
 void InnerLoop () {
 				int x;
 				// Part 1: 100% Accurate
@@ -281,8 +279,7 @@ void InnerLoop () {
 				RSP_Vect[0].DW[1] = 0xB504A57E00016A09;
 				RSP_Vect[0].DW[0] = 0x0002D4130005A827;
 */
-				if ((t1 | t2 | t3 | t5 | t6) & 0x1)
-					__asm int 3;
+				assert(((t1 | t2 | t3 | t5 | t6) & 0x1) == 0);
 
 				// 0x13A8
 				v[1] = 0;

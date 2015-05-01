@@ -1,5 +1,8 @@
 #include <stdarg.h>
 #include <stdio.h>
+
+#include "common.h"
+
 #include "hle_external.h"
 #include "hle_internal.h"
 #include "../AudioSpec.h"

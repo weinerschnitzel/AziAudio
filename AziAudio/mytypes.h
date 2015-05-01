@@ -12,7 +12,7 @@
 #ifndef __MYTYPES_DOT_H__
 #define __MYTYPES_DOT_H__
 
-#define	u8	unsigned char
+#define u8	unsigned char
 #define s8	signed char
 #define u16	unsigned short
 #define s16	signed short
@@ -20,6 +20,7 @@
 #define s32	signed long
 #define u64	unsigned __int64
 #define s64	signed __int64
+
 /*
 #ifndef WIN32
 #define BYTE   unsigned char
