@@ -165,6 +165,30 @@ isDoneNow:
 #endif
 }
 
+static inline s32 mixer_macc(s32* Acc, s32* AdderStart, s32* AdderEnd, s32 Ramp)
+{
+    s64 product, product_shifted;
+    s32 volume;
+
+#if 1
+/*** TODO!  It looks like my C translation of Azimer's assembly code ... ***/
+    product = (s64)(*AdderEnd) * (s64)Ramp;
+    product_shifted = product >> 16;
+
+    volume      = (*AdderEnd - *AdderStart) / 8;
+    *Acc        = *AdderStart;
+    *AdderStart = *AdderEnd;
+    *AdderEnd   = (s32)(product_shifted & 0xFFFFFFFFul);
+#else
+/*** ... comes out to something not the same as the C code he commented. ***/
+    volume      = (*AdderEnd - *AdderStart) >> 3;
+    *Acc        = *AdderStart;
+    *AdderEnd   = ((s64)(*AdderEnd) * (s64)Ramp) >> 16;
+    *AdderStart = ((s64)(*Acc)      * (s64)Ramp) >> 16;
+#endif
+    return (volume);
+}
+
 //FILE *dfile = fopen ("d:\\envmix.txt", "wt");
 
 void ENVMIXER () {
@@ -242,68 +266,14 @@ void ENVMIXER () {
 	for (int y = 0; y < AudioCount; y += 0x10) {
 
 		if (LAdderStart != LTrg) {
-#if defined(_MSC_VER) && defined(_WIN32) && !defined(_WIN64)
-			__asm {
-				mov ecx, dword ptr [LAdderEnd];
-				mov eax, dword ptr [LRamp];
-				imul ecx;
-				shrd eax, edx, 16;
-				mov dword ptr [LAdderEnd], eax;
-				mov eax, dword ptr [LAdderStart];
-				mov dword ptr [LAcc], eax;
-				mov dword ptr [LAdderStart], ecx;
-				sub ecx, eax;
-				sar ecx, 3;
-				mov dword ptr [LVol], ecx;
-			}
-#else
-			s64 product, product_shifted;
-
-			product = (s64)LRamp * (s64)LAdderEnd;
-			product_shifted = product >> 16;
-			LAcc = LAdderStart;
-			LAdderStart = LAdderEnd;
-			LVol = (LAdderEnd - LAcc) / 8;
-			LAdderEnd = (s32)(product_shifted & 0xFFFFFFFFul);
-#endif
-			//LAcc = LAdderStart;
-			//LVol = (LAdderEnd - LAdderStart) >> 3;
-			//LAdderEnd   = ((s64)LAdderEnd * (s64)LRamp) >> 16;
-			//LAdderStart = ((s64)LAcc * (s64)LRamp) >> 16;
+			LVol = mixer_macc(&LAcc, &LAdderStart, &LAdderEnd, LRamp);
 		} else {
 			LAcc = LTrg;
 			LVol = 0;
 		}
 
 		if (RAdderStart != RTrg) {
-#if defined(_MSC_VER) && defined(_WIN32) && !defined(_WIN64)
-			__asm {
-				mov ecx, dword ptr [RAdderEnd];
-				mov eax, dword ptr [RRamp];
-				imul ecx;
-				shrd eax, edx, 16;
-				mov dword ptr [RAdderEnd], eax;
-				mov eax, dword ptr [RAdderStart];
-				mov dword ptr [RAcc], eax;
-				mov dword ptr [RAdderStart], ecx;
-				sub ecx, eax;
-				sar ecx, 3;
-				mov dword ptr [RVol], ecx;
-			}
-#else
-			s64 product, product_shifted;
-
-			product = (s64)RRamp * (s64)RAdderEnd;
-			product_shifted = product >> 16;
-			RAcc = RAdderStart;
-			RAdderStart = RAdderEnd;
-			RVol = (RAdderEnd - RAcc) / 8;
-			RAdderEnd = (s32)(product_shifted & 0xFFFFFFFFul);
-#endif
-			//RAcc = RAdderStart;
-			//RVol = (RAdderEnd - RAdderStart) >> 3;
-			//RAdderEnd   = ((s64)RAdderEnd * (s64)RRamp) >> 16;
-			//RAdderStart = ((s64)RAcc * (s64)RRamp) >> 16;
+			RVol = mixer_macc(&RAcc, &RAdderStart, &RAdderEnd, RRamp);
 		} else {
 			RAcc = RTrg;
 			RVol = 0;
