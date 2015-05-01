@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include "WaveOut.h"	
 
-void WaveOut::BeginWaveOut(char *filename, WORD channels, DWORD bitsPerSample, DWORD sampleRate)
+void WaveOut::BeginWaveOut(char *filename, WORD channels, WORD bitsPerSample, DWORD sampleRate)
 {
 	if (waveoutput != NULL) return;
 	// Clear header
@@ -32,7 +32,11 @@ void WaveOut::BeginWaveOut(char *filename, WORD channels, DWORD bitsPerSample, D
 	memcpy(header.Subchunk2ID,"data",4);
 	header.Subchunk2Size=0; // TODO at EndWaveOut
 
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+	fopen_s(&waveoutput, filename, "wb");
+#else
 	waveoutput = fopen(filename, "wb");
+#endif
 	fwrite(&header, sizeof(WaveHeader), 1, waveoutput);
 	datasize = 0;
 }

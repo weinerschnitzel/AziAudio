@@ -15,9 +15,16 @@
 extern u8 BufferSpace[0x10000];
 
 static void SPNOOP () {
-	char buff[0x100];
-	sprintf (buff, "Unknown/Unimplemented Audio Command %i in ABI 2", k0 >> 24);
-	MessageBox (NULL, buff, "Audio HLE Error", MB_OK);
+    static char buff[] = "Unknown/Unimplemented Audio Command %i in ABI 2";
+    char * sprintf_offset;
+    const u8 command = (unsigned char)((k0 & 0xFF000000ul) >> 24);
+
+    sprintf_offset = strchr(&buff[0], '%'); /* Overwrite "%i" with decimal. */
+    *(sprintf_offset + 0) = '0' + (command/10 % 10);
+    *(sprintf_offset + 1) = '0' + (command/ 1 % 10);
+    if (sprintf_offset[0] == '0')
+        sprintf_offset[0] = ' '; /* Leading 0's may confuse decimal w/ octal. */
+    MessageBox(NULL, buff, PLUGIN_VERSION, MB_OK);
 }
 extern u16 AudioInBuffer;		// 0x0000(T8)
 extern u16 AudioOutBuffer;		// 0x0002(T8)
