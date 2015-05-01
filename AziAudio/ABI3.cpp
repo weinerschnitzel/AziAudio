@@ -128,10 +128,6 @@ void ENVMIXER3 () {
 		RVol   = *(s32 *)(hleMixerWorkArea + 18); // 18-19
 		LSig   = *(s16 *)(hleMixerWorkArea + 20); // 20-21
 		RSig   = *(s16 *)(hleMixerWorkArea + 22); // 22-23
-#ifdef _DEBUG
-		u32 test  = *(s32 *)(hleMixerWorkArea + 24); // 22-23
-		assert(test == 0x13371337);
-#endif
 	}
 
 
