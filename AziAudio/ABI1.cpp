@@ -916,13 +916,13 @@ void SEGMENT () { // Should work
 
 void SETBUFF () { // Should work ;-)
 	if ((k0 >> 0x10) & 0x8) { // A_AUX - Auxillary Sound Buffer Settings
-		AudioAuxA		= u16(k0);
-		AudioAuxC		= u16((t9 >> 0x10));
-		AudioAuxE		= u16(t9);
+		AudioAuxA       = (u16)(k0);
+		AudioAuxC       = (u16)((t9 >> 0x10));
+		AudioAuxE       = (u16)(t9);
 	} else {		// A_MAIN - Main Sound Buffer Settings
-		AudioInBuffer   = u16(k0); // 0x00
-		AudioOutBuffer	= u16((t9 >> 0x10)); // 0x02
-		AudioCount		= u16(t9); // 0x04
+		AudioInBuffer   = (u16)(k0);           // 0x00
+		AudioOutBuffer  = (u16)((t9 >> 0x10)); // 0x02
+		AudioCount      = (u16)(t9);           // 0x04
 	}
 }
 
