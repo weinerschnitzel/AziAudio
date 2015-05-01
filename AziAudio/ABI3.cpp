@@ -512,10 +512,8 @@ void SAVEBUFF3 () {
 void LOADADPCM3 () { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u32 v0;
 	v0 = (t9 & 0xffffff);
-#ifdef _DEBUG
-	memcpy (dmem+0x3f0, rdram+v0, k0&0xffff);
-	assert ((k0&0xffff) <= 0x80);
-#endif
+	//memcpy (dmem+0x3f0, rdram+v0, k0&0xffff);
+	//assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram+v0);
 	for (u32 x = 0; x < ((k0&0xffff)>>0x4); x++) {
 		adpcmtable[0x1+(x<<3)] = table[0];

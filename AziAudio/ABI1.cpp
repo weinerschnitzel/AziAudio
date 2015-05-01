@@ -903,10 +903,9 @@ void DMEMMOVE () { // Doesn't sound just right?... will fix when HLE is ready - 
 		return;
 	v0 = (k0 & 0xFFFF);
 	v1 = (t9 >> 0x10);
-#ifdef _DEBUG
-	assert((v1 & 0x3) == 0);
-	assert((v0 & 0x3) == 0);
-#endif
+	//assert((v1 & 0x3) == 0);
+	//assert((v0 & 0x3) == 0);
+
 	u32 count = ((t9+3) & 0xfffc);
 	//v0 = (v0) & 0xfffc;
 	//v1 = (v1) & 0xfffc;
@@ -920,12 +919,10 @@ void DMEMMOVE () { // Doesn't sound just right?... will fix when HLE is ready - 
 void LOADADPCM () { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u32 v0;
 	v0 = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
-#ifdef _DEBUG
-	if (v0 > (1024*1024*8))
-		v0 = (t9 & 0xffffff);
-	memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
-	assert ((k0&0xffff) <= 0x80);
-#endif
+//	if (v0 > (1024*1024*8))
+//		v0 = (t9 & 0xffffff);
+//	memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
+//	assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram+v0);
 	for (u32 x = 0; x < ((k0&0xffff)>>0x4); x++) {
 		adpcmtable[0x1+(x<<3)] = table[0];
