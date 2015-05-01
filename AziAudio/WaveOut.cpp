@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include "WaveOut.h"	
 
-void WaveOut::BeginWaveOut(char *filename, WORD channels, DWORD bitsPerSample, DWORD sampleRate)
+void WaveOut::BeginWaveOut(char *filename, WORD channels, WORD bitsPerSample, DWORD sampleRate)
 {
 	if (waveoutput != NULL) return;
 	// Clear header
