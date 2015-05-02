@@ -189,11 +189,8 @@ void ENVMIXER3 () {
 
 // ****************************************************************
 
-		if(o1>32767) o1=32767;
-		else if(o1<-32768) o1=-32768;
-
-		if(a1>32767) a1=32767;
-		else if(a1<-32768) a1=-32768;
+		o1 = pack_signed(o1);
+		a1 = pack_signed(a1);
 
 // ****************************************************************
 
@@ -211,11 +208,8 @@ void ENVMIXER3 () {
 			a2+=((i1*AuxL)+0x4000)>>15;
 			a3+=((i1*AuxR)+0x4000)>>15;
 			
-			if(a2>32767) a2=32767;
-			else if(a2<-32768) a2=-32768;
-
-			if(a3>32767) a3=32767;
-			else if(a3<-32768) a3=-32768;
+			a2 = pack_signed(a2);
+			a3 = pack_signed(a3);
 
 			aux2[y^1]=a2;
 			aux3[y^1]=a3;
@@ -343,14 +337,12 @@ void ENVMIXER3o () {
 		MainR = ((Dry * (RAcc>>16)) + 0x4000) >> 15; 
 		AuxL  = ((Wet * (LAcc>>16)) + 0x4000) >> 15; 
 		AuxR  = ((Wet * (RAcc>>16)) + 0x4000) >> 15;
-		/*if (MainL>32767) MainL = 32767;
-		else if (MainL<-32768) MainL = -32768;
-		if (MainR>32767) MainR = 32767;
-		else if (MainR<-32768) MainR = -32768;
-		if (AuxL>32767) AuxL = 32767;
-		else if (AuxL<-32768) AuxR = -32768;
-		if (AuxR>32767) AuxR = 32767;
-		else if (AuxR<-32768) AuxR = -32768;*/
+		/*
+		MainL = pack_signed(MainL);
+		MainR = pack_signed(MainR);
+		AuxL = pack_signed(AuxL);
+		AuxR = pack_signed(AuxR);
+		*/
 		/*
 		MainR = (Dry * RTrg + 0x10000) >> 15;
 		MainL = (Dry * LTrg + 0x10000) >> 15;
@@ -361,11 +353,8 @@ void ENVMIXER3o () {
 
 		a1+=(/*(a1*0x7fff)+*/(i1*MainL)+0x4000)>>15;
 
-		if(o1>32767) o1=32767;
-		else if(o1<-32768) o1=-32768;
-
-		if(a1>32767) a1=32767;
-		else if(a1<-32768) a1=-32768;
+		o1 = pack_signed(o1);
+		a1 = pack_signed(a1);
 
 		out[x^1]=o1;
 		aux1[x^1]=a1;
@@ -373,11 +362,8 @@ void ENVMIXER3o () {
 			a2+=(/*(a2*0x7fff)+*/(i1*AuxR)+0x4000)>>15;
 			a3+=(/*(a3*0x7fff)+*/(i1*AuxL)+0x4000)>>15;
 			
-			if(a2>32767) a2=32767;
-			else if(a2<-32768) a2=-32768;
-
-			if(a3>32767) a3=32767;
-			else if(a3<-32768) a3=-32768;
+			a2 = pack_signed(a2);
+			a3 = pack_signed(a3);
 
 			aux2[x^1]=a2;
 			aux3[x^1]=a3;
@@ -447,17 +433,10 @@ void ENVMIXER3 () { // Borrowed from RCP...
 		a1=((a1*0x7fff)+(i1*MainL)+0x10000)>>15;
 		a3=((a3*0x7fff)+(i1*AuxL)+0x8000)>>16;
 
-		if(o1>32767) o1=32767;
-		else if(o1<-32768) o1=-32768;
-
-		if(a1>32767) a1=32767;
-		else if(a1<-32768) a1=-32768;
-
-		if(a2>32767) a2=32767;
-		else if(a2<-32768) a2=-32768;
-
-		if(a3>32767) a3=32767;
-		else if(a3<-32768) a3=-32768;
+		o1 = pack_signed(o1);
+		a1 = pack_signed(a1);
+		a2 = pack_signed(a2);
+		a3 = pack_signed(a3);
 
 		*(out++)=o1;
 		*(aux1++)=a1;
@@ -490,11 +469,7 @@ void MIXER3 () { // Needs accuracy verification...
 	for (int x=0; x < 0x170; x+=2) { // I think I can do this a lot easier 
 		temp = (*(s16 *)(BufferSpace+dmemin+x) * gain) >> 16;
 		temp += *(s16 *)(BufferSpace+dmemout+x);
-			
-		if ((s32)temp > 32767) 
-			temp = 32767;
-		if ((s32)temp < -32768) 
-			temp = -32768;
+		temp = pack_signed((s32)temp);
 
 		*(u16 *)(BufferSpace+dmemout+x) = (u16)(temp & 0xFFFF);
 	}
@@ -725,8 +700,7 @@ void ADPCM3 () { // Verified to be 100% Accurate...
 		for(j=0;j<8;j++)
 		{
 			a[j^1]>>=11;
-			if(a[j^1]>32767) a[j^1]=32767;
-			else if(a[j^1]<-32768) a[j^1]=-32768;
+			a[j^1] = pack_signed(a[j^1]);
 			*(out++)=a[j^1];
 			//*(out+j)=a[j^1];
 		}
@@ -797,8 +771,7 @@ void ADPCM3 () { // Verified to be 100% Accurate...
 		for(j=0;j<8;j++)
 		{
 			a[j^1]>>=11;
-			if(a[j^1]>32767) a[j^1]=32767;
-			else if(a[j^1]<-32768) a[j^1]=-32768;
+			a[j^1] = pack_signed(a[j^1]);
 			*(out++)=a[j^1];
 			//*(out+j+0x1f8)=a[j^1];
 		}
@@ -871,36 +844,31 @@ void RESAMPLE3 () {
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
 		temp = (s32)(temp >> 16);
-		if ((s32)temp > 32767) temp = 32767;
-		if ((s32)temp < -32768) temp = -32768;
+		temp = pack_signed((s32)temp);
 		accum = (s32)(s16)temp;
 
 		temp = ((s64)*(s16*)(src+((srcPtr+1)^1))*((s64)((s16)lut[1]<<1)));
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
 		temp = (s32)(temp >> 16);
-		if ((s32)temp > 32767) temp = 32767;
-		if ((s32)temp < -32768) temp = -32768;
+		temp = pack_signed((s32)temp);
 		accum += (s32)(s16)temp;
 
 		temp = ((s64)*(s16*)(src+((srcPtr+2)^1))*((s64)((s16)lut[2]<<1)));
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
 		temp = (s32)(temp >> 16);
-		if ((s32)temp > 32767) temp = 32767;
-		if ((s32)temp < -32768) temp = -32768;
+		temp = pack_signed((s32)temp);
 		accum += (s32)(s16)temp;
 
 		temp = ((s64)*(s16*)(src+((srcPtr+3)^1))*((s64)((s16)lut[3]<<1)));
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
 		temp = (s32)(temp >> 16);
-		if ((s32)temp > 32767) temp = 32767;
-		if ((s32)temp < -32768) temp = -32768;
+		temp = pack_signed((s32)temp);
 		accum += (s32)(s16)temp;*/
 
-		if (accum > 32767) accum = 32767;
-		if (accum < -32768) accum = -32768;
+		accum = pack_signed(accum);
 
 		dst[dstPtr^1] = (s16)(accum);
 		dstPtr++;

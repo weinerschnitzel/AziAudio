@@ -345,14 +345,10 @@ void ENVMIXER () {
 		AuxL  = (((s64)Wet*2 * (s64)(LAcc>>16)) + 0x8000) >> 16; 
 		AuxR  = (((s64)Wet*2 * (s64)(RAcc>>16)) + 0x8000) >> 16;*/
 /*
-		if (MainL>32767) MainL = 32767;
-		else if (MainL<-32768) MainL = -32768;
-		if (MainR>32767) MainR = 32767;
-		else if (MainR<-32768) MainR = -32768;
-		if (AuxL>32767) AuxL = 32767;
-		else if (AuxL<-32768) AuxR = -32768;
-		if (AuxR>32767) AuxR = 32767;
-		else if (AuxR<-32768) AuxR = -32768;*/
+		MainL = pack_signed(MainL);
+		MainR = pack_signed(MainR);
+		AuxL = pack_signed(AuxL);
+		AuxR = pack_signed(AuxR);*/
 		/*
 		MainR = (Dry * RTrg + 0x10000) >> 15;
 		MainL = (Dry * LTrg + 0x10000) >> 15;
@@ -366,11 +362,8 @@ void ENVMIXER () {
 
 		a1=((s64)(((s64)a1*0xfffe)+((s64)i1*MainL*2)+0x8000)>>16);*/
 
-		if(o1>32767) o1=32767;
-		else if(o1<-32768) o1=-32768;
-
-		if(a1>32767) a1=32767;
-		else if(a1<-32768) a1=-32768;
+		o1 = pack_signed(o1);
+		a1 = pack_signed(a1);
 
 		out[ptr^1]=o1;
 		aux1[ptr^1]=a1;
@@ -380,12 +373,9 @@ void ENVMIXER () {
 			//a3=((s64)(((s64)a3*0xfffe)+((s64)i1*AuxL*2)+0x8000)>>16);
 			a2+=(/*(a2*0x7fff)+*/(i1*AuxR)+0x4000)>>15;
 			a3+=(/*(a3*0x7fff)+*/(i1*AuxL)+0x4000)>>15;
-			
-			if(a2>32767) a2=32767;
-			else if(a2<-32768) a2=-32768;
 
-			if(a3>32767) a3=32767;
-			else if(a3<-32768) a3=-32768;
+			a2 = pack_signed(a2);
+			a3 = pack_signed(a3);
 
 			aux2[ptr^1]=a2;
 			aux3[ptr^1]=a3;
@@ -460,17 +450,10 @@ void ENVMIXERo () { // Borrowed from RCP...
 		a1=((a1*0x7fff)+(i1*MainL)+0x10000)>>15;
 		a3=((a3*0x7fff)+(i1*AuxL)+0x8000)>>16;
 
-		if(o1>32767) o1=32767;
-		else if(o1<-32768) o1=-32768;
-
-		if(a1>32767) a1=32767;
-		else if(a1<-32768) a1=-32768;
-
-		if(a2>32767) a2=32767;
-		else if(a2<-32768) a2=-32768;
-
-		if(a3>32767) a3=32767;
-		else if(a3<-32768) a3=-32768;
+		o1 = pack_signed(o1);
+		a1 = pack_signed(a1);
+		a2 = pack_signed(a2);
+		a3 = pack_signed(a3);
 
 		*(out++)=o1;
 		*(aux1++)=a1;
@@ -548,8 +531,7 @@ void RESAMPLE () {
 		temp = ((s32)*(s16*)(src+((srcPtr+3)^1))*((s32)((s16)lut[3])));
 		accum += (s32)(temp >> 15);
 
-		if (accum > 32767) accum = 32767;
-		if (accum < -32768) accum = -32768;
+		accum = pack_signed(accum);
 
 		dst[dstPtr^1] = (s16)(accum);
 		dstPtr++;
@@ -778,8 +760,7 @@ void ADPCM () { // Work in progress! :)
 		for(j=0;j<8;j++)
 		{
 			a[j^1]>>=11;
-			if(a[j^1]>32767) a[j^1]=32767;
-			else if(a[j^1]<-32768) a[j^1]=-32768;
+			a[j^1] = pack_signed(a[j^1]);
 			*(out++)=a[j^1];
 		}
 		l1=a[6];
@@ -848,8 +829,7 @@ void ADPCM () { // Work in progress! :)
 		for(j=0;j<8;j++)
 		{
 			a[j^1]>>=11;
-			if(a[j^1]>32767) a[j^1]=32767;
-			else if(a[j^1]<-32768) a[j^1]=-32768;
+			a[j^1] = pack_signed(a[j^1]);
 			*(out++)=a[j^1];
 		}
 		l1=a[6];
@@ -979,11 +959,7 @@ void MIXER () { // Fixed a sign issue... 03-14-01
 	for (int x=0; x < AudioCount; x+=2) { // I think I can do this a lot easier 
 		temp = (*(s16 *)(BufferSpace+dmemin+x) * gain) >> 15;
 		temp += *(s16 *)(BufferSpace+dmemout+x);
-			
-		if ((s32)temp > 32767) 
-			temp = 32767;
-		if ((s32)temp < -32768) 
-			temp = -32768;
+		temp = pack_signed((s32)temp);
 
 		*(u16 *)(BufferSpace+dmemout+x) = (u16)(temp & 0xFFFF);
 	}
@@ -1032,10 +1008,7 @@ void MIXER () { // Fixed a sign issue... 03-14-01
 		temp += ((*(s16 *)(BufferSpace+dmemin+x) * (s64)((s16)gain*2))) & 0xFFFFFFFFFFFF;
 			
 		temp = (s32)(temp >> 16);
-		if ((s32)temp > 32767) 
-			temp = 32767;
-		if ((s32)temp < -32768) 
-			temp = -32768;
+		temp = pack_signed((s32)temp);
 
 		*(u16 *)(BufferSpace+dmemout+x) = (u16)(temp & 0xFFFF);
 	}

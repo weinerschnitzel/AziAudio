@@ -266,8 +266,7 @@ void ADPCM2 () { // Verified to be 100% Accurate...
 		for(j=0;j<8;j++)
 		{
 			a[j^1]>>=11;
-			if(a[j^1]>32767) a[j^1]=32767;
-			else if(a[j^1]<-32768) a[j^1]=-32768;
+			a[j^1] = pack_signed(a[j^1]);
 			*(out++)=a[j^1];
 		}
 		l1=a[6];
@@ -336,8 +335,7 @@ void ADPCM2 () { // Verified to be 100% Accurate...
 		for(j=0;j<8;j++)
 		{
 			a[j^1]>>=11;
-			if(a[j^1]>32767) a[j^1]=32767;
-			else if(a[j^1]<-32768) a[j^1]=-32768;
+			a[j^1] = pack_signed(a[j^1]);
 			*(out++)=a[j^1];
 		}
 		l1=a[6];
@@ -382,11 +380,7 @@ void MIXER2 () { // Needs accuracy verification...
 
 		temp = (*(s16 *)(BufferSpace+dmemin+x) * gain) >> 16;
 		temp += *(s16 *)(BufferSpace+dmemout+x);
-			
-		if ((s32)temp > 32767) 
-			temp = 32767;
-		if ((s32)temp < -32768) 
-			temp = -32768;
+		temp = pack_signed((s32)temp);
 
 		*(u16 *)(BufferSpace+dmemout+x) = (u16)(temp & 0xFFFF);
 	}
@@ -443,8 +437,7 @@ void RESAMPLE2 () {
 		temp = ((s32)*(s16*)(src+((srcPtr+3)^1))*((s32)((s16)lut[3])));
 		accum += (s32)(temp >> 15);
 
-		if (accum > 32767) accum = 32767;
-		if (accum < -32768) accum = -32768;
+		accum = pack_signed(accum);
 
 		dst[dstPtr^1] = (s16)(accum);
 		dstPtr++;
@@ -554,26 +547,26 @@ void ENVMIXER2 () {
 			vec9  = (s16)(((s32)buffs3[x^1] * (u32)env[0]) >> 0x10) ^ v2[0];
 			vec10 = (s16)(((s32)buffs3[x^1] * (u32)env[2]) >> 0x10) ^ v2[1];
 			temp = bufft6[x^1] + vec9;
-			if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+			temp = pack_signed(temp);
 			bufft6[x^1] = temp;
 			temp = bufft7[x^1] + vec10;
-			if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+			temp = pack_signed(temp);
 			bufft7[x^1] = temp;
 			vec9  = (s16)(((s32)vec9  * (u32)env[4]) >> 0x10) ^ v2[2];
 			vec10 = (s16)(((s32)vec10 * (u32)env[4]) >> 0x10) ^ v2[3];
 			if (k0 & 0x10) {
 				temp = buffs0[x^1] + vec10;
-				if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+				temp = pack_signed(temp);
 				buffs0[x^1] = temp;
 				temp = buffs1[x^1] + vec9;
-				if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+				temp = pack_signed(temp);
 				buffs1[x^1] = temp;
 			} else {
 				temp = buffs0[x^1] + vec9;
-				if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+				temp = pack_signed(temp);
 				buffs0[x^1] = temp;
 				temp = buffs1[x^1] + vec10;
-				if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+				temp = pack_signed(temp);
 				buffs1[x^1] = temp;
 			}
 		}
@@ -583,26 +576,26 @@ void ENVMIXER2 () {
 			vec9  = (s16)(((s32)buffs3[x^1] * (u32)env[1]) >> 0x10) ^ v2[0];
 			vec10 = (s16)(((s32)buffs3[x^1] * (u32)env[3]) >> 0x10) ^ v2[1];
 			temp = bufft6[x^1] + vec9;
-			if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+			temp = pack_signed(temp);
 			bufft6[x^1] = temp;
 			temp = bufft7[x^1] + vec10;
-			if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+			temp = pack_signed(temp);
 			bufft7[x^1] = temp;
 			vec9  = (s16)(((s32)vec9  * (u32)env[5]) >> 0x10) ^ v2[2];
 			vec10 = (s16)(((s32)vec10 * (u32)env[5]) >> 0x10) ^ v2[3];
 			if (k0 & 0x10) {
 				temp = buffs0[x^1] + vec10;
-				if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+				temp = pack_signed(temp);
 				buffs0[x^1] = temp;
 				temp = buffs1[x^1] + vec9;
-				if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+				temp = pack_signed(temp);
 				buffs1[x^1] = temp;
 			} else {
 				temp = buffs0[x^1] + vec9;
-				if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+				temp = pack_signed(temp);
 				buffs0[x^1] = temp;
 				temp = buffs1[x^1] + vec10;
-				if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+				temp = pack_signed(temp);
 				buffs1[x^1] = temp;
 			}
 		}
@@ -721,7 +714,7 @@ void ADDMIXER () {
 	outp = (s16 *)(BufferSpace + OutBuffer);
 	for (int cntr = 0; cntr < Count; cntr+=2) {
 		temp = *outp + *inp;
-		if (temp > 32767)  temp = 32767; if (temp < -32768) temp = -32768;
+		temp = pack_signed(temp);
 		outp++;	inp++;
 	}
 }
@@ -740,8 +733,7 @@ void HILOGAIN () {
 		val = (s32)*src;
 		//tmp = ((val * (s32)hi) + ((u64)(val * lo) << 16) >> 16);
 		tmp = ((val * (s32)hi) >> 16) + (u32)(val * lo);
-		if ((s32)tmp > 32767) tmp = 32767;
-		else if ((s32)tmp < -32768) tmp = -32768;
+		tmp = pack_signed((s32)tmp);
 		*src = (s16)tmp;
 		src++;
 		cnt -= 2;
