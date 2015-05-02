@@ -73,8 +73,10 @@ set OBJ_LIST=^
 %obj%\Mupen64plusHLE\audio.o ^
 %obj%\Mupen64plusHLE\memory.o ^
 %obj%\Mupen64plusHLE\Mupen64Support.o ^
-%obj%\Mupen64plusHLE\musyx.o
+%obj%\Mupen64plusHLE\musyx.o ^
+%obj%\res.res
 
 ECHO Linking assembled object files...
-g++ -o %obj%\AziAudio.dll %OBJ_LIST% -ldsound --shared -s
+windres -i %src%\resource.rc --input-format=rc -o %obj%\res.res -O coff
+g++ -o %obj%\AziAudio.dll %OBJ_LIST% -ldsound --shared -s -Wl,--subsystem,windows
 PAUSE
