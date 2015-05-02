@@ -246,7 +246,7 @@ void (*ABIUnknown [0x20])() = { // Unknown ABI
 };
 
 #ifndef PREFER_MACRO_FUNCTIONS
-inline s32 sats_over(s32 slice)
+INLINE s32 sats_over(s32 slice)
 {
 #ifdef TWOS_COMPLEMENT_NEGATION
     s32 adder, mask;
@@ -262,7 +262,7 @@ inline s32 sats_over(s32 slice)
     return (slice);
 #endif
 }
-inline s32 sats_under(s32 slice)
+INLINE s32 sats_under(s32 slice)
 {
 #ifdef TWOS_COMPLEMENT_NEGATION
     s32 adder, mask;
@@ -278,7 +278,7 @@ inline s32 sats_under(s32 slice)
     return (slice);
 #endif
 }
-inline s32 satu_over(s32 slice)
+INLINE s32 satu_over(s32 slice)
 {
 #ifdef TWOS_COMPLEMENT_NEGATION
     s32 adder, mask;
@@ -294,7 +294,7 @@ inline s32 satu_over(s32 slice)
     return (slice);
 #endif
 }
-inline s32 satu_under(s32 slice)
+INLINE s32 satu_under(s32 slice)
 {
 #ifdef TWOS_COMPLEMENT_NEGATION
     s32 adder, mask;
@@ -310,7 +310,7 @@ inline s32 satu_under(s32 slice)
 #endif
 }
 
-inline s16 pack_signed(s32 slice)
+INLINE s16 pack_signed(s32 slice)
 {
 #ifdef SSE2_SUPPORT
     __m128i xmm;
@@ -327,7 +327,7 @@ inline s16 pack_signed(s32 slice)
     return (s16)(result & 0x0000FFFFul);
 #endif
 }
-inline u16 pack_unsigned(s32 slice)
+INLINE u16 pack_unsigned(s32 slice)
 {
     s32 result;
 
@@ -337,7 +337,7 @@ inline u16 pack_unsigned(s32 slice)
     return (u16)(result & 0x0000FFFFul);
 }
 
-inline void vsats128(s16* vd, s32* vs)
+INLINE void vsats128(s16* vd, s32* vs)
 {
 #ifdef SSE2_SUPPORT
     __m128i xmm;
@@ -352,14 +352,14 @@ inline void vsats128(s16* vd, s32* vs)
         vd[i] = pack_signed(vs[i]);
 #endif
 }
-inline void vsatu128(u16* vd, s32* vs)
+INLINE void vsatu128(u16* vd, s32* vs)
 {
     register size_t i;
 
     for (i = 0; i < 4; i++)
         vd[i] = pack_unsigned(vs[i]);
 }
-inline void vsats64 (s16* vd, s32* vs)
+INLINE void vsats64 (s16* vd, s32* vs)
 {
 #ifdef SSE2_SUPPORT
     __m64 mmx;
@@ -375,7 +375,7 @@ inline void vsats64 (s16* vd, s32* vs)
         vd[i] = pack_signed(vs[i]);
 #endif
 }
-inline void vsatu64 (u16* vd, s32* vs)
+INLINE void vsatu64 (u16* vd, s32* vs)
 {
     register size_t i;
 

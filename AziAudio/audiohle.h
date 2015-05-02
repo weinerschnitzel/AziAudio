@@ -121,18 +121,18 @@ extern u32 t8, t9, k0, k1, gp, sp, s8, ra;
 #define satu_over(slice)        (((slice) < 0x0000) ? 0x0000U : (slice))
 #define satu_under(slice)       (((slice) > 0xFFFF) ? 0xFFFFU : (slice))
 #else
-extern inline s32 sats_over(s32 slice);
-extern inline s32 sats_under(s32 slice);
-extern inline s32 satu_over(s32 slice);
-extern inline s32 satu_under(s32 slice);
+extern INLINE s32 sats_over(s32 slice);
+extern INLINE s32 sats_under(s32 slice);
+extern INLINE s32 satu_over(s32 slice);
+extern INLINE s32 satu_under(s32 slice);
 #endif
 
 #ifdef PREFER_MACRO_FUNCTIONS
 #define pack_signed(slice)      sats_over(sats_under(slice))
 #define pack_unsigned(slice)    satu_over(satu_under(slice))
 #else
-extern inline s16 pack_signed(s32 slice);
-extern inline u16 pack_unsigned(s32 slice);
+extern INLINE s16 pack_signed(s32 slice);
+extern INLINE u16 pack_unsigned(s32 slice);
 #endif
 
 #ifdef PREFER_MACRO_FUNCTIONS
@@ -147,10 +147,10 @@ vd[0] = pack_signed(vs[0]); vd[1] = pack_signed(vs[1]); }
 #define vsatu64(vd, vs) {       \
 vd[0] = pack_unsigned(vs[0]); vd[1] = pack_unsigned(vs[1]); }
 #else
-extern inline void vsats128(s16* vd, s32* vs); /* Clamp vectors using SSE2. */
-extern inline void vsatu128(u16* vd, s32* vs);
-extern inline void vsats64 (s16* vd, s32* vs); /* Clamp vectors using MMX. */
-extern inline void vsatu64 (u16* vd, s32* vs);
+extern INLINE void vsats128(s16* vd, s32* vs); /* Clamp vectors using SSE2. */
+extern INLINE void vsatu128(u16* vd, s32* vs);
+extern INLINE void vsats64 (s16* vd, s32* vs); /* Clamp vectors using MMX. */
+extern INLINE void vsatu64 (u16* vd, s32* vs);
 #endif
 
 /*

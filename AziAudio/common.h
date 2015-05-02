@@ -22,6 +22,12 @@
 #define SEH_SUPPORTED
 #endif
 
+#if defined(_MSC_VER)
+#define INLINE          __inline
+#else
+#define INLINE
+#endif
+
 #ifndef XAUDIO_LIBRARIES_UNAVAILABLE
 #define USE_XAUDIO2
 #endif
