@@ -244,3 +244,120 @@ void (*ABIUnknown [0x20])() = { // Unknown ABI
 	SPU, SPU, SPU, SPU, SPU, SPU, SPU, SPU,
 	SPU, SPU, SPU, SPU, SPU, SPU, SPU, SPU
 };
+
+#ifndef PREFER_MACRO_FUNCTIONS
+inline s32 sats_over(s32 slice)
+{
+#ifdef TWOS_COMPLEMENT_NEGATION
+    s32 adder, mask;
+
+    adder  = +32767 - slice;
+    mask  =  ((s32)adder >> 31); /* if (+32767 - x < 0 */
+    mask &= ~((s32)slice >> 31); /*  && x >= 0) */
+    adder &= mask;
+    return (s32)(slice + adder); /* slice + (+32767 - slice) == +32767 */
+#else
+    if (slice > +32767)
+        return +32767;
+    return (slice);
+#endif
+}
+inline s32 sats_under(s32 slice)
+{
+#ifdef TWOS_COMPLEMENT_NEGATION
+    s32 adder, mask;
+
+    adder  = +32768 + slice;
+    mask  =  ((s32)adder >> 31); /* if (x + 32768 < 0 */
+    mask &=  ((s32)slice >> 31); /*  && x < 0) */
+    adder &= mask;
+    return (s32)(slice - adder); /* slice - (slice + 32768) == -32768 */
+#else
+    if (slice < -32768)
+        return -32768;
+    return (slice);
+#endif
+}
+inline s32 satu_over(s32 slice)
+{
+#ifdef TWOS_COMPLEMENT_NEGATION
+    s32 adder, mask;
+
+    adder  = +65535 - slice;
+    mask  =  ((s32)adder >> 31); /* if (65535 - x < 0 */
+    mask &= ~((s32)slice >> 31); /*  && x >= 0) */
+    adder &= mask;
+    return (s32)(slice + adder); /* slice + (65535 - slice) == 65535 */
+#else
+    if (slice > +0x0000FFFFL)
+        return +0x0000FFFFL;
+    return (slice);
+#endif
+}
+inline s32 satu_under(s32 slice)
+{
+#ifdef TWOS_COMPLEMENT_NEGATION
+    s32 adder, mask;
+
+    adder  = slice;
+    mask  = ~((s32)adder >> 31); /* if (x >= 0) */
+    adder &= mask;
+    return (s32)(slice);
+#else
+    if (slice < 0)
+        slice = 0;
+    return (slice);
+#endif
+}
+
+inline s16 pack_signed(s32 slice)
+{
+/* to do:  should be able to use Intel SIMD to directly compute these */
+    s32 result;
+
+    result = slice;
+    result = sats_under(result);
+    result = sats_over (result);
+    return (s16)(result & 0x0000FFFFul);
+}
+inline u16 pack_unsigned(s32 slice)
+{
+    s32 result;
+
+    result = slice;
+    result = satu_under(result);
+    result = satu_over (result);
+    return (u16)(result & 0x0000FFFFul);
+}
+
+inline void vsats128(s16* vd, s32* vs)
+{
+/* to do:  should be able to use Intel SIMD to directly compute these */
+    register size_t i;
+
+    for (i = 0; i < 4; i++)
+        vd[i] = pack_signed(vs[i]);
+}
+inline void vsatu128(u16* vd, s32* vs)
+{
+    register size_t i;
+
+    for (i = 0; i < 4; i++)
+        vd[i] = pack_unsigned(vs[i]);
+}
+inline void vsats64 (s16* vd, s32* vs)
+{
+/* to do:  should be able to use Intel SIMD to directly compute these */
+    register size_t i;
+
+    for (i = 0; i < 2; i++)
+        vd[i] = pack_signed(vs[i]);
+}
+inline void vsatu64 (u16* vd, s32* vs)
+{
+    register size_t i;
+
+    for (i = 0; i < 2; i++)
+        vd[i] = pack_unsigned(vs[i]);
+}
+#endif
