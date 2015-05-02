@@ -7,7 +7,11 @@ set obj=%CD%\gccbuild
 
 if not exist gccbuild (
 mkdir gccbuild
+)
+
 cd gccbuild
+
+if not exist Mupen64plusHLE (
 mkdir Mupen64plusHLE
 )
 
