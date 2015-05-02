@@ -20,6 +20,7 @@ static IXAudio2SourceVoice* g_source;
 static IXAudio2MasteringVoice* g_master;
 
 static bool audioIsPlaying = false;
+static bool canPlay = false;
 
 static BYTE bufferData[10][44100 * 4];
 static int bufferLength[10];
@@ -100,6 +101,8 @@ BOOL XAudio2SoundDriver::Setup()
 		CoUninitialize();
 		return -2;
 	}
+	canPlay = true;
+
 	// Load Wave File
 
 	WAVEFORMATEX wfm;
@@ -151,7 +154,7 @@ void XAudio2SoundDriver::Teardown()
 	}
 	
 	if (g_master != NULL) g_master->DestroyVoice();
-	if (g_engine != NULL)
+	if (g_engine != NULL && canPlay)
 	{
 		g_engine->StopEngine();
 		g_engine->Release();
@@ -229,7 +232,8 @@ DWORD XAudio2SoundDriver::AddBuffer(BYTE *start, DWORD length)
 	xa2buff.pContext = &bufferLength[writeBuffer];
 	xa2buff.AudioBytes = length;
 	xa2buff.pAudioData = bufferData[writeBuffer];
-	g_source->SubmitSourceBuffer(&xa2buff);
+	if (canPlay)
+		g_source->SubmitSourceBuffer(&xa2buff);
 
 	writeBuffer = ++writeBuffer % 10;
 
@@ -274,7 +278,9 @@ DWORD XAudio2SoundDriver::GetReadStatus()
 {
 	XAUDIO2_VOICE_STATE xvs;
 	int retVal;
-	g_source->GetState(&xvs);
+
+	if (canPlay)
+		g_source->GetState(&xvs);
 
 //	printf("%i - %i - %i\n", xvs.SamplesPlayed, bufferLength[0], bufferLength[1]);
 
