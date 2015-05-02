@@ -562,10 +562,9 @@ void InnerLoop () {
 				s32 hi1 = mult4;
 				s32 v;
 				/*
-				if (hi0 & 0xffff)
-					__asm int 3; 
-				if (hi1 & 0xffff)
-					__asm int 3;*/
+				assert((hi0 & 0xffff) == 0);
+				assert((hi1 & 0xffff) == 0);
+				*/
 				hi0 = (int)hi0 >> 0x10;
 				hi1 = (int)hi1 >> 0x10;
 				for (i = 0; i < 8; i++) {

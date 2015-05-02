@@ -417,8 +417,7 @@ void RESAMPLE2 () {
 			src[(srcPtr+x)^1] = 0;//*(u16 *)(rdram+((addy+x)^2));
 	}
 
-//	if ((Flags & 0x2))
-//		__asm int 3;
+//	assert((Flags & 0x2) == 0);
 
 	for(int i=0;i < ((AudioCount+0xf)&0xFFF0)/2;i++)	{
 		location = (((Accum * 0x40) >> 0x10) * 8);
@@ -515,7 +514,7 @@ void ENVMIXER2 () {
 
 	s16 v2[8];
 
-	//__asm int 3;
+	//assert(0);
 
 	buffs3 = (s16 *)(BufferSpace + ((k0 >> 0x0c)&0x0ff0));
 	bufft6 = (s16 *)(BufferSpace + ((t9 >> 0x14)&0x0ff0));
