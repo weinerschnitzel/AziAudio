@@ -385,7 +385,10 @@ BOOL DirectSoundDriver::Initialize(HWND hwnd) {
 
 	WaitForSingleObject(hMutex, INFINITE);
 
-	assert(!FAILED(hr = DirectSoundCreate8(NULL, &lpds, NULL)));
+	hr = DirectSoundCreate8(NULL, &lpds, NULL);
+//	assert(!FAILED(hr)); // This happens if there is no sound device.
+	if (FAILED(hr))
+		return -2;
 
 	if (FAILED(hr = IDirectSound_SetCooperativeLevel(lpds, hwnd, DSSCL_PRIORITY))) {
 		return -1;
