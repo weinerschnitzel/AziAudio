@@ -81,6 +81,24 @@ extern u32 s0, s1, s2, s3, s4, s5, s6, s7;
 extern u32 t8, t9, k0, k1, gp, sp, s8, ra;
 */
 
+/*
+ * Include the SSE2 headers if MSVC is set to target SSE2 in code generation.
+ */
+#if defined(_M_IX86_FP) && (_M_IX86_FP >= 2)
+#include <emmintrin.h>
+#endif
+
+/* ... or if compiled with the right preprocessor token on other compilers */
+#ifdef SSE2_SUPPORT
+#include <emmintrin.h>
+#endif
+
+/* The SSE1 and SSE2 headers always define these macro functions: */
+#undef SSE2_SUPPORT
+#if defined(_MM_SHUFFLE) && defined(_MM_SHUFFLE2)
+#define SSE2_SUPPORT
+#endif
+
 #if 0
 #define PREFER_MACRO_FUNCTIONS
 #endif

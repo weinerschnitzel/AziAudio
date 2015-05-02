@@ -235,7 +235,7 @@ void HLEStart() {
 #endif
 
 //	fclose (dfile);
-//	__asm int 3;
+//	assert(0);
 }
 
 void (*ABIUnknown [0x20])() = { // Unknown ABI
@@ -312,13 +312,20 @@ inline s32 satu_under(s32 slice)
 
 inline s16 pack_signed(s32 slice)
 {
-/* to do:  should be able to use Intel SIMD to directly compute these */
+#ifdef SSE2_SUPPORT
+    __m128i xmm;
+
+    xmm = _mm_cvtsi32_si128(slice);
+    xmm = _mm_packs_epi32(xmm, xmm);
+    return _mm_cvtsi128_si32(xmm); /* or:  return _mm_extract_epi16(xmm, 0); */
+#else
     s32 result;
 
     result = slice;
     result = sats_under(result);
     result = sats_over (result);
     return (s16)(result & 0x0000FFFFul);
+#endif
 }
 inline u16 pack_unsigned(s32 slice)
 {
@@ -332,11 +339,18 @@ inline u16 pack_unsigned(s32 slice)
 
 inline void vsats128(s16* vd, s32* vs)
 {
-/* to do:  should be able to use Intel SIMD to directly compute these */
+#ifdef SSE2_SUPPORT
+    __m128i xmm;
+
+    xmm = _mm_loadu_si128((__m128i *)vs);
+    xmm = _mm_packs_epi32(xmm, xmm);
+    *(__m64 *)vd = _mm_movepi64_pi64(xmm);
+#else
     register size_t i;
 
     for (i = 0; i < 4; i++)
         vd[i] = pack_signed(vs[i]);
+#endif
 }
 inline void vsatu128(u16* vd, s32* vs)
 {
@@ -347,11 +361,19 @@ inline void vsatu128(u16* vd, s32* vs)
 }
 inline void vsats64 (s16* vd, s32* vs)
 {
-/* to do:  should be able to use Intel SIMD to directly compute these */
+#ifdef SSE2_SUPPORT
+    __m64 mmx;
+
+    mmx = *(__m64 *)vs;
+    mmx = _mm_packs_pi32(mmx, mmx);
+    *(s32 *)vd = _mm_cvtsi64_si32(mmx);
+    _mm_empty();
+#else
     register size_t i;
 
     for (i = 0; i < 2; i++)
         vd[i] = pack_signed(vs[i]);
+#endif
 }
 inline void vsatu64 (u16* vd, s32* vs)
 {
