@@ -183,9 +183,11 @@ void XAudio2SoundDriver::SetFrequency(DWORD Frequency)
 	else if (Frequency < 15000 && Frequency > 10000) {
 		Frequency = 11025;
 	}*/
-	Setup();
-	g_source->SetSourceSampleRate(Frequency);
 	cacheSize = (Frequency / 25) * 4;// (((Frequency * 4) / 100) & ~0x3) * 8;
+
+	if (Setup() < 0) /* failed to apply a sound device */
+		return;
+	g_source->SetSourceSampleRate(Frequency);
 }
 
 DWORD XAudio2SoundDriver::AddBuffer(BYTE *start, DWORD length)
