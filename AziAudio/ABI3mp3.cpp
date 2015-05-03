@@ -569,20 +569,16 @@ void InnerLoop () {
 				hi1 = (int)hi1 >> 0x10;
 				for (i = 0; i < 8; i++) {
 					// v0
-					v = (*(s16 *)(mp3data+((tmp-0x40)^2)) * hi0);
-					if (v > 32767) v = 32767; else if (v < -32767) v = -32767;
+					v = pack_signed(*(s16 *)(mp3data+((tmp-0x40)^2)) * hi0);
 					*(s16 *)((u8 *)mp3data+((tmp-0x40)^2)) = (s16)v;
 					// v17
-					v = (*(s16 *)(mp3data+((tmp-0x30)^2)) * hi0);
-					if (v > 32767) v = 32767; else if (v < -32767) v = -32767;
+					v = pack_signed(*(s16 *)(mp3data+((tmp-0x30)^2)) * hi0);
 					*(s16 *)((u8 *)mp3data+((tmp-0x30)^2)) = (s16)v;
 					// v2
-					v = (*(s16 *)(mp3data+((tmp-0x1E)^2)) * hi1);
-					if (v > 32767) v = 32767; else if (v < -32767) v = -32767;
+					v = pack_signed(*(s16 *)(mp3data+((tmp-0x1E)^2)) * hi1);
 					*(s16 *)((u8 *)mp3data+((tmp-0x1E)^2)) = (s16)v;
 					// v4
-					v = (*(s16 *)(mp3data+((tmp-0xE)^2)) * hi1);
-					if (v > 32767) v = 32767; else if (v < -32767) v = -32767;
+					v = pack_signed(*(s16 *)(mp3data+((tmp-0x0E)^2)) * hi1);
 					*(s16 *)((u8 *)mp3data+((tmp-0xE)^2)) = (s16)v;
 					tmp += 2;
 				}
