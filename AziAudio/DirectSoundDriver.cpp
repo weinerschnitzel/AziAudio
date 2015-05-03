@@ -152,7 +152,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 				ExitThread(-1);
 			// Check to see if the audio pointer moved on to the next segment
 			if (write_pos == last_pos) {
-				//Sleep (0);
+				Sleep (1);
 			}
 			WaitForSingleObject(ac->hMutex, INFINITE);
 			if FAILED(lpdsbuff->GetCurrentPosition((unsigned long*)&play_pos, NULL)) {
