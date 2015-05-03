@@ -78,5 +78,5 @@ set OBJ_LIST=^
 
 ECHO Linking assembled object files...
 windres -i %src%\resource.rc --input-format=rc -o %obj%\res.res -O coff
-g++ -o %obj%\AziAudio.dll %OBJ_LIST% -ldsound --shared -s -Wl,--subsystem,windows
+g++ -o %obj%\AziAudio.dll %OBJ_LIST% -ldsound --shared -s -Wl,--subsystem,windows -shared -shared-libgcc
 PAUSE
