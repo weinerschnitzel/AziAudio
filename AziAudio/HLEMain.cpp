@@ -235,7 +235,7 @@ void HLEStart() {
 #endif
 
 //	fclose (dfile);
-//	__asm int 3;
+//	assert(0);
 }
 
 void (*ABIUnknown [0x20])() = { // Unknown ABI
@@ -244,3 +244,142 @@ void (*ABIUnknown [0x20])() = { // Unknown ABI
 	SPU, SPU, SPU, SPU, SPU, SPU, SPU, SPU,
 	SPU, SPU, SPU, SPU, SPU, SPU, SPU, SPU
 };
+
+#ifndef PREFER_MACRO_FUNCTIONS
+INLINE s32 sats_over(s32 slice)
+{
+#ifdef TWOS_COMPLEMENT_NEGATION
+    s32 adder, mask;
+
+    adder  = +32767 - slice;
+    mask  =  ((s32)adder >> 31); /* if (+32767 - x < 0 */
+    mask &= ~((s32)slice >> 31); /*  && x >= 0) */
+    adder &= mask;
+    return (s32)(slice + adder); /* slice + (+32767 - slice) == +32767 */
+#else
+    if (slice > +32767)
+        return +32767;
+    return (slice);
+#endif
+}
+INLINE s32 sats_under(s32 slice)
+{
+#ifdef TWOS_COMPLEMENT_NEGATION
+    s32 adder, mask;
+
+    adder  = +32768 + slice;
+    mask  =  ((s32)adder >> 31); /* if (x + 32768 < 0 */
+    mask &=  ((s32)slice >> 31); /*  && x < 0) */
+    adder &= mask;
+    return (s32)(slice - adder); /* slice - (slice + 32768) == -32768 */
+#else
+    if (slice < -32768)
+        return -32768;
+    return (slice);
+#endif
+}
+INLINE s32 satu_over(s32 slice)
+{
+#ifdef TWOS_COMPLEMENT_NEGATION
+    s32 adder, mask;
+
+    adder  = +65535 - slice;
+    mask  =  ((s32)adder >> 31); /* if (65535 - x < 0 */
+    mask &= ~((s32)slice >> 31); /*  && x >= 0) */
+    adder &= mask;
+    return (s32)(slice + adder); /* slice + (65535 - slice) == 65535 */
+#else
+    if (slice > +0x0000FFFFL)
+        return +0x0000FFFFL;
+    return (slice);
+#endif
+}
+INLINE s32 satu_under(s32 slice)
+{
+#ifdef TWOS_COMPLEMENT_NEGATION
+    s32 adder, mask;
+
+    adder  = slice;
+    mask  = ~((s32)adder >> 31); /* if (x >= 0) */
+    adder &= mask;
+    return (s32)(slice);
+#else
+    if (slice < 0)
+        slice = 0;
+    return (slice);
+#endif
+}
+
+INLINE s16 pack_signed(s32 slice)
+{
+#ifdef SSE2_SUPPORT
+    __m128i xmm;
+
+    xmm = _mm_cvtsi32_si128(slice);
+    xmm = _mm_packs_epi32(xmm, xmm);
+    return _mm_cvtsi128_si32(xmm); /* or:  return _mm_extract_epi16(xmm, 0); */
+#else
+    s32 result;
+
+    result = slice;
+    result = sats_under(result);
+    result = sats_over (result);
+    return (s16)(result & 0x0000FFFFul);
+#endif
+}
+INLINE u16 pack_unsigned(s32 slice)
+{
+    s32 result;
+
+    result = slice;
+    result = satu_under(result);
+    result = satu_over (result);
+    return (u16)(result & 0x0000FFFFul);
+}
+
+INLINE void vsats128(s16* vd, s32* vs)
+{
+#ifdef SSE2_SUPPORT
+    __m128i xmm;
+
+    xmm = _mm_loadu_si128((__m128i *)vs);
+    xmm = _mm_packs_epi32(xmm, xmm);
+    *(__m64 *)vd = _mm_movepi64_pi64(xmm);
+#else
+    register size_t i;
+
+    for (i = 0; i < 4; i++)
+        vd[i] = pack_signed(vs[i]);
+#endif
+}
+INLINE void vsatu128(u16* vd, s32* vs)
+{
+    register size_t i;
+
+    for (i = 0; i < 4; i++)
+        vd[i] = pack_unsigned(vs[i]);
+}
+INLINE void vsats64 (s16* vd, s32* vs)
+{
+#ifdef SSE2_SUPPORT
+    __m64 mmx;
+
+    mmx = *(__m64 *)vs;
+    mmx = _mm_packs_pi32(mmx, mmx);
+    *(s32 *)vd = _mm_cvtsi64_si32(mmx);
+    _mm_empty();
+#else
+    register size_t i;
+
+    for (i = 0; i < 2; i++)
+        vd[i] = pack_signed(vs[i]);
+#endif
+}
+INLINE void vsatu64 (u16* vd, s32* vs)
+{
+    register size_t i;
+
+    for (i = 0; i < 2; i++)
+        vd[i] = pack_unsigned(vs[i]);
+}
+#endif

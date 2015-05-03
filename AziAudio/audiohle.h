@@ -80,3 +80,87 @@ extern u32 t0, t1, t2, t3, t4, t5, t6, t7;
 extern u32 s0, s1, s2, s3, s4, s5, s6, s7;
 extern u32 t8, t9, k0, k1, gp, sp, s8, ra;
 */
+
+/*
+ * Include the SSE2 headers if MSVC is set to target SSE2 in code generation.
+ */
+#if defined(_M_IX86_FP) && (_M_IX86_FP >= 2)
+#include <emmintrin.h>
+#endif
+
+/* ... or if compiled with the right preprocessor token on other compilers */
+#ifdef SSE2_SUPPORT
+#include <emmintrin.h>
+#endif
+
+/* The SSE1 and SSE2 headers always define these macro functions: */
+#undef SSE2_SUPPORT
+#if defined(_MM_SHUFFLE) && defined(_MM_SHUFFLE2)
+#define SSE2_SUPPORT
+#endif
+
+#if 0
+#define PREFER_MACRO_FUNCTIONS
+#endif
+
+/*
+ * RSP hardware has two types of saturated arithmetic:
+ *     1.  signed clamping from 32- to 16-bit elements
+ *     2.  unsigned clamping from 32- to 16-bit elements
+ *
+ * Accumulators are 48-bit, but only 32-bit-segment intervals at one time are
+ * involved in the clamp.  The upper and lower bounds for signed and unsigned
+ * clamping match the ANSI C language minimum requirements for the types
+ * `short` and `unsigned short`:  -32768 <= x <= +32767 and 0 <= x <= +65535.
+ *
+ * A "slice" is an off-set portion of the accumulator:  high, middle, or low.
+ */
+#ifdef PREFER_MACRO_FUNCTIONS
+#define sats_over(slice)        (((slice) > +32767) ? +32767  : (slice))
+#define sats_under(slice)       (((slice) < -32768) ? -32768  : (slice))
+#define satu_over(slice)        (((slice) < 0x0000) ? 0x0000U : (slice))
+#define satu_under(slice)       (((slice) > 0xFFFF) ? 0xFFFFU : (slice))
+#else
+extern INLINE s32 sats_over(s32 slice);
+extern INLINE s32 sats_under(s32 slice);
+extern INLINE s32 satu_over(s32 slice);
+extern INLINE s32 satu_under(s32 slice);
+#endif
+
+#ifdef PREFER_MACRO_FUNCTIONS
+#define pack_signed(slice)      sats_over(sats_under(slice))
+#define pack_unsigned(slice)    satu_over(satu_under(slice))
+#else
+extern INLINE s16 pack_signed(s32 slice);
+extern INLINE u16 pack_unsigned(s32 slice);
+#endif
+
+#ifdef PREFER_MACRO_FUNCTIONS
+#define vsats128(vd, vs) {      \
+vd[0] = pack_signed(vs[0]); vd[1] = pack_signed(vs[1]); \
+vd[2] = pack_signed(vs[2]); vd[3] = pack_signed(vs[3]); }
+#define vsatu128(vd, vs) {      \
+vd[0] = pack_unsigned(vs[0]); vd[1] = pack_unsigned(vs[1]); \
+vd[2] = pack_unsigned(vs[2]); vd[3] = pack_unsigned(vs[3]); }
+#define vsats64(vd, vs) {       \
+vd[0] = pack_signed(vs[0]); vd[1] = pack_signed(vs[1]); }
+#define vsatu64(vd, vs) {       \
+vd[0] = pack_unsigned(vs[0]); vd[1] = pack_unsigned(vs[1]); }
+#else
+extern INLINE void vsats128(s16* vd, s32* vs); /* Clamp vectors using SSE2. */
+extern INLINE void vsatu128(u16* vd, s32* vs);
+extern INLINE void vsats64 (s16* vd, s32* vs); /* Clamp vectors using MMX. */
+extern INLINE void vsatu64 (u16* vd, s32* vs);
+#endif
+
+/*
+ * Basically, if we can prove that, on the C implementation in question:
+ *     1.  Integers are negative if all bits are set (or simply the MSB).
+ *     2.  Shifting a signed integer to the right shifts in the sign bit.
+ * ... then we are able to easily staticize [un-]signed clamping functions.
+ */
+#if (~0 < 0)
+#if ((~0 & ~1) >> 1 == ~0)
+#define TWOS_COMPLEMENT_NEGATION
+#endif
+#endif
