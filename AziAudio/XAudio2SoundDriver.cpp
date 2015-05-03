@@ -195,7 +195,7 @@ void XAudio2SoundDriver::SetFrequency(DWORD Frequency)
 
 DWORD XAudio2SoundDriver::AddBuffer(BYTE *start, DWORD length)
 {
-	if (length == 0) {
+	if (length == 0 || g_source == NULL) {
 		*AudioInfo.AI_STATUS_REG = 0;
 		*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
 		AudioInfo.CheckInterrupts();
