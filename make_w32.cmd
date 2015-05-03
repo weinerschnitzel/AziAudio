@@ -15,8 +15,7 @@ if not exist Mupen64plusHLE (
 mkdir Mupen64plusHLE
 )
 
-set FLAGS_x86=-O3^
- -I%obj%\dx_mingw^
+set FLAGS_x86=-I%obj%\dx_mingw^
  -DXAUDIO_LIBRARIES_UNAVAILABLE^
  -masm=intel^
  -msse2^
@@ -26,20 +25,20 @@ set C_FLAGS=%FLAGS_X86%
 cd %MinGW%\bin
 
 ECHO Compiling sources...
-gcc -o %obj%\Mupen64plusHLE\audio.asm           %src%\Mupen64plusHLE\audio.c          -S %C_FLAGS%
-gcc -o %obj%\Mupen64plusHLE\memory.asm          %src%\Mupen64plusHLE\memory.c         -S %C_FLAGS%
-gcc -o %obj%\Mupen64plusHLE\Mupen64Support.asm  %src%\Mupen64plusHLE\Mupen64Support.c -S %C_FLAGS%
-gcc -o %obj%\Mupen64plusHLE\musyx.asm           %src%\Mupen64plusHLE\musyx.c          -S %C_FLAGS%
-g++ -o %obj%\ABI1.asm                   %src%\ABI1.cpp                  -S %C_FLAGS%
-g++ -o %obj%\ABI2.asm                   %src%\ABI2.cpp                  -S %C_FLAGS%
-g++ -o %obj%\ABI3.asm                   %src%\ABI3.cpp                  -S %C_FLAGS%
-g++ -o %obj%\ABI3mp3.asm                %src%\ABI3mp3.cpp               -S %C_FLAGS%
-g++ -o %obj%\DirectSoundDriver.asm      %src%\DirectSoundDriver.cpp     -S %C_FLAGS%
-g++ -o %obj%\HLEMain.asm                %src%\HLEMain.cpp               -S %C_FLAGS%
-g++ -o %obj%\main.asm                   %src%\main.cpp                  -S %C_FLAGS%
-g++ -o %obj%\SafeABI.asm                %src%\SafeABI.cpp               -S %C_FLAGS%
-g++ -o %obj%\WaveOut.asm                %src%\WaveOut.cpp               -S %C_FLAGS%
-g++ -o %obj%\XAudio2SoundDriver.asm     %src%\XAudio2SoundDriver.cpp    -S %C_FLAGS%
+gcc -o %obj%\Mupen64plusHLE\audio.asm           %src%\Mupen64plusHLE\audio.c          -S %C_FLAGS% -O2
+gcc -o %obj%\Mupen64plusHLE\memory.asm          %src%\Mupen64plusHLE\memory.c         -S %C_FLAGS% -O2
+gcc -o %obj%\Mupen64plusHLE\Mupen64Support.asm  %src%\Mupen64plusHLE\Mupen64Support.c -S %C_FLAGS% -Os
+gcc -o %obj%\Mupen64plusHLE\musyx.asm           %src%\Mupen64plusHLE\musyx.c          -S %C_FLAGS% -O2
+g++ -o %obj%\ABI1.asm                   %src%\ABI1.cpp                  -S %C_FLAGS% -O2
+g++ -o %obj%\ABI2.asm                   %src%\ABI2.cpp                  -S %C_FLAGS% -O2
+g++ -o %obj%\ABI3.asm                   %src%\ABI3.cpp                  -S %C_FLAGS% -O2
+g++ -o %obj%\ABI3mp3.asm                %src%\ABI3mp3.cpp               -S %C_FLAGS% -O2
+g++ -o %obj%\DirectSoundDriver.asm      %src%\DirectSoundDriver.cpp     -S %C_FLAGS% -Os
+g++ -o %obj%\HLEMain.asm                %src%\HLEMain.cpp               -S %C_FLAGS% -Os
+g++ -o %obj%\main.asm                   %src%\main.cpp                  -S %C_FLAGS% -Os
+g++ -o %obj%\SafeABI.asm                %src%\SafeABI.cpp               -S %C_FLAGS% -Os
+g++ -o %obj%\WaveOut.asm                %src%\WaveOut.cpp               -S %C_FLAGS% -Os
+g++ -o %obj%\XAudio2SoundDriver.asm     %src%\XAudio2SoundDriver.cpp    -S %C_FLAGS% -Os
 
 ECHO Assembling compiled sources...
 as -o %obj%\ABI1.o                          %obj%\ABI1.asm
