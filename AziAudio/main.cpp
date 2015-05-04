@@ -96,7 +96,7 @@ EXPORT void CALL DllAbout ( HWND hParent ){
 	MessageBox (hParent, "No About yet... ", "About Box", MB_OK);
 }
 
-BOOL CALLBACK ConfigProc(
+INT_PTR CALLBACK ConfigProc(
   HWND hDlg,  // handle to dialog box
   UINT uMsg,     // message
   WPARAM wParam, // first message parameter
@@ -184,9 +184,13 @@ BOOL CALLBACK ConfigProc(
 }
 
 
-EXPORT void CALL DllConfig ( HWND hParent ){
+EXPORT void CALL DllConfig(HWND hParent)
+{
+#if 0
+	MessageBox(hParent, "Nothing to config yet... ", "Config Box", MB_OK);
+#else
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG), hParent, ConfigProc);
-//	MessageBox (hParent, "Nothing to config yet... ", "Config Box", MB_OK);
+#endif
 }
 
 EXPORT void CALL DllTest ( HWND hParent ){
