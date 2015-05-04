@@ -96,7 +96,7 @@ EXPORT void CALL DllAbout ( HWND hParent ){
 	MessageBox (hParent, "No About yet... ", "About Box", MB_OK);
 }
 
-BOOL CALLBACK ConfigProc(
+INT_PTR CALLBACK ConfigProc(
   HWND hDlg,  // handle to dialog box
   UINT uMsg,     // message
   WPARAM wParam, // first message parameter
@@ -158,7 +158,11 @@ BOOL CALLBACK ConfigProc(
 			short int userReq = LOWORD(wParam);
 			if (userReq == TB_ENDTRACK || userReq == TB_THUMBTRACK)
 			{
-				DWORD dwPosition  = SendMessage(GetDlgItem(hDlg,IDC_VOLUME   ), TBM_GETPOS, 0, 0);
+				LRESULT position;
+				DWORD dwPosition;
+
+				position = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
+				dwPosition = (position > 100) ? 100 : (DWORD)position;
 				snd.SetVolume(dwPosition);
 				if (!snd.configMute)
 				{
@@ -184,9 +188,13 @@ BOOL CALLBACK ConfigProc(
 }
 
 
-EXPORT void CALL DllConfig ( HWND hParent ){
+EXPORT void CALL DllConfig(HWND hParent)
+{
+#if 0
+	MessageBox(hParent, "Nothing to config yet... ", "Config Box", MB_OK);
+#else
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG), hParent, ConfigProc);
-//	MessageBox (hParent, "Nothing to config yet... ", "Config Box", MB_OK);
+#endif
 }
 
 EXPORT void CALL DllTest ( HWND hParent ){
