@@ -158,7 +158,11 @@ INT_PTR CALLBACK ConfigProc(
 			short int userReq = LOWORD(wParam);
 			if (userReq == TB_ENDTRACK || userReq == TB_THUMBTRACK)
 			{
-				DWORD dwPosition  = SendMessage(GetDlgItem(hDlg,IDC_VOLUME   ), TBM_GETPOS, 0, 0);
+				LRESULT position;
+				DWORD dwPosition;
+
+				position = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
+				dwPosition = (position > 100) ? 100 : (DWORD)position;
 				snd.SetVolume(dwPosition);
 				if (!snd.configMute)
 				{
