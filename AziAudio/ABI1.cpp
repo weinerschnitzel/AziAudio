@@ -697,65 +697,16 @@ void ADPCM () { // Work in progress! :)
 			j++;
 		}
 
-		a[0]= (int)book1[0]*(int)l1;
-		a[0]+=(int)book2[0]*(int)l2;
-		a[0]+=(int)inp1[0]*(int)2048;
-
-		a[1] =(int)book1[1]*(int)l1;
-		a[1]+=(int)book2[1]*(int)l2;
-		a[1]+=(int)book2[0]*inp1[0];
-		a[1]+=(int)inp1[1]*(int)2048;
-
-		a[2] =(int)book1[2]*(int)l1;
-		a[2]+=(int)book2[2]*(int)l2;
-		a[2]+=(int)book2[1]*inp1[0];
-		a[2]+=(int)book2[0]*inp1[1];
-		a[2]+=(int)inp1[2]*(int)2048;
-
-		a[3] =(int)book1[3]*(int)l1;
-		a[3]+=(int)book2[3]*(int)l2;
-		a[3]+=(int)book2[2]*inp1[0];
-		a[3]+=(int)book2[1]*inp1[1];
-		a[3]+=(int)book2[0]*inp1[2];
-		a[3]+=(int)inp1[3]*(int)2048;
-
-		a[4] =(int)book1[4]*(int)l1;
-		a[4]+=(int)book2[4]*(int)l2;
-		a[4]+=(int)book2[3]*inp1[0];
-		a[4]+=(int)book2[2]*inp1[1];
-		a[4]+=(int)book2[1]*inp1[2];
-		a[4]+=(int)book2[0]*inp1[3];
-		a[4]+=(int)inp1[4]*(int)2048;
-
-		a[5] =(int)book1[5]*(int)l1;
-		a[5]+=(int)book2[5]*(int)l2;
-		a[5]+=(int)book2[4]*inp1[0];
-		a[5]+=(int)book2[3]*inp1[1];
-		a[5]+=(int)book2[2]*inp1[2];
-		a[5]+=(int)book2[1]*inp1[3];
-		a[5]+=(int)book2[0]*inp1[4];
-		a[5]+=(int)inp1[5]*(int)2048;
-
-		a[6] =(int)book1[6]*(int)l1;
-		a[6]+=(int)book2[6]*(int)l2;
-		a[6]+=(int)book2[5]*inp1[0];
-		a[6]+=(int)book2[4]*inp1[1];
-		a[6]+=(int)book2[3]*inp1[2];
-		a[6]+=(int)book2[2]*inp1[3];
-		a[6]+=(int)book2[1]*inp1[4];
-		a[6]+=(int)book2[0]*inp1[5];
-		a[6]+=(int)inp1[6]*(int)2048;
-
-		a[7] =(int)book1[7]*(int)l1;
-		a[7]+=(int)book2[7]*(int)l2;
-		a[7]+=(int)book2[6]*inp1[0];
-		a[7]+=(int)book2[5]*inp1[1];
-		a[7]+=(int)book2[4]*inp1[2];
-		a[7]+=(int)book2[3]*inp1[3];
-		a[7]+=(int)book2[2]*inp1[4];
-		a[7]+=(int)book2[1]*inp1[5];
-		a[7]+=(int)book2[0]*inp1[6];
-		a[7]+=(int)inp1[7]*(int)2048;
+		for (int i = 0; i < 8; i++)
+		{
+			a[i] = (int)book1[i] * (int)l1;
+			a[i] += (int)book2[i] * (int)l2;
+			for (int i2 = 0; i2 < i; i2++)
+			{
+				a[i] += (int)book2[(i - 1) - i2] * inp1[i2];
+			}
+			a[i] += (int)inp1[i] * (int)2048;
+		}
 
 		for(j=0;j<8;j++)
 		{
@@ -766,65 +717,16 @@ void ADPCM () { // Work in progress! :)
 		l1=a[6];
 		l2=a[7];
 
-		a[0]= (int)book1[0]*(int)l1;
-		a[0]+=(int)book2[0]*(int)l2;
-		a[0]+=(int)inp2[0]*(int)2048;
-
-		a[1] =(int)book1[1]*(int)l1;
-		a[1]+=(int)book2[1]*(int)l2;
-		a[1]+=(int)book2[0]*inp2[0];
-		a[1]+=(int)inp2[1]*(int)2048;
-
-		a[2] =(int)book1[2]*(int)l1;
-		a[2]+=(int)book2[2]*(int)l2;
-		a[2]+=(int)book2[1]*inp2[0];
-		a[2]+=(int)book2[0]*inp2[1];
-		a[2]+=(int)inp2[2]*(int)2048;
-
-		a[3] =(int)book1[3]*(int)l1;
-		a[3]+=(int)book2[3]*(int)l2;
-		a[3]+=(int)book2[2]*inp2[0];
-		a[3]+=(int)book2[1]*inp2[1];
-		a[3]+=(int)book2[0]*inp2[2];
-		a[3]+=(int)inp2[3]*(int)2048;
-
-		a[4] =(int)book1[4]*(int)l1;
-		a[4]+=(int)book2[4]*(int)l2;
-		a[4]+=(int)book2[3]*inp2[0];
-		a[4]+=(int)book2[2]*inp2[1];
-		a[4]+=(int)book2[1]*inp2[2];
-		a[4]+=(int)book2[0]*inp2[3];
-		a[4]+=(int)inp2[4]*(int)2048;
-
-		a[5] =(int)book1[5]*(int)l1;
-		a[5]+=(int)book2[5]*(int)l2;
-		a[5]+=(int)book2[4]*inp2[0];
-		a[5]+=(int)book2[3]*inp2[1];
-		a[5]+=(int)book2[2]*inp2[2];
-		a[5]+=(int)book2[1]*inp2[3];
-		a[5]+=(int)book2[0]*inp2[4];
-		a[5]+=(int)inp2[5]*(int)2048;
-
-		a[6] =(int)book1[6]*(int)l1;
-		a[6]+=(int)book2[6]*(int)l2;
-		a[6]+=(int)book2[5]*inp2[0];
-		a[6]+=(int)book2[4]*inp2[1];
-		a[6]+=(int)book2[3]*inp2[2];
-		a[6]+=(int)book2[2]*inp2[3];
-		a[6]+=(int)book2[1]*inp2[4];
-		a[6]+=(int)book2[0]*inp2[5];
-		a[6]+=(int)inp2[6]*(int)2048;
-
-		a[7] =(int)book1[7]*(int)l1;
-		a[7]+=(int)book2[7]*(int)l2;
-		a[7]+=(int)book2[6]*inp2[0];
-		a[7]+=(int)book2[5]*inp2[1];
-		a[7]+=(int)book2[4]*inp2[2];
-		a[7]+=(int)book2[3]*inp2[3];
-		a[7]+=(int)book2[2]*inp2[4];
-		a[7]+=(int)book2[1]*inp2[5];
-		a[7]+=(int)book2[0]*inp2[6];
-		a[7]+=(int)inp2[7]*(int)2048;
+		for (int i = 0; i < 8; i++)
+		{
+			a[i] = (int)book1[i] * (int)l1;
+			a[i] += (int)book2[i] * (int)l2;
+			for (int i2 = 0; i2 < i; i2++)
+			{
+				a[i] += (int)book2[(i - 1) - i2] * inp2[i2];
+			}
+			a[i] += (int)inp2[i] * (int)2048;
+		}
 
 		for(j=0;j<8;j++)
 		{
