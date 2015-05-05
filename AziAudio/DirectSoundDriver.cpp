@@ -162,7 +162,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 			ReleaseMutex(ac->hMutex);
 			// *** Cached method ***
 			// Determine our write position by where our play position resides
-			if (play_pos < LOCK_SIZE) write_pos = (LOCK_SIZE * SEGMENTS) - LOCK_SIZE;
+			if (play_pos < LOCK_SIZE) write_pos = (LOCK_SIZE * DS_SEGMENTS) - LOCK_SIZE;
 			else write_pos = ((play_pos / LOCK_SIZE) * LOCK_SIZE) - LOCK_SIZE;
 			// *** JIT ***
 			//write_pos = ((play_pos / LOCK_SIZE) * LOCK_SIZE) + (LOCK_SIZE*2);
@@ -295,8 +295,8 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 
 		// Set out next anticipated segment
 		next_pos = write_pos + LOCK_SIZE;
-		if (next_pos >= (LOCK_SIZE*SEGMENTS)) {
-			next_pos -= (LOCK_SIZE*SEGMENTS);
+		if (next_pos >= (LOCK_SIZE*DS_SEGMENTS)) {
+			next_pos -= (LOCK_SIZE*DS_SEGMENTS);
 		}
 		if (ac->audioIsDone == true) break;
 		// Fill queue buffer here with LOCK_SIZE
@@ -359,7 +359,7 @@ void DirectSoundDriver::SetSegmentSize(DWORD length) {
 	dsbdesc.dwSize = sizeof(DSBUFFERDESC);
 	//dsbdesc.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLPOSITIONNOTIFY;
 	dsbdesc.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_LOCSOFTWARE;
-	dsbdesc.dwBufferBytes = SegmentSize * SEGMENTS;
+	dsbdesc.dwBufferBytes = SegmentSize * DS_SEGMENTS;
 	dsbdesc.lpwfxFormat = &wfm;
 
 	assert(!FAILED(hr = IDirectSound_CreateSoundBuffer(lpds, &dsbdesc, &lpdsbuf, NULL)));
