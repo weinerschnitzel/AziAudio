@@ -34,6 +34,12 @@ g++ -o %obj%\ABI1.asm                   %src%\ABI1.cpp                  -S %C_FL
 g++ -o %obj%\ABI2.asm                   %src%\ABI2.cpp                  -S %C_FLAGS% -O2
 g++ -o %obj%\ABI3.asm                   %src%\ABI3.cpp                  -S %C_FLAGS% -O2
 g++ -o %obj%\ABI3mp3.asm                %src%\ABI3mp3.cpp               -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Adpcm.asm              %src%\ABI_Adpcm.cpp             -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Buffers.asm            %src%\ABI_Buffers.cpp           -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Envmixer.asm           %src%\ABI_Envmixer.cpp          -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Filters.asm            %src%\ABI_Filters.cpp           -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_MixerInterleave.asm    %src%\ABI_MixerInterleave.cpp   -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Resample.asm           %src%\ABI_Resample.cpp          -S %C_FLAGS% -O2
 g++ -o %obj%\DirectSoundDriver.asm      %src%\DirectSoundDriver.cpp     -S %C_FLAGS% -Os
 g++ -o %obj%\HLEMain.asm                %src%\HLEMain.cpp               -S %C_FLAGS% -Os
 g++ -o %obj%\main.asm                   %src%\main.cpp                  -S %C_FLAGS% -Os
@@ -46,6 +52,12 @@ as -o %obj%\ABI1.o                          %obj%\ABI1.asm
 as -o %obj%\ABI2.o                          %obj%\ABI2.asm
 as -o %obj%\ABI3.o                          %obj%\ABI3.asm
 as -o %obj%\ABI3mp3.o                       %obj%\ABI3mp3.asm
+as -o %obj%\ABI_Adpcm.o                     %obj%\ABI_Adpcm.asm
+as -o %obj%\ABI_Buffers.o                   %obj%\ABI_Buffers.asm
+as -o %obj%\ABI_Envmixer.o                  %obj%\ABI_Envmixer.asm
+as -o %obj%\ABI_Filters.o                   %obj%\ABI_Filters.asm
+as -o %obj%\ABI_MixerInterleave.o           %obj%\ABI_MixerInterleave.asm
+as -o %obj%\ABI_Resample.o                  %obj%\ABI_Resample.asm
 as -o %obj%\DirectSoundDriver.o             %obj%\DirectSoundDriver.asm
 as -o %obj%\HLEMain.o                       %obj%\HLEMain.asm
 as -o %obj%\main.o                          %obj%\main.asm
@@ -64,6 +76,12 @@ set OBJ_LIST=^
 %obj%\ABI2.o ^
 %obj%\ABI3.o ^
 %obj%\ABI3mp3.o ^
+%obj%\ABI_Adpcm.o ^
+%obj%\ABI_Buffers.o ^
+%obj%\ABI_Envmixer.o ^
+%obj%\ABI_Filters.o ^
+%obj%\ABI_MixerInterleave.o ^
+%obj%\ABI_Resample.o ^
 %obj%\DirectSoundDriver.o ^
 %obj%\HLEMain.o ^
 %obj%\main.o ^

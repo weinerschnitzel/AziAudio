@@ -152,6 +152,13 @@ u16 myVector[32][8];
 u8 mp3data[0x1000];
 
 s32 v[32];
+u32 setaddr;
+
+void MP3ADDY() {
+	setaddr = (t9 & 0xffffff);
+	//assert(0);
+	//fprintf (fp, "mp3addy: k0: %08X, t9: %08X, loopval: %08X\n", k0, t9, loopval);
+}
 
 void MP3AB0 () {
 	// Part 2 - 100% Accurate

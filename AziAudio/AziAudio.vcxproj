@@ -188,6 +188,12 @@
     <ClCompile Include="ABI2.cpp" />
     <ClCompile Include="ABI3.cpp" />
     <ClCompile Include="ABI3mp3.cpp" />
+    <ClCompile Include="ABI_Adpcm.cpp" />
+    <ClCompile Include="ABI_Buffers.cpp" />
+    <ClCompile Include="ABI_Envmixer.cpp" />
+    <ClCompile Include="ABI_Filters.cpp" />
+    <ClCompile Include="ABI_MixerInterleave.cpp" />
+    <ClCompile Include="ABI_Resample.cpp" />
     <ClCompile Include="DirectSoundDriver.cpp" />
     <ClCompile Include="HLEMain.cpp" />
     <ClCompile Include="main.cpp" />
