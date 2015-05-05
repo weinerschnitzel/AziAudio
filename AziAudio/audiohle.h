@@ -160,8 +160,8 @@ extern INLINE s32 satu_under(s32 slice);
 #define pack_signed(slice)      sats_over(sats_under(slice))
 #define pack_unsigned(slice)    satu_over(satu_under(slice))
 #else
-extern INLINE s16 pack_signed(s32 slice);
-extern INLINE u16 pack_unsigned(s32 slice);
+extern s16 pack_signed(s32 slice);
+extern u16 pack_unsigned(s32 slice);
 #endif
 
 #ifdef PREFER_MACRO_FUNCTIONS
