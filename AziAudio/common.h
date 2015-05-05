@@ -32,7 +32,7 @@
 #define USE_XAUDIO2
 #endif
 
-#include "mytypes.h"
+#include "my_types.h"
 
 typedef struct {
 	u16 Version;

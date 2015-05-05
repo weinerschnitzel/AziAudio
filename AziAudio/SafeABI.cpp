@@ -9,7 +9,6 @@
 *                                                                           *
 ****************************************************************************/
 
-#include "mytypes.h"
 #include "audiohle.h"
 
 //extern "C" { void (*CheckForHLE)( void ); }

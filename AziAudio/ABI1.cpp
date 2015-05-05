@@ -9,7 +9,6 @@
 *                                                                           *
 ****************************************************************************/
 
-#include "mytypes.h"
 #include "audiohle.h"
 //#include "rsp.h"
 //#define SAFE_MEMORY

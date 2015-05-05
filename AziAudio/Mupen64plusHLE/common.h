@@ -22,6 +22,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "../my_types.h"
+
 /* macro for unused variable warning suppression */
 #ifdef __GNUC__
 #  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
