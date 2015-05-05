@@ -336,7 +336,7 @@ INLINE s32 satu_under(s32 slice)
 #endif
 }
 
-INLINE s16 pack_signed(s32 slice)
+s16 pack_signed(s32 slice)
 {
 #ifdef SSE2_SUPPORT
     __m128i xmm;
@@ -353,7 +353,7 @@ INLINE s16 pack_signed(s32 slice)
     return (s16)(result & 0x0000FFFFul);
 #endif
 }
-INLINE u16 pack_unsigned(s32 slice)
+u16 pack_unsigned(s32 slice)
 {
     s32 result;
 
