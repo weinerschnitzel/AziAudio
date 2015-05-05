@@ -17,17 +17,17 @@
 
 static DWORD sLOCK_SIZE;
 
-#define SEGMENTS	 4
+#define DS_SEGMENTS     4
 #define LOCK_SIZE 0x800
 // 0x600
 //sLOCK_SIZE
 //0x700
 
-#define TOTAL_SIZE (LOCK_SIZE*SEGMENTS)
+#define TOTAL_SIZE (LOCK_SIZE*DS_SEGMENTS)
 
 #define MAXBUFFER 27000
 //27000
-//(LOCK_SIZE*SEGMENTS+LOCK_SIZE)
+//(LOCK_SIZE*DS_SEGMENTS+LOCK_SIZE)
 // LOCKSIZE must not be fractional
 //#define LOCK_SIZE    (ac->SegmentSize)
 
