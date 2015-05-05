@@ -24,7 +24,6 @@
 
 #include <assert.h>
 #include <stddef.h>
-#include <stdint.h>
 
 #include "common.h"
 #include "hle_internal.h"
@@ -64,18 +63,18 @@ static inline unsigned int align(unsigned int x, unsigned amount)
     return (x + amount) & ~amount;
 }
 
-static inline uint8_t* u8(const unsigned char* buffer, unsigned address)
+static inline uint8_t* pt_u8(const unsigned char* buffer, unsigned address)
 {
     return (uint8_t*)(buffer + (address ^ S8));
 }
 
-static inline uint16_t* u16(const unsigned char* buffer, unsigned address)
+static inline uint16_t* pt_u16(const unsigned char* buffer, unsigned address)
 {
     assert((address & 1) == 0);
     return (uint16_t*)(buffer + (address ^ S16));
 }
 
-static inline uint32_t* u32(const unsigned char* buffer, unsigned address)
+static inline uint32_t* pt_u32(const unsigned char* buffer, unsigned address)
 {
     assert((address & 3) == 0);
     return (uint32_t*)(buffer + address);
@@ -92,17 +91,17 @@ void store_u32(unsigned char* buffer, unsigned address, const uint32_t* src, siz
 /* convenient functions for DMEM access */
 static inline uint8_t* dmem_u8(struct hle_t* hle, uint16_t address)
 {
-    return u8(hle->dmem, address & 0xfff);
+    return pt_u8(hle->dmem, address & 0xfff);
 }
 
 static inline uint16_t* dmem_u16(struct hle_t* hle, uint16_t address)
 {
-    return u16(hle->dmem, address & 0xfff);
+    return pt_u16(hle->dmem, address & 0xfff);
 }
 
 static inline uint32_t* dmem_u32(struct hle_t* hle, uint16_t address)
 {
-    return u32(hle->dmem, address & 0xfff);
+    return pt_u32(hle->dmem, address & 0xfff);
 }
 
 static inline void dmem_load_u8(struct hle_t* hle, uint8_t* dst, uint16_t address, size_t count)
@@ -138,17 +137,17 @@ static inline void dmem_store_u32(struct hle_t* hle, const uint32_t* src, uint16
 /* convenient functions DRAM access */
 static inline uint8_t* dram_u8(struct hle_t* hle, uint32_t address)
 {
-    return u8(hle->dram, address & 0xffffff);
+    return pt_u8(hle->dram, address & 0xffffff);
 }
 
 static inline uint16_t* dram_u16(struct hle_t* hle, uint32_t address)
 {
-    return u16(hle->dram, address & 0xffffff);
+    return pt_u16(hle->dram, address & 0xffffff);
 }
 
 static inline uint32_t* dram_u32(struct hle_t* hle, uint32_t address)
 {
-    return u32(hle->dram, address & 0xffffff);
+    return pt_u32(hle->dram, address & 0xffffff);
 }
 
 static inline void dram_load_u8(struct hle_t* hle, uint8_t* dst, uint32_t address, size_t count)

@@ -23,7 +23,6 @@
 #define ALIST_INTERNAL_H
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <stddef.h>
 
 struct hle_t;

@@ -22,8 +22,6 @@
 #ifndef ARITHMETICS_H
 #define ARITHMETICS_H
 
-#include <stdint.h>
-
 #include "common.h"
 
 /*

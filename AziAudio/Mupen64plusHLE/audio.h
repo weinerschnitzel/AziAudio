@@ -23,7 +23,6 @@
 #define AUDIO_H
 
 #include <stddef.h>
-#include <stdint.h>
 
 #include "common.h"
 

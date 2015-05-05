@@ -22,8 +22,6 @@
 #ifndef UCODES_H
 #define UCODES_H
 
-#include <stdint.h>
-
 struct hle_t;
 
 
