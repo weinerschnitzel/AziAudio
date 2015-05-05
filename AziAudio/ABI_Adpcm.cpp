@@ -14,6 +14,15 @@
 
 u16 adpcmtable[0x88];
 
+void InitInput(int *inp, int index, BYTE icode, u8 mask, u8 shifter, BYTE code, u8 srange, int vscale)
+{
+	inp[index] = (s16)((icode & mask) << shifter);
+	if (code < srange)	
+		inp[index] = ((int)((int)inp[index] * (int)vscale) >> 16);
+	else 
+		int catchme = 1;
+}
+
 void ADPCMFillArray(int *a, short *book1, short *book2, int l1, int l2, int *inp)
 {
 	for (int i = 0; i < 8; i++)
@@ -93,18 +102,10 @@ void ADPCM() { // Work in progress! :)
 			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
 			inPtr++;
 
-			inp1[j] = (s16)((icode & 0xf0) << 8);			// this will in effect be signed
-			if (code<12)
-				inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-			else
-				int catchme = 1;
+			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
 			j++;
 
-			inp1[j] = (s16)((icode & 0xf) << 12);
-			if (code<12)
-				inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-			else
-				int catchme = 1;
+			InitInput(inp1, j, icode, 0xf, 12, code, 12, vscale);
 			j++;
 		}
 		j = 0;
@@ -113,18 +114,10 @@ void ADPCM() { // Work in progress! :)
 			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
 			inPtr++;
 
-			inp2[j] = (short)((icode & 0xf0) << 8);			// this will in effect be signed
-			if (code<12)
-				inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-			else
-				int catchme = 1;
+			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
 			j++;
 
-			inp2[j] = (short)((icode & 0xf) << 12);
-			if (code<12)
-				inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-			else
-				int catchme = 1;
+			InitInput(inp2, j, icode, 0xf, 12, code, 12, vscale);
 			j++;
 		}
 
@@ -237,25 +230,17 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
 			inPtr++;
 
-			inp1[j] = (s16)((icode&mask1) << 8);			// this will in effect be signed
-			if (code<srange) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-			else int catchme = 1;
+			InitInput(inp1, j, icode, mask1, 8, code, srange, vscale); // this will in effect be signed
 			j++;
 
-			inp1[j] = (s16)((icode&mask2) << shifter);
-			if (code<srange)	inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-			else int catchme = 1;
+			InitInput(inp1, j, icode, mask2, shifter, code, srange, vscale);
 			j++;
 
 			if (Flags & 4) {
-				inp1[j] = (s16)((icode & 0xC) << 12);			// this will in effect be signed
-				if (code < 0xE) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-				else int catchme = 1;
+				InitInput(inp1, j, icode, 0xC, 12, code, 0xE, vscale); // this will in effect be signed
 				j++;
 
-				inp1[j] = (s16)((icode & 0x3) << 14);
-				if (code < 0xE) inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-				else int catchme = 1;
+				InitInput(inp1, j, icode, 0x3, 14, code, 0xE, vscale);
 				j++;
 			} // end flags
 		} // end while
@@ -267,25 +252,17 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
 			inPtr++;
 
-			inp2[j] = (s16)((icode&mask1) << 8);
-			if (code<srange) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-			else int catchme = 1;
+			InitInput(inp2, j, icode, mask1, 8, code, srange, vscale);
 			j++;
 
-			inp2[j] = (s16)((icode&mask2) << shifter);
-			if (code<srange)	inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-			else int catchme = 1;
+			InitInput(inp2, j, icode, mask2, shifter, code, srange, vscale);
 			j++;
 
 			if (Flags & 4) {
-				inp2[j] = (s16)((icode & 0xC) << 12);
-				if (code < 0xE) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-				else int catchme = 1;
+				InitInput(inp2, j, icode, 0xC, 12, code, 0xE, vscale);
 				j++;
 
-				inp2[j] = (s16)((icode & 0x3) << 14);
-				if (code < 0xE) inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-				else int catchme = 1;
+				InitInput(inp2, j, icode, 0x3, 14, code, 0xE, vscale);
 				j++;
 			} // end flags
 		}
@@ -390,18 +367,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			icode = BufferSpace[(0x4f0 + inPtr) ^ 3];
 			inPtr++;
 
-			inp1[j] = (s16)((icode & 0xf0) << 8);			// this will in effect be signed
-			if (code<12)
-				inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-			else
-				int catchme = 1;
+			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
 			j++;
 
-			inp1[j] = (s16)((icode & 0xf) << 12);
-			if (code<12)
-				inp1[j] = ((int)((int)inp1[j] * (int)vscale) >> 16);
-			else
-				int catchme = 1;
+			InitInput(inp1, j, icode, 0xf, 12, code, 12, vscale);
 			j++;
 		}
 		j = 0;
@@ -410,18 +379,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			icode = BufferSpace[(0x4f0 + inPtr) ^ 3];
 			inPtr++;
 
-			inp2[j] = (short)((icode & 0xf0) << 8);			// this will in effect be signed
-			if (code<12)
-				inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-			else
-				int catchme = 1;
+			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
 			j++;
 
-			inp2[j] = (short)((icode & 0xf) << 12);
-			if (code<12)
-				inp2[j] = ((int)((int)inp2[j] * (int)vscale) >> 16);
-			else
-				int catchme = 1;
+			InitInput(inp2, j, icode, 0xf, 12, code, 12, vscale);
 			j++;
 		}
 
