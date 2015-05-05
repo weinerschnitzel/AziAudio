@@ -30,7 +30,7 @@
 
 using namespace std;
 
-#if defined(XAUDIO_LIBRARIES_UNAVAILABLE) && !defined(USE_XAUDIO2)
+#if defined(XAUDIO_LIBRARIES_UNAVAILABLE) || !defined(USE_XAUDIO2)
 DirectSoundDriver snd;// = AudioCode();
 #else
 XAudio2SoundDriver snd;// = AudioCode();
@@ -131,7 +131,7 @@ INT_PTR CALLBACK ConfigProc(
 					snd.configAIEmulation = SendMessage(GetDlgItem(hDlg,IDC_AI       ),BM_GETSTATE, 0,0) == BST_CHECKED?true:false;
 					snd.configHLE = SendMessage(GetDlgItem(hDlg,IDC_HLE      ),BM_GETSTATE, 0,0) == BST_CHECKED?true:false;
 					snd.configRSP = SendMessage(GetDlgItem(hDlg,IDC_RSP      ),BM_GETSTATE, 0,0) == BST_CHECKED?true:false;
-					SelectedDSound = SendMessage(GetDlgItem(hDlg, IDC_DEVICE), CB_GETCURSEL, 0, 0);
+					SelectedDSound = (int)SendMessage(GetDlgItem(hDlg, IDC_DEVICE), CB_GETCURSEL, 0, 0);
 					safe_strcpy(snd.configDevice, 99, DSoundDeviceName[SelectedDSound]);
 					EndDialog(hDlg, 0);
 				break;
