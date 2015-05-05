@@ -9,7 +9,6 @@
 *                                                                           *
 ****************************************************************************/
 
-#include "mytypes.h"
 #include "audiohle.h"
 
 static void SPNOOP () {

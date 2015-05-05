@@ -16,6 +16,7 @@ the plugin.
 #define _AUDIO_H_INCLUDED__
 
 #include <windows.h>
+#include "my_types.h"
 //#include "Audio #1.1EXT.h"
 
 #if defined(__cplusplus)
@@ -25,9 +26,6 @@ extern "C" {
 /* Note: BOOL, BYTE, WORD, DWORD, TRUE, FALSE are defined in windows.h */
 
 #define PLUGIN_TYPE_AUDIO			3
-
-#define EXPORT						__declspec(dllexport)
-#define CALL						_cdecl
 
 #define SYSTEM_NTSC					0
 #define SYSTEM_PAL					1

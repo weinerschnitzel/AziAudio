@@ -10,6 +10,12 @@
 ****************************************************************************/
 
 #include "common.h"
+
+/*
+ * Ultra64 data types for working with RCP stuff--useful for HLE
+ */
+#include "my_types.h"
+
 /* Audio commands: ABI 1 */
 /*
 #define	A_SPNOOP				0

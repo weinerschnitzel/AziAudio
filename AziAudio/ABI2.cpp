@@ -9,7 +9,6 @@
 *                                                                           *
 ****************************************************************************/
 
-#include "mytypes.h"
 #include "audiohle.h"
 
 extern u8 BufferSpace[0x10000];
