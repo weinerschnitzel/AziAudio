@@ -131,9 +131,6 @@
     <ClCompile Include="ABI_Adpcm.cpp">
       <Filter>Source Files\HLE</Filter>
     </ClCompile>
-    <ClCompile Include="ABI_Functions.cpp">
-      <Filter>Source Files\HLE</Filter>
-    </ClCompile>
     <ClCompile Include="ABI_Buffers.cpp">
       <Filter>Source Files\HLE</Filter>
     </ClCompile>
