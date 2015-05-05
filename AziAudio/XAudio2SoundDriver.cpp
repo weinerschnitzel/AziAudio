@@ -235,7 +235,8 @@ DWORD XAudio2SoundDriver::AddBuffer(BYTE *start, DWORD length)
 	if (canPlay)
 		g_source->SubmitSourceBuffer(&xa2buff);
 
-	writeBuffer = ++writeBuffer % 10;
+	++writeBuffer;
+	writeBuffer %= 10;
 
 	if (bufferBytes < cacheSize || configForceSync == true)
 	{
