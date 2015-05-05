@@ -26,26 +26,26 @@ set C_FLAGS=%FLAGS_X86%
 cd %MinGW%\bin
 
 ECHO Compiling sources...
-gcc -o %obj%\Mupen64plusHLE\audio.asm           %src%\Mupen64plusHLE\audio.c          -S %C_FLAGS% -O2
-gcc -o %obj%\Mupen64plusHLE\memory.asm          %src%\Mupen64plusHLE\memory.c         -S %C_FLAGS% -O2
-gcc -o %obj%\Mupen64plusHLE\Mupen64Support.asm  %src%\Mupen64plusHLE\Mupen64Support.c -S %C_FLAGS% -Os
-gcc -o %obj%\Mupen64plusHLE\musyx.asm           %src%\Mupen64plusHLE\musyx.c          -S %C_FLAGS% -O2
-g++ -o %obj%\ABI1.asm                   %src%\ABI1.cpp                  -S %C_FLAGS% -O2
-g++ -o %obj%\ABI2.asm                   %src%\ABI2.cpp                  -S %C_FLAGS% -O2
-g++ -o %obj%\ABI3.asm                   %src%\ABI3.cpp                  -S %C_FLAGS% -O2
-g++ -o %obj%\ABI3mp3.asm                %src%\ABI3mp3.cpp               -S %C_FLAGS% -O2
-g++ -o %obj%\ABI_Adpcm.asm              %src%\ABI_Adpcm.cpp             -S %C_FLAGS% -O2
-g++ -o %obj%\ABI_Buffers.asm            %src%\ABI_Buffers.cpp           -S %C_FLAGS% -O2
-g++ -o %obj%\ABI_Envmixer.asm           %src%\ABI_Envmixer.cpp          -S %C_FLAGS% -O2
-g++ -o %obj%\ABI_Filters.asm            %src%\ABI_Filters.cpp           -S %C_FLAGS% -O2
-g++ -o %obj%\ABI_MixerInterleave.asm    %src%\ABI_MixerInterleave.cpp   -S %C_FLAGS% -O2
-g++ -o %obj%\ABI_Resample.asm           %src%\ABI_Resample.cpp          -S %C_FLAGS% -O2
-g++ -o %obj%\DirectSoundDriver.asm      %src%\DirectSoundDriver.cpp     -S %C_FLAGS% -Os
-g++ -o %obj%\HLEMain.asm                %src%\HLEMain.cpp               -S %C_FLAGS% -Os
-g++ -o %obj%\main.asm                   %src%\main.cpp                  -S %C_FLAGS% -Os
-g++ -o %obj%\SafeABI.asm                %src%\SafeABI.cpp               -S %C_FLAGS% -Os
-g++ -o %obj%\WaveOut.asm                %src%\WaveOut.cpp               -S %C_FLAGS% -Os
-g++ -o %obj%\XAudio2SoundDriver.asm     %src%\XAudio2SoundDriver.cpp    -S %C_FLAGS% -Os
+gcc -o %obj%\Mupen64plusHLE\audio.asm          -x c %src%\Mupen64plusHLE\audio.c          -S %C_FLAGS% -O2
+gcc -o %obj%\Mupen64plusHLE\memory.asm         -x c %src%\Mupen64plusHLE\memory.c         -S %C_FLAGS% -O2
+gcc -o %obj%\Mupen64plusHLE\Mupen64Support.asm -x c %src%\Mupen64plusHLE\Mupen64Support.c -S %C_FLAGS% -Os
+gcc -o %obj%\Mupen64plusHLE\musyx.asm          -x c %src%\Mupen64plusHLE\musyx.c          -S %C_FLAGS% -O2
+g++ -o %obj%\ABI1.asm                   -x c++ %src%\ABI1.cpp                  -S %C_FLAGS% -O2
+g++ -o %obj%\ABI2.asm                   -x c++ %src%\ABI2.cpp                  -S %C_FLAGS% -O2
+g++ -o %obj%\ABI3.asm                   -x c++ %src%\ABI3.cpp                  -S %C_FLAGS% -O2
+g++ -o %obj%\ABI3mp3.asm                -x c++ %src%\ABI3mp3.cpp               -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Adpcm.asm              -x c++ %src%\ABI_Adpcm.cpp             -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Buffers.asm            -x c++ %src%\ABI_Buffers.cpp           -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Envmixer.asm           -x c++ %src%\ABI_Envmixer.cpp          -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Filters.asm            -x c++ %src%\ABI_Filters.cpp           -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_MixerInterleave.asm    -x c++ %src%\ABI_MixerInterleave.cpp   -S %C_FLAGS% -O2
+g++ -o %obj%\ABI_Resample.asm           -x c++ %src%\ABI_Resample.cpp          -S %C_FLAGS% -O2
+g++ -o %obj%\DirectSoundDriver.asm      -x c++ %src%\DirectSoundDriver.cpp     -S %C_FLAGS% -Os
+g++ -o %obj%\HLEMain.asm                -x c++ %src%\HLEMain.cpp               -S %C_FLAGS% -Os
+g++ -o %obj%\main.asm                   -x c++ %src%\main.cpp                  -S %C_FLAGS% -Os
+g++ -o %obj%\SafeABI.asm                -x c++ %src%\SafeABI.cpp               -S %C_FLAGS% -Os
+g++ -o %obj%\WaveOut.asm                -x c++ %src%\WaveOut.cpp               -S %C_FLAGS% -Os
+g++ -o %obj%\XAudio2SoundDriver.asm     -x c++ %src%\XAudio2SoundDriver.cpp    -S %C_FLAGS% -Os
 
 ECHO Assembling compiled sources...
 as -o %obj%\ABI1.o                          %obj%\ABI1.asm
