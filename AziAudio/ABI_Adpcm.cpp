@@ -290,16 +290,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			} // end flags
 		}
 
-		for (int i = 0; i < 8; i++)
-		{
-			a[i] = (int)book1[i] * (int)l1;
-			a[i] += (int)book2[i] * (int)l2;
-			for (int i2 = 0; i2 < i; i2++)
-			{
-				a[i] += (int)book2[(i - 1) - i2] * inp1[i2];
-			}
-			a[i] += (int)inp1[i] * (int)2048;
-		}
+		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
 
 		for (j = 0; j<8; j++)
 		{
@@ -310,16 +301,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		l1 = a[6];
 		l2 = a[7];
 
-		for (int i = 0; i < 8; i++)
-		{
-			a[i] = (int)book1[i] * (int)l1;
-			a[i] += (int)book2[i] * (int)l2;
-			for (int i2 = 0; i2 < i; i2++)
-			{
-				a[i] += (int)book2[(i - 1) - i2] * inp2[i2];
-			}
-			a[i] += (int)inp2[i] * (int)2048;
-		}
+		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 
 		for (j = 0; j<8; j++)
 		{
