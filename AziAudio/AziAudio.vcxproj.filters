@@ -122,6 +122,27 @@
     <ClCompile Include="Mupen64plusHLE\audio.c">
       <Filter>Mupen64Plus HLE</Filter>
     </ClCompile>
+    <ClCompile Include="ABI_Resample.cpp">
+      <Filter>Source Files\HLE</Filter>
+    </ClCompile>
+    <ClCompile Include="ABI_Envmixer.cpp">
+      <Filter>Source Files\HLE</Filter>
+    </ClCompile>
+    <ClCompile Include="ABI_Adpcm.cpp">
+      <Filter>Source Files\HLE</Filter>
+    </ClCompile>
+    <ClCompile Include="ABI_Functions.cpp">
+      <Filter>Source Files\HLE</Filter>
+    </ClCompile>
+    <ClCompile Include="ABI_Buffers.cpp">
+      <Filter>Source Files\HLE</Filter>
+    </ClCompile>
+    <ClCompile Include="ABI_Filters.cpp">
+      <Filter>Source Files\HLE</Filter>
+    </ClCompile>
+    <ClCompile Include="ABI_MixerInterleave.cpp">
+      <Filter>Source Files\HLE</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">

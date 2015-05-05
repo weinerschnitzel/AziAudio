@@ -23,6 +23,20 @@ u32 t9, k0;
 u64 ProfileStartTimes[30];
 u64 ProfileTimes[30];
 
+// Variables needed for ABI HLE
+u8 BufferSpace[0x10000];
+short hleMixerWorkArea[256];
+u32 SEGMENTS[0x10];		// 0x0320
+u16 AudioInBuffer;		// 0x0000(T8)
+u16 AudioOutBuffer;		// 0x0002(T8)
+u16 AudioCount;			// 0x0004(T8)
+u16 AudioAuxA;			// 0x000A(T8)
+u16 AudioAuxC;			// 0x000C(T8)
+u16 AudioAuxE;			// 0x000E(T8)
+u32 loopval;			// 0x0010(T8) // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
+bool isMKABI = false;
+bool isZeldaABI = false;
+
 // Audio UCode lists
 //     Dummy UCode Handler for UCode detection... (Will always assume UCode1 until the nth list is executed)
 extern void (*SafeABI[0x20])();
@@ -112,6 +126,21 @@ void ChangeABI (int type) {
 void SPU () {
 }
 
+void SPNOOP() {
+#if 0//_DEBUG
+	static char buff[] = "Unknown/Unimplemented Audio Command %i in ABI 3";
+	char * sprintf_offset;
+	const u8 command = (unsigned char)((k0 & 0xFF000000ul) >> 24);
+
+	sprintf_offset = strchr(&buff[0], '%'); /* Overwrite "%i" with decimal. */
+	*(sprintf_offset + 0) = '0' + (command / 10 % 10);
+	*(sprintf_offset + 1) = '0' + (command / 1 % 10);
+	if (sprintf_offset[0] == '0')
+		sprintf_offset[0] = ' '; /* Leading 0's may confuse decimal w/ octal. */
+	MessageBox(NULL, buff, PLUGIN_VERSION, MB_OK);
+#endif
+}
+
 u32 UCData, UDataLen;
 
 //#define ENABLELOG
@@ -127,8 +156,6 @@ extern "C"
 	void ProcessMusyX_v2();
 }
 
-extern u32 loopval;
-extern u32 SEGMENTS[0x10];
 u32 base, dmembase;
 
 void HLEStart() {
@@ -142,7 +169,8 @@ void HLEStart() {
 
 	loopval = 0;
 	memset(SEGMENTS, 0, 0x10 * 4);
-
+	isMKABI = false;
+	isZeldaABI = false;
 
 	u8  *UData = rdram + UCData;
 
@@ -160,8 +188,7 @@ void HLEStart() {
 			ProcessMusyX_v2();
 			return;
 		}
-}
-
+	}
 
 	//memcpy (imem+0x80, rdram+((u32*)dmem)[0xFD0/4], ((u32*)dmem)[0xFD4/4]);
 

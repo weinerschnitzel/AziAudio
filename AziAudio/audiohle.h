@@ -61,25 +61,48 @@ extern u32 t9, k0;
 void HLEStart ();
 void ChangeABI (int type); // type 0 = AutoDetectMode
 
-extern u16 AudioInBuffer, AudioOutBuffer, AudioCount;
-extern u16 AudioAuxA, AudioAuxC, AudioAuxE;
-extern u32 loopval; // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
 extern u32 UCData, UDataLen;
-//extern u32 SEGMENTS[0x10];
 
 void SaveSettings( void );
 void LoadSettings( void );
 
 void RspDump ();
 
-//extern const u16 ResampleLUT [0x200];
+// ABI Functions
+void ADDMIXER();
+void ADPCM(); void ADPCM2(); void ADPCM3();
+void CLEARBUFF(); void CLEARBUFF2(); void CLEARBUFF3();
+void DMEMMOVE(); void DMEMMOVE2(); void DMEMMOVE3();
+void DUPLICATE2();
+void ENVMIXER(); void ENVMIXER2(); void ENVMIXER3();
+void ENVSETUP1(); void ENVSETUP2();
+void FILTER2();
+void HILOGAIN();
+void INTERL2();
+void INTERLEAVE(); void INTERLEAVE2(); void INTERLEAVE3();
+void LOADADPCM(); void LOADADPCM2(); void LOADADPCM3();
+void LOADBUFF(); void LOADBUFF2(); void LOADBUFF3();
+void MIXER(); void MIXER2(); void MIXER3();
+void MP3();
+void MP3ADDY();
+void RESAMPLE(); void RESAMPLE2(); void RESAMPLE3();
+void SAVEBUFF(); void SAVEBUFF2(); void SAVEBUFF3();
+void SEGMENT(); void SEGMENT2();
+void SETBUFF(); void SETBUFF2(); 
+void SETLOOP(); void SETLOOP2(); void SETLOOP3();
+void SETVOL(); void SETVOL3();
+void SPNOOP();
+void UNKNOWN();
 
-/*
-extern u32 r0, at, v0, v1, a0, a1, a2, a3;
-extern u32 t0, t1, t2, t3, t4, t5, t6, t7;
-extern u32 s0, s1, s2, s3, s4, s5, s6, s7;
-extern u32 t8, t9, k0, k1, gp, sp, s8, ra;
-*/
+// Buffer Space
+extern u8 BufferSpace[0x10000];
+extern short hleMixerWorkArea[256];
+extern u32 SEGMENTS[0x10];		// 0x0320
+extern u16 AudioInBuffer, AudioOutBuffer, AudioCount;
+extern u16 AudioAuxA, AudioAuxC, AudioAuxE;
+extern u32 loopval; // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
+extern bool isMKABI;
+extern bool isZeldaABI;
 
 /*
  * Include the SSE2 headers if MSVC is set to target SSE2 in code generation.
