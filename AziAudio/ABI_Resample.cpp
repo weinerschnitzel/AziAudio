@@ -47,7 +47,17 @@ u16 ResampleLUT[0x200] = {
 	0xFFD8, 0x0E5F, 0x6696, 0x0B39, 0xFFDF, 0x0D46, 0x66AD, 0x0C39
 };
 
+s32 IncrAccum(s16 *src, u32 srcPtr, s16 *lut)
+{
+	s32 accum = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		s32 temp = ((s32)*(s16*)(src + ((srcPtr + i) ^ 1))*((s32)((s16)lut[i])));
+		accum += (s32)(temp >> 15);
+	}
 
+	return accum;
+}
 
 void RESAMPLE() {
 	BYTE Flags = (u8)((k0 >> 16) & 0xff);
@@ -62,7 +72,6 @@ void RESAMPLE() {
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = (AudioInBuffer / 2);
 	u32 dstPtr = (AudioOutBuffer / 2);
-	s32 temp;
 	s32 accum;
 	/*
 	if (addy > (1024*1024*8))
@@ -100,18 +109,7 @@ void RESAMPLE() {
 		// and edx, 0f000h
 
 		// imul 
-		temp = ((s32)*(s16*)(src + ((srcPtr + 0) ^ 1))*((s32)((s16)lut[0])));
-		accum = (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 1) ^ 1))*((s32)((s16)lut[1])));
-		accum += (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 2) ^ 1))*((s32)((s16)lut[2])));
-		accum += (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 3) ^ 1))*((s32)((s16)lut[3])));
-		accum += (s32)(temp >> 15);
-
+		accum = IncrAccum(src, srcPtr, lut);
 		accum = pack_signed(accum);
 
 		dst[dstPtr ^ 1] = (s16)(accum);
@@ -139,7 +137,6 @@ void RESAMPLE2() {
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = (AudioInBuffer / 2);
 	u32 dstPtr = (AudioOutBuffer / 2);
-	s32 temp;
 	s32 accum;
 
 	if (addy > (1024 * 1024 * 8))
@@ -164,18 +161,7 @@ void RESAMPLE2() {
 		//location = (Accum >> 0xa) << 0x3;
 		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-		temp = ((s32)*(s16*)(src + ((srcPtr + 0) ^ 1))*((s32)((s16)lut[0])));
-		accum = (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 1) ^ 1))*((s32)((s16)lut[1])));
-		accum += (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 2) ^ 1))*((s32)((s16)lut[2])));
-		accum += (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 3) ^ 1))*((s32)((s16)lut[3])));
-		accum += (s32)(temp >> 15);
-
+		accum = IncrAccum(src, srcPtr, lut);
 		accum = pack_signed(accum);
 
 		dst[dstPtr ^ 1] = (s16)(accum);
@@ -203,7 +189,6 @@ void RESAMPLE3() {
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = ((((t9 >> 2) & 0xfff) + 0x4f0) / 2);
 	u32 dstPtr;//=(AudioOutBuffer/2);
-	s32 temp;
 	s32 accum;
 
 	//if (addy > (1024*1024*8))
@@ -237,17 +222,7 @@ void RESAMPLE3() {
 		//location = (Accum >> 0xa) << 0x3;
 		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-		temp = ((s32)*(s16*)(src + ((srcPtr + 0) ^ 1))*((s32)((s16)lut[0])));
-		accum = (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 1) ^ 1))*((s32)((s16)lut[1])));
-		accum += (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 2) ^ 1))*((s32)((s16)lut[2])));
-		accum += (s32)(temp >> 15);
-
-		temp = ((s32)*(s16*)(src + ((srcPtr + 3) ^ 1))*((s32)((s16)lut[3])));
-		accum += (s32)(temp >> 15);
+		accum = IncrAccum(src, srcPtr, lut);
 		/*		temp =  ((s64)*(s16*)(src+((srcPtr+0)^1))*((s64)((s16)lut[0]<<1)));
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
