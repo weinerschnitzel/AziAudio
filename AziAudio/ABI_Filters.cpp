@@ -49,84 +49,84 @@ void FILTER2() {
 	inp2 = (short *)(BufferSpace + inPtr);
 	for (x = 0; x < cnt; x += 0x10) {
 		out1[0] =
-			inp2[1] * lutt6[0] +
 			inp2[0] * lutt6[1] +
-			inp1[7] * lutt6[2] +
+			inp2[1] * lutt6[0] +
 			inp1[6] * lutt6[3] +
-			inp1[5] * lutt6[4] +
+			inp1[7] * lutt6[2] +
 			inp1[4] * lutt6[5] +
-			inp1[3] * lutt6[6] +
-			inp1[2] * lutt6[7]
+			inp1[5] * lutt6[4] +
+			inp1[2] * lutt6[7] +
+			inp1[3] * lutt6[6]
 		;
 		out1[1] =
-			inp1[6] * lutt6[0] +
 			inp2[1] * lutt6[1] +
-			inp1[4] * lutt6[2] +
+			inp1[6] * lutt6[0] +
 			inp1[7] * lutt6[3] +
-			inp1[2] * lutt6[4] +
+			inp1[4] * lutt6[2] +
 			inp1[5] * lutt6[5] +
-			inp1[0] * lutt6[6] +
-			inp1[3] * lutt6[7]
+			inp1[2] * lutt6[4] +
+			inp1[3] * lutt6[7] +
+			inp1[0] * lutt6[6]
 		;
 		out1[2] =
-			inp2[3] * lutt6[0] +
 			inp2[2] * lutt6[1] +
-			inp2[1] * lutt6[2] +
+			inp2[3] * lutt6[0] +
 			inp2[0] * lutt6[3] +
-			inp1[7] * lutt6[4] +
+			inp2[1] * lutt6[2] +
 			inp1[6] * lutt6[5] +
-			inp1[5] * lutt6[6] +
-			inp1[4] * lutt6[7]
+			inp1[7] * lutt6[4] +
+			inp1[4] * lutt6[7] +
+			inp1[5] * lutt6[6]
 		;
 		out1[3] =
-			inp2[0] * lutt6[0] +
 			inp2[3] * lutt6[1] +
-			inp1[6] * lutt6[2] +
+			inp2[0] * lutt6[0] +
 			inp2[1] * lutt6[3] +
-			inp1[4] * lutt6[4] +
+			inp1[6] * lutt6[2] +
 			inp1[7] * lutt6[5] +
-			inp1[2] * lutt6[6] +
-			inp1[5] * lutt6[7]
+			inp1[4] * lutt6[4] +
+			inp1[5] * lutt6[7] +
+			inp1[2] * lutt6[6]
 		;
 		out1[4] =
-			inp2[5] * lutt6[0] +
 			inp2[4] * lutt6[1] +
-			inp2[3] * lutt6[2] +
+			inp2[5] * lutt6[0] +
 			inp2[2] * lutt6[3] +
-			inp2[1] * lutt6[4] +
+			inp2[3] * lutt6[2] +
 			inp2[0] * lutt6[5] +
-			inp1[7] * lutt6[6] +
-			inp1[6] * lutt6[7]
+			inp2[1] * lutt6[4] +
+			inp1[6] * lutt6[7] +
+			inp1[7] * lutt6[6]
 		;
 		out1[5] =
-			inp2[2] * lutt6[0] +
 			inp2[5] * lutt6[1] +
-			inp2[0] * lutt6[2] +
+			inp2[2] * lutt6[0] +
 			inp2[3] * lutt6[3] +
-			inp1[6] * lutt6[4] +
+			inp2[0] * lutt6[2] +
 			inp2[1] * lutt6[5] +
-			inp1[4] * lutt6[6] +
-			inp1[7] * lutt6[7]
+			inp1[6] * lutt6[4] +
+			inp1[7] * lutt6[7] +
+			inp1[4] * lutt6[6]
 		;
 		out1[6] =
-			inp2[7] * lutt6[0] +
 			inp2[6] * lutt6[1] +
-			inp2[5] * lutt6[2] +
+			inp2[7] * lutt6[0] +
 			inp2[4] * lutt6[3] +
-			inp2[3] * lutt6[4] +
+			inp2[5] * lutt6[2] +
 			inp2[2] * lutt6[5] +
-			inp2[1] * lutt6[6] +
-			inp2[0] * lutt6[7]
+			inp2[3] * lutt6[4] +
+			inp2[0] * lutt6[7] +
+			inp2[1] * lutt6[6]
 		;
 		out1[7] =
-			inp2[4] * lutt6[0] +
 			inp2[7] * lutt6[1] +
-			inp2[2] * lutt6[2] +
+			inp2[4] * lutt6[0] +
 			inp2[5] * lutt6[3] +
-			inp2[0] * lutt6[4] +
+			inp2[2] * lutt6[2] +
 			inp2[3] * lutt6[5] +
-			inp1[6] * lutt6[6] +
-			inp2[1] * lutt6[7]
+			inp2[0] * lutt6[4] +
+			inp2[1] * lutt6[7] +
+			inp1[6] * lutt6[6]
 		;
 
 		outp[0] = /*CLAMP*/(s16)((out1[0] + 0x4000) >> 0xF);
