@@ -28,7 +28,7 @@ static void packed_multiply_accumulate(pi32 acc, pi16 vs, pi16 vt, int offset)
 }
 
 void FILTER2() {
-	int x;
+	int x, i;
 	static int cnt = 0;
 	static s16 *lutt6;
 	static s16 *lutt5;
@@ -80,14 +80,17 @@ void FILTER2() {
 		packed_multiply_accumulate(&out1[6], &inputs_matrix[0], &lutt6[0], 0);
 		packed_multiply_accumulate(&out1[7], &inputs_matrix[0], &lutt6[0], 1);
 
-		outp[0] = /*CLAMP*/(s16)((out1[0] + 0x4000) >> 0xF);
-		outp[1] = /*CLAMP*/(s16)((out1[1] + 0x4000) >> 0xF);
-		outp[2] = /*CLAMP*/(s16)((out1[2] + 0x4000) >> 0xF);
-		outp[3] = /*CLAMP*/(s16)((out1[3] + 0x4000) >> 0xF);
-		outp[4] = /*CLAMP*/(s16)((out1[4] + 0x4000) >> 0xF);
-		outp[5] = /*CLAMP*/(s16)((out1[5] + 0x4000) >> 0xF);
-		outp[6] = /*CLAMP*/(s16)((out1[6] + 0x4000) >> 0xF);
-		outp[7] = /*CLAMP*/(s16)((out1[7] + 0x4000) >> 0xF);
+		for (i = 0; i < 8; i++)
+			outp[i] = (out1[i] + 0x4000) >> 15; /* fractional round and shift */
+#if 0
+/*
+ * Clamp the result to fit within the legal range of 16-bit short elements.
+ * VMULF, I know, never needs this in games, because the only way for VMULF
+ * to produce an out-of-range value is if audio ucode does -32768 * -32768.
+ */
+		for (i = 0; i < 8; i++)
+			outp[i] = pack_signed(outp[i]);
+#endif
 		inp1 = inp2;
 		inp2 += 8;
 		outp += 8;
