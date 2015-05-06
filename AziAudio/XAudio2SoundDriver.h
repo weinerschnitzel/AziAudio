@@ -77,3 +77,15 @@ protected:
 	bool dllInitialized;
 };
 
+/*
+ * The GNU C++ compiler (ported to Windows through MinGW, for example)
+ * references system C++ headers that use `__in` and `__out` for things
+ * related to C++, which conflicts with Microsoft's <sal.h> driver macros for
+ * the XAudio2 API.  Perhaps either side could be blamed for this, but I
+ * think that it shouldn't hurt to un-define the __in and __out stuff after
+ * we have finished prototyping everything relevant to XAudio2.  -- cxd4
+ */
+#if !defined(_MSC_VER)
+#undef __in
+#undef __out
+#endif
