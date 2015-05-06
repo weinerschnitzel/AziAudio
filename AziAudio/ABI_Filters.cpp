@@ -40,13 +40,13 @@ void FILTER2() {
 		a = (lutt5[x] + lutt6[x]) >> 1;
 		lutt5[x] = lutt6[x] = (short)a;
 	}
-	short *inp1, *inp2;
+	pi16 inp1, inp2;
 	s32 out1[8];
 	s16 outbuff[0x3c0], *outp;
 	u32 inPtr = (u32)(k0 & 0xffff);
-	inp1 = (short *)(save);
+	inp1 = (i16 *)(save);
 	outp = outbuff;
-	inp2 = (short *)(BufferSpace + inPtr);
+	inp2 = (i16 *)(BufferSpace + inPtr);
 	for (x = 0; x < cnt; x += 0x10) {
 		out1[0] =
 			inp2[0] * lutt6[1] +
