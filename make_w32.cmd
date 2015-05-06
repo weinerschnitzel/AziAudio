@@ -16,7 +16,7 @@ mkdir Mupen64plusHLE
 )
 
 set FLAGS_x86=-I%obj%\dx_mingw^
- -DXAUDIO_LIBRARIES_UNAVAILABLE^
+ -I%obj%^
  -DSSE2_SUPPORT^
  -masm=intel^
  -msse2^
