@@ -56,84 +56,84 @@ void FILTER2() {
 
 	for (x = 0; x < cnt; x += 0x10) {
 		out1[0] =
-			inputs_matrix[( 9) ^ 1] * lutt6[1] +
-			inputs_matrix[( 8) ^ 1] * lutt6[0] +
-			inputs_matrix[( 7) ^ 1] * lutt6[3] +
-			inputs_matrix[( 6) ^ 1] * lutt6[2] +
-			inputs_matrix[( 5) ^ 1] * lutt6[5] +
-			inputs_matrix[( 4) ^ 1] * lutt6[4] +
-			inputs_matrix[( 3) ^ 1] * lutt6[7] +
-			inputs_matrix[( 2) ^ 1] * lutt6[6]
+			inputs_matrix[( 9) ^ 1] * lutt6[0 ^ 1] +
+			inputs_matrix[( 8) ^ 1] * lutt6[1 ^ 1] +
+			inputs_matrix[( 7) ^ 1] * lutt6[2 ^ 1] +
+			inputs_matrix[( 6) ^ 1] * lutt6[3 ^ 1] +
+			inputs_matrix[( 5) ^ 1] * lutt6[4 ^ 1] +
+			inputs_matrix[( 4) ^ 1] * lutt6[5 ^ 1] +
+			inputs_matrix[( 3) ^ 1] * lutt6[6 ^ 1] +
+			inputs_matrix[( 2) ^ 1] * lutt6[7 ^ 1]
 		;
 		out1[1] =
-			inputs_matrix[( 8) ^ 1] * lutt6[1] +
-			inputs_matrix[( 7) ^ 1] * lutt6[0] +
-			inputs_matrix[( 6) ^ 1] * lutt6[3] +
-			inputs_matrix[( 5) ^ 1] * lutt6[2] +
-			inputs_matrix[( 4) ^ 1] * lutt6[5] +
-			inputs_matrix[( 3) ^ 1] * lutt6[4] +
-			inputs_matrix[( 2) ^ 1] * lutt6[7] +
-			inputs_matrix[( 1) ^ 1] * lutt6[6]
+			inputs_matrix[( 8) ^ 1] * lutt6[0 ^ 1] +
+			inputs_matrix[( 7) ^ 1] * lutt6[1 ^ 1] +
+			inputs_matrix[( 6) ^ 1] * lutt6[2 ^ 1] +
+			inputs_matrix[( 5) ^ 1] * lutt6[3 ^ 1] +
+			inputs_matrix[( 4) ^ 1] * lutt6[4 ^ 1] +
+			inputs_matrix[( 3) ^ 1] * lutt6[5 ^ 1] +
+			inputs_matrix[( 2) ^ 1] * lutt6[6 ^ 1] +
+			inputs_matrix[( 1) ^ 1] * lutt6[7 ^ 1]
 		;
 		out1[2] =
-			inputs_matrix[(11) ^ 1] * lutt6[1] +
-			inputs_matrix[(10) ^ 1] * lutt6[0] +
-			inputs_matrix[( 9) ^ 1] * lutt6[3] +
-			inputs_matrix[( 8) ^ 1] * lutt6[2] +
-			inputs_matrix[( 7) ^ 1] * lutt6[5] +
-			inputs_matrix[( 6) ^ 1] * lutt6[4] +
-			inputs_matrix[( 5) ^ 1] * lutt6[7] +
-			inputs_matrix[( 4) ^ 1] * lutt6[6]
+			inputs_matrix[(11) ^ 1] * lutt6[0 ^ 1] +
+			inputs_matrix[(10) ^ 1] * lutt6[1 ^ 1] +
+			inputs_matrix[( 9) ^ 1] * lutt6[2 ^ 1] +
+			inputs_matrix[( 8) ^ 1] * lutt6[3 ^ 1] +
+			inputs_matrix[( 7) ^ 1] * lutt6[4 ^ 1] +
+			inputs_matrix[( 6) ^ 1] * lutt6[5 ^ 1] +
+			inputs_matrix[( 5) ^ 1] * lutt6[6 ^ 1] +
+			inputs_matrix[( 4) ^ 1] * lutt6[7 ^ 1]
 		;
 		out1[3] =
-			inputs_matrix[(10) ^ 1] * lutt6[1] +
-			inputs_matrix[( 9) ^ 1] * lutt6[0] +
-			inputs_matrix[( 8) ^ 1] * lutt6[3] +
-			inputs_matrix[( 7) ^ 1] * lutt6[2] +
-			inputs_matrix[( 6) ^ 1] * lutt6[5] +
-			inputs_matrix[( 5) ^ 1] * lutt6[4] +
-			inputs_matrix[( 4) ^ 1] * lutt6[7] +
-			inputs_matrix[( 3) ^ 1] * lutt6[6]
+			inputs_matrix[(10) ^ 1] * lutt6[0 ^ 1] +
+			inputs_matrix[( 9) ^ 1] * lutt6[1 ^ 1] +
+			inputs_matrix[( 8) ^ 1] * lutt6[2 ^ 1] +
+			inputs_matrix[( 7) ^ 1] * lutt6[3 ^ 1] +
+			inputs_matrix[( 6) ^ 1] * lutt6[4 ^ 1] +
+			inputs_matrix[( 5) ^ 1] * lutt6[5 ^ 1] +
+			inputs_matrix[( 4) ^ 1] * lutt6[6 ^ 1] +
+			inputs_matrix[( 3) ^ 1] * lutt6[7 ^ 1]
 		;
 		out1[4] =
-			inputs_matrix[(13) ^ 1] * lutt6[1] +
-			inputs_matrix[(12) ^ 1] * lutt6[0] +
-			inputs_matrix[(11) ^ 1] * lutt6[3] +
-			inputs_matrix[(10) ^ 1] * lutt6[2] +
-			inputs_matrix[( 9) ^ 1] * lutt6[5] +
-			inputs_matrix[( 8) ^ 1] * lutt6[4] +
-			inputs_matrix[( 7) ^ 1] * lutt6[7] +
-			inputs_matrix[( 6) ^ 1] * lutt6[6]
+			inputs_matrix[(13) ^ 1] * lutt6[0 ^ 1] +
+			inputs_matrix[(12) ^ 1] * lutt6[1 ^ 1] +
+			inputs_matrix[(11) ^ 1] * lutt6[2 ^ 1] +
+			inputs_matrix[(10) ^ 1] * lutt6[3 ^ 1] +
+			inputs_matrix[( 9) ^ 1] * lutt6[4 ^ 1] +
+			inputs_matrix[( 8) ^ 1] * lutt6[5 ^ 1] +
+			inputs_matrix[( 7) ^ 1] * lutt6[6 ^ 1] +
+			inputs_matrix[( 6) ^ 1] * lutt6[7 ^ 1]
 		;
 		out1[5] =
-			inputs_matrix[(12) ^ 1] * lutt6[1] +
-			inputs_matrix[(11) ^ 1] * lutt6[0] +
-			inputs_matrix[(10) ^ 1] * lutt6[3] +
-			inputs_matrix[( 9) ^ 1] * lutt6[2] +
-			inputs_matrix[( 8) ^ 1] * lutt6[5] +
-			inputs_matrix[( 7) ^ 1] * lutt6[4] +
-			inputs_matrix[( 6) ^ 1] * lutt6[7] +
-			inputs_matrix[( 5) ^ 1] * lutt6[6]
+			inputs_matrix[(12) ^ 1] * lutt6[0 ^ 1] +
+			inputs_matrix[(11) ^ 1] * lutt6[1 ^ 1] +
+			inputs_matrix[(10) ^ 1] * lutt6[2 ^ 1] +
+			inputs_matrix[( 9) ^ 1] * lutt6[3 ^ 1] +
+			inputs_matrix[( 8) ^ 1] * lutt6[4 ^ 1] +
+			inputs_matrix[( 7) ^ 1] * lutt6[5 ^ 1] +
+			inputs_matrix[( 6) ^ 1] * lutt6[6 ^ 1] +
+			inputs_matrix[( 5) ^ 1] * lutt6[7 ^ 1]
 		;
 		out1[6] =
-			inputs_matrix[(15) ^ 1] * lutt6[1] +
-			inputs_matrix[(14) ^ 1] * lutt6[0] +
-			inputs_matrix[(13) ^ 1] * lutt6[3] +
-			inputs_matrix[(12) ^ 1] * lutt6[2] +
-			inputs_matrix[(11) ^ 1] * lutt6[5] +
-			inputs_matrix[(10) ^ 1] * lutt6[4] +
-			inputs_matrix[( 9) ^ 1] * lutt6[7] +
-			inputs_matrix[( 8) ^ 1] * lutt6[6]
+			inputs_matrix[(15) ^ 1] * lutt6[0 ^ 1] +
+			inputs_matrix[(14) ^ 1] * lutt6[1 ^ 1] +
+			inputs_matrix[(13) ^ 1] * lutt6[2 ^ 1] +
+			inputs_matrix[(12) ^ 1] * lutt6[3 ^ 1] +
+			inputs_matrix[(11) ^ 1] * lutt6[4 ^ 1] +
+			inputs_matrix[(10) ^ 1] * lutt6[5 ^ 1] +
+			inputs_matrix[( 9) ^ 1] * lutt6[6 ^ 1] +
+			inputs_matrix[( 8) ^ 1] * lutt6[7 ^ 1]
 		;
 		out1[7] =
-			inputs_matrix[(14) ^ 1] * lutt6[1] +
-			inputs_matrix[(13) ^ 1] * lutt6[0] +
-			inputs_matrix[(12) ^ 1] * lutt6[3] +
-			inputs_matrix[(11) ^ 1] * lutt6[2] +
-			inputs_matrix[(10) ^ 1] * lutt6[5] +
-			inputs_matrix[( 9) ^ 1] * lutt6[4] +
-			inputs_matrix[( 8) ^ 1] * lutt6[7] +
-			inputs_matrix[( 7) ^ 1] * lutt6[6]
+			inputs_matrix[(14) ^ 1] * lutt6[0 ^ 1] +
+			inputs_matrix[(13) ^ 1] * lutt6[1 ^ 1] +
+			inputs_matrix[(12) ^ 1] * lutt6[2 ^ 1] +
+			inputs_matrix[(11) ^ 1] * lutt6[3 ^ 1] +
+			inputs_matrix[(10) ^ 1] * lutt6[4 ^ 1] +
+			inputs_matrix[( 9) ^ 1] * lutt6[5 ^ 1] +
+			inputs_matrix[( 8) ^ 1] * lutt6[6 ^ 1] +
+			inputs_matrix[( 7) ^ 1] * lutt6[7 ^ 1]
 		;
 
 		outp[0] = /*CLAMP*/(s16)((out1[0] + 0x4000) >> 0xF);
