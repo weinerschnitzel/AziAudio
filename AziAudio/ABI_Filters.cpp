@@ -11,6 +11,22 @@
 
 #include "audiohle.h"
 
+/*
+ * Some combination of RSP LWC2 pack-type operations and vector multiply-
+ * accumulate going on here, doing some fancy matrix math from data memory.
+ */
+static void packed_multiply_accumulate(pi32 acc, pi16 vs, pi16 vt, int offset)
+{
+	i32 result;
+	register int i;
+
+	result = 0;
+	for (i = 0; i < 8; i++)
+		result += (s32)vs[(i + offset) ^ 1] * (s32)vt[i ^ 1];
+	*(acc) = result;
+	return;
+}
+
 void FILTER2() {
 	int x;
 	static int cnt = 0;
@@ -55,86 +71,14 @@ void FILTER2() {
 		inputs_matrix[15 - (x + 8)] = inp2[x];
 
 	for (x = 0; x < cnt; x += 0x10) {
-		out1[0] =
-			inputs_matrix[( 6) ^ 1] * lutt6[0 ^ 1] +
-			inputs_matrix[( 7) ^ 1] * lutt6[1 ^ 1] +
-			inputs_matrix[( 8) ^ 1] * lutt6[2 ^ 1] +
-			inputs_matrix[( 9) ^ 1] * lutt6[3 ^ 1] +
-			inputs_matrix[(10) ^ 1] * lutt6[4 ^ 1] +
-			inputs_matrix[(11) ^ 1] * lutt6[5 ^ 1] +
-			inputs_matrix[(12) ^ 1] * lutt6[6 ^ 1] +
-			inputs_matrix[(13) ^ 1] * lutt6[7 ^ 1]
-		;
-		out1[1] =
-			inputs_matrix[( 7) ^ 1] * lutt6[0 ^ 1] +
-			inputs_matrix[( 8) ^ 1] * lutt6[1 ^ 1] +
-			inputs_matrix[( 9) ^ 1] * lutt6[2 ^ 1] +
-			inputs_matrix[(10) ^ 1] * lutt6[3 ^ 1] +
-			inputs_matrix[(11) ^ 1] * lutt6[4 ^ 1] +
-			inputs_matrix[(12) ^ 1] * lutt6[5 ^ 1] +
-			inputs_matrix[(13) ^ 1] * lutt6[6 ^ 1] +
-			inputs_matrix[(14) ^ 1] * lutt6[7 ^ 1]
-		;
-		out1[2] =
-			inputs_matrix[( 4) ^ 1] * lutt6[0 ^ 1] +
-			inputs_matrix[( 5) ^ 1] * lutt6[1 ^ 1] +
-			inputs_matrix[( 6) ^ 1] * lutt6[2 ^ 1] +
-			inputs_matrix[( 7) ^ 1] * lutt6[3 ^ 1] +
-			inputs_matrix[( 8) ^ 1] * lutt6[4 ^ 1] +
-			inputs_matrix[( 9) ^ 1] * lutt6[5 ^ 1] +
-			inputs_matrix[(10) ^ 1] * lutt6[6 ^ 1] +
-			inputs_matrix[(11) ^ 1] * lutt6[7 ^ 1]
-		;
-		out1[3] =
-			inputs_matrix[( 5) ^ 1] * lutt6[0 ^ 1] +
-			inputs_matrix[( 6) ^ 1] * lutt6[1 ^ 1] +
-			inputs_matrix[( 7) ^ 1] * lutt6[2 ^ 1] +
-			inputs_matrix[( 8) ^ 1] * lutt6[3 ^ 1] +
-			inputs_matrix[( 9) ^ 1] * lutt6[4 ^ 1] +
-			inputs_matrix[(10) ^ 1] * lutt6[5 ^ 1] +
-			inputs_matrix[(11) ^ 1] * lutt6[6 ^ 1] +
-			inputs_matrix[(12) ^ 1] * lutt6[7 ^ 1]
-		;
-		out1[4] =
-			inputs_matrix[( 2) ^ 1] * lutt6[0 ^ 1] +
-			inputs_matrix[( 3) ^ 1] * lutt6[1 ^ 1] +
-			inputs_matrix[( 4) ^ 1] * lutt6[2 ^ 1] +
-			inputs_matrix[( 5) ^ 1] * lutt6[3 ^ 1] +
-			inputs_matrix[( 6) ^ 1] * lutt6[4 ^ 1] +
-			inputs_matrix[( 7) ^ 1] * lutt6[5 ^ 1] +
-			inputs_matrix[( 8) ^ 1] * lutt6[6 ^ 1] +
-			inputs_matrix[( 9) ^ 1] * lutt6[7 ^ 1]
-		;
-		out1[5] =
-			inputs_matrix[( 3) ^ 1] * lutt6[0 ^ 1] +
-			inputs_matrix[( 4) ^ 1] * lutt6[1 ^ 1] +
-			inputs_matrix[( 5) ^ 1] * lutt6[2 ^ 1] +
-			inputs_matrix[( 6) ^ 1] * lutt6[3 ^ 1] +
-			inputs_matrix[( 7) ^ 1] * lutt6[4 ^ 1] +
-			inputs_matrix[( 8) ^ 1] * lutt6[5 ^ 1] +
-			inputs_matrix[( 9) ^ 1] * lutt6[6 ^ 1] +
-			inputs_matrix[(10) ^ 1] * lutt6[7 ^ 1]
-		;
-		out1[6] =
-			inputs_matrix[( 0) ^ 1] * lutt6[0 ^ 1] +
-			inputs_matrix[( 1) ^ 1] * lutt6[1 ^ 1] +
-			inputs_matrix[( 2) ^ 1] * lutt6[2 ^ 1] +
-			inputs_matrix[( 3) ^ 1] * lutt6[3 ^ 1] +
-			inputs_matrix[( 4) ^ 1] * lutt6[4 ^ 1] +
-			inputs_matrix[( 5) ^ 1] * lutt6[5 ^ 1] +
-			inputs_matrix[( 6) ^ 1] * lutt6[6 ^ 1] +
-			inputs_matrix[( 7) ^ 1] * lutt6[7 ^ 1]
-		;
-		out1[7] =
-			inputs_matrix[( 1) ^ 1] * lutt6[0 ^ 1] +
-			inputs_matrix[( 2) ^ 1] * lutt6[1 ^ 1] +
-			inputs_matrix[( 3) ^ 1] * lutt6[2 ^ 1] +
-			inputs_matrix[( 4) ^ 1] * lutt6[3 ^ 1] +
-			inputs_matrix[( 5) ^ 1] * lutt6[4 ^ 1] +
-			inputs_matrix[( 6) ^ 1] * lutt6[5 ^ 1] +
-			inputs_matrix[( 7) ^ 1] * lutt6[6 ^ 1] +
-			inputs_matrix[( 8) ^ 1] * lutt6[7 ^ 1]
-		;
+		packed_multiply_accumulate(&out1[0], &inputs_matrix[0], &lutt6[0], 6);
+		packed_multiply_accumulate(&out1[1], &inputs_matrix[0], &lutt6[0], 7);
+		packed_multiply_accumulate(&out1[2], &inputs_matrix[0], &lutt6[0], 4);
+		packed_multiply_accumulate(&out1[3], &inputs_matrix[0], &lutt6[0], 5);
+		packed_multiply_accumulate(&out1[4], &inputs_matrix[0], &lutt6[0], 2);
+		packed_multiply_accumulate(&out1[5], &inputs_matrix[0], &lutt6[0], 3);
+		packed_multiply_accumulate(&out1[6], &inputs_matrix[0], &lutt6[0], 0);
+		packed_multiply_accumulate(&out1[7], &inputs_matrix[0], &lutt6[0], 1);
 
 		outp[0] = /*CLAMP*/(s16)((out1[0] + 0x4000) >> 0xF);
 		outp[1] = /*CLAMP*/(s16)((out1[1] + 0x4000) >> 0xF);
