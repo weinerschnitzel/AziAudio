@@ -192,6 +192,11 @@ void MP3AB0 () {
 	}
 }
 
+int CalcDeWindow(u32 addptr, int mp3DataIndex, u32 offset, int offsetValue)
+{
+	return ((int)*(s16 *)(mp3data + (addptr)+ mp3DataIndex) * (short)DeWindowLUT[offset + offsetValue] + 0x4000) >> 0xF;
+}
+
 void Dewindow()
 {
 	//Part 8 
@@ -212,10 +217,10 @@ void Dewindow()
 		//addptr = t1;
 
 		for (int i = 7; i >= 0; i--) {
-			v2 += ((int)*(s16 *)(mp3data + (addptr)+0x00) * (short)DeWindowLUT[offset + 0x00] + 0x4000) >> 0xF;
-			v4 += ((int)*(s16 *)(mp3data + (addptr)+0x10) * (short)DeWindowLUT[offset + 0x08] + 0x4000) >> 0xF;
-			v6 += ((int)*(s16 *)(mp3data + (addptr)+0x20) * (short)DeWindowLUT[offset + 0x20] + 0x4000) >> 0xF;
-			v8 += ((int)*(s16 *)(mp3data + (addptr)+0x30) * (short)DeWindowLUT[offset + 0x28] + 0x4000) >> 0xF;
+			v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
+			v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
+			v6 += CalcDeWindow(addptr, 0x20, offset, 0x20); 
+			v8 += CalcDeWindow(addptr, 0x30, offset, 0x28); 
 			addptr += 2; offset++;
 		}
 		s32 v0 = v2 + v4;
@@ -233,11 +238,11 @@ void Dewindow()
 	offset = 0x10 - (t4 >> 1) + 8 * 0x40;
 	v2 = v4 = 0;
 	for (int i = 0; i < 4; i++) {
-		v2 += ((int)*(s16 *)(mp3data + (addptr)+0x00) * (short)DeWindowLUT[offset + 0x00] + 0x4000) >> 0xF;
-		v2 += ((int)*(s16 *)(mp3data + (addptr)+0x10) * (short)DeWindowLUT[offset + 0x08] + 0x4000) >> 0xF;
+		v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
+		v2 += CalcDeWindow(addptr, 0x10, offset, 0x08); 
 		addptr += 2; offset++;
-		v4 += ((int)*(s16 *)(mp3data + (addptr)+0x00) * (short)DeWindowLUT[offset + 0x00] + 0x4000) >> 0xF;
-		v4 += ((int)*(s16 *)(mp3data + (addptr)+0x10) * (short)DeWindowLUT[offset + 0x08] + 0x4000) >> 0xF;
+		v4 += CalcDeWindow(addptr, 0x00, offset, 0x00);
+		v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
 		addptr += 2; offset++;
 	}
 	s32 mult6 = *(s32 *)(mp3data + 0xCE8);
@@ -259,14 +264,14 @@ void Dewindow()
 		offset = (0x22F - (t4 >> 1) + x * 0x40);
 
 		for (int i = 0; i < 4; i++) {
-			v2 += ((int)*(s16 *)(mp3data + (addptr)+0x20) * (short)DeWindowLUT[offset + 0x00] + 0x4000) >> 0xF;
-			v2 -= ((int)*(s16 *)(mp3data + ((addptr + 2)) + 0x20) * (short)DeWindowLUT[offset + 0x01] + 0x4000) >> 0xF;
-			v4 += ((int)*(s16 *)(mp3data + (addptr)+0x30) * (short)DeWindowLUT[offset + 0x08] + 0x4000) >> 0xF;
-			v4 -= ((int)*(s16 *)(mp3data + ((addptr + 2)) + 0x30) * (short)DeWindowLUT[offset + 0x09] + 0x4000) >> 0xF;
-			v6 += ((int)*(s16 *)(mp3data + (addptr)+0x00) * (short)DeWindowLUT[offset + 0x20] + 0x4000) >> 0xF;
-			v6 -= ((int)*(s16 *)(mp3data + ((addptr + 2)) + 0x00) * (short)DeWindowLUT[offset + 0x21] + 0x4000) >> 0xF;
-			v8 += ((int)*(s16 *)(mp3data + (addptr)+0x10) * (short)DeWindowLUT[offset + 0x28] + 0x4000) >> 0xF;
-			v8 -= ((int)*(s16 *)(mp3data + ((addptr + 2)) + 0x10) * (short)DeWindowLUT[offset + 0x29] + 0x4000) >> 0xF;
+			v2 += CalcDeWindow(addptr, 0x20, offset, 0x00);
+			v2 -= CalcDeWindow(addptr + 2, 0x20, offset, 0x01);
+			v4 += CalcDeWindow(addptr, 0x30, offset, 0x08); 
+			v4 -= CalcDeWindow(addptr + 2, 0x30, offset, 0x09);
+			v6 += CalcDeWindow(addptr, 0x00, offset, 0x20); 
+			v6 -= CalcDeWindow(addptr + 2, 0x00, offset, 0x21);
+			v8 += CalcDeWindow(addptr, 0x10, offset, 0x28); 
+			v8 -= CalcDeWindow(addptr + 2, 0x10, offset, 0x29); 
 			addptr += 4; offset += 2;
 		}
 		s32 v0 = v2 + v4;
