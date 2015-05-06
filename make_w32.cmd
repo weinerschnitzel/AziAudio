@@ -16,7 +16,7 @@ mkdir Mupen64plusHLE
 )
 
 set FLAGS_x86=-I%obj%\dx_mingw^
- -DXAUDIO_LIBRARIES_UNAVAILABLE^
+ -I%obj%^
  -DSSE2_SUPPORT^
  -masm=intel^
  -msse2^
@@ -96,5 +96,5 @@ set OBJ_LIST=^
 
 ECHO Linking assembled object files...
 windres -i %src%\resource.rc --input-format=rc -o %obj%\res.res -O coff
-g++ -o %obj%\AziAudio.dll %OBJ_LIST% -ldsound --shared -s -Wl,--subsystem,windows -shared -shared-libgcc
+g++ -o %obj%\AziAudio.dll %OBJ_LIST% -ldsound -lole32 --shared -s -Wl,--subsystem,windows -shared -shared-libgcc
 PAUSE

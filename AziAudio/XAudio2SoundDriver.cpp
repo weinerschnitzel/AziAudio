@@ -308,8 +308,10 @@ void XAudio2SoundDriver::SetVolume(DWORD volume)
 void __stdcall VoiceCallback::OnBufferEnd(void * pBufferContext)
 {
 	WaitForSingleObject(hMutex, INFINITE);
+#ifdef SEH_SUPPORTED
 	__try // PJ64 likes to close objects before it shuts down the DLLs completely...
 	{
+#endif
 		*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
 		if (interrupts > 0)
 		{
@@ -317,10 +319,12 @@ void __stdcall VoiceCallback::OnBufferEnd(void * pBufferContext)
 			*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
 			AudioInfo.CheckInterrupts();
 		}
+#ifdef SEH_SUPPORTED
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER)
 	{
 	}
+#endif
 	bufferBytes -= *(int *)(pBufferContext);
 	filledBuffers--;
 	ReleaseMutex(hMutex);

@@ -24,8 +24,7 @@
 #include <conio.h>
 #include <fcntl.h>
 #include <io.h>
-#include <iostream>
-#include <fstream>
+#include <ios>
 #include "resource.h"
 
 using namespace std;
