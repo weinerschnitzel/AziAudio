@@ -204,7 +204,7 @@ DWORD XAudio2SoundDriver::AddBuffer(BYTE *start, DWORD length)
 	lastLength = length;
 
 	// Gracefully waiting for filled buffers to deplete
-	if (configSyncAudio == true || configSyncAudio == true)
+	if (configSyncAudio == true || configForceSync == true)
 		while (filledBuffers == 10) Sleep(1);
 	else 
 		if (filledBuffers == 10) return 0;
