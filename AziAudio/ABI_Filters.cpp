@@ -95,6 +95,8 @@ void FILTER2() {
  * to produce an out-of-range value is if audio ucode does -32768 * -32768.
  */
 		for (i = 0; i < 8; i++)
+			assert(outp[i] >= -32768 && outp[i] <= +32767);
+		for (i = 0; i < 8; i++)
 			outp[i] = pack_signed(outp[i]);
 #endif
 		outp += 8;
