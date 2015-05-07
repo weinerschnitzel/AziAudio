@@ -188,7 +188,7 @@ void XAudio2SoundDriver::SetFrequency(DWORD Frequency)
 	Frequency = (DWORD)freq;
 	assert(Frequency <= 44100);
 
-	cacheSize = (Frequency / 25) * 4;// (((Frequency * 4) / 100) & ~0x3) * 8;
+	cacheSize = (freq / 25) * 4;// (((Frequency * 4) / 100) & ~0x3) * 8;
 	if (Setup() < 0) /* failed to apply a sound device */
 		return;
 	g_source->SetSourceSampleRate(Frequency);
