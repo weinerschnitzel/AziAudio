@@ -178,7 +178,7 @@
     <ClInclude Include="Mupen64plusHLE\hle_internal.h" />
     <ClInclude Include="Mupen64plusHLE\memory.h" />
     <ClInclude Include="Mupen64plusHLE\ucodes.h" />
-    <ClInclude Include="mytypes.h" />
+    <ClInclude Include="my_types.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SoundDriver.h" />
     <ClInclude Include="WaveOut.h" />

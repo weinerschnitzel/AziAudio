@@ -69,13 +69,13 @@
     <ClInclude Include="common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mytypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WaveOut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="my_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
