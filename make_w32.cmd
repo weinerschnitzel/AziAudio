@@ -16,7 +16,7 @@ mkdir Mupen64plusHLE
 )
 
 set FLAGS_x86=^
- -I%obj%^
+ -I"%src%\..\3rd Party"^
  -I"%src%\..\3rd Party\directx\include"^
  -DSSE2_SUPPORT^
  -masm=intel^
