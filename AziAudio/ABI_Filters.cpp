@@ -65,12 +65,15 @@ void FILTER2() {
 	inp1 = (i16 *)(save);
 	outp = outbuff;
 	inp2 = (i16 *)(BufferSpace + inPtr);
-	for (x = 0; x < 8; x++)
-		inputs_matrix[15 - (x + 0)] = inp1[x];
-	for (x = 0; x < 8; x++)
-		inputs_matrix[15 - (x + 8)] = inp2[x];
 
 	for (x = 0; x < cnt; x += 0x10) {
+		for (i = 0; i < 8; i++)
+			inputs_matrix[15 - (i + 0)] = inp1[i];
+		for (i = 0; i < 8; i++)
+			inputs_matrix[15 - (i + 8)] = inp2[i];
+		inp1 = inp2 + 0;
+		inp2 = inp2 + 8;
+
 		packed_multiply_accumulate(&out1[0], &inputs_matrix[0], &lutt6[0], 6);
 		packed_multiply_accumulate(&out1[1], &inputs_matrix[0], &lutt6[0], 7);
 		packed_multiply_accumulate(&out1[2], &inputs_matrix[0], &lutt6[0], 4);
@@ -91,8 +94,6 @@ void FILTER2() {
 		for (i = 0; i < 8; i++)
 			outp[i] = pack_signed(outp[i]);
 #endif
-		inp1 = inp2;
-		inp2 += 8;
 		outp += 8;
 	}
 	//			memcpy (rdram+(t9&0xFFFFFF), dmem+0xFB0, 0x20);
