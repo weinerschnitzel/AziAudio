@@ -124,4 +124,3 @@ void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
         dst[i] = clamp_s16(accu >> 11);
    }
 }
-

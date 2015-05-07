@@ -52,4 +52,3 @@ static inline int16_t clamp_s16(int_fast32_t x)
 }
 
 #endif
-

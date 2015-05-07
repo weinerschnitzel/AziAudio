@@ -141,4 +141,3 @@ void jpeg_decode_PS(struct hle_t* hle);
 void jpeg_decode_OB(struct hle_t* hle);
 
 #endif
-

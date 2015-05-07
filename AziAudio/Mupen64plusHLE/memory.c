@@ -71,4 +71,3 @@ void store_u32(unsigned char* buffer, unsigned address, const uint32_t* src, siz
     /* Optimization for uint32_t */
     memcpy(pt_u32(buffer, address), src, count * sizeof(uint32_t));
 }
-

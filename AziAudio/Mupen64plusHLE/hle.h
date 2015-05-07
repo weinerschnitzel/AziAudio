@@ -51,4 +51,3 @@ void hle_init(struct hle_t* hle,
 void hle_execute(struct hle_t* hle);
 
 #endif
-
