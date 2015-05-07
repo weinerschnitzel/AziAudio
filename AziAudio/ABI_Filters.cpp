@@ -11,8 +11,24 @@
 
 #include "audiohle.h"
 
+/*
+ * Some combination of RSP LWC2 pack-type operations and vector multiply-
+ * accumulate going on here, doing some fancy matrix math from data memory.
+ */
+static void packed_multiply_accumulate(pi32 acc, pi16 vs, pi16 vt, int offset)
+{
+	i32 result;
+	register int i;
+
+	result = 0;
+	for (i = 0; i < 8; i++)
+		result += (s32)vs[(i + offset) ^ 1] * (s32)vt[i ^ 1];
+	*(acc) = result;
+	return;
+}
+
 void FILTER2() {
-	int x;
+	int x, i;
 	static int cnt = 0;
 	static s16 *lutt6;
 	static s16 *lutt5;
@@ -40,97 +56,56 @@ void FILTER2() {
 		a = (lutt5[x] + lutt6[x]) >> 1;
 		lutt5[x] = lutt6[x] = (short)a;
 	}
-	short *inp1, *inp2;
+	i16 inputs_matrix[16];
+	i16* inp1;
+	i16* inp2;
 	s32 out1[8];
 	s16 outbuff[0x3c0], *outp;
 	u32 inPtr = (u32)(k0 & 0xffff);
-	inp1 = (short *)(save);
+
+	inp1 = (i16 *)(save);
 	outp = outbuff;
-	inp2 = (short *)(BufferSpace + inPtr);
+	inp2 = (i16 *)(BufferSpace + inPtr);
+
+/*
+ * The first iteration has no contiguity between inp1 and inp2.
+ * Every iteration thereafter, they are contiguous:  inp1 = inp2; inp2 += 8;
+ */
+	for (i = 0; i < 8; i++)
+		inputs_matrix[15 - (i + 0)] = inp1[i];
+	for (i = 0; i < 8; i++)
+		inputs_matrix[15 - (i + 8)] = inp2[i];
+
 	for (x = 0; x < cnt; x += 0x10) {
-		out1[0]  = inp2[1] * lutt6[0];
-		out1[0] += inp2[0] * lutt6[1];
-		out1[0] += inp1[7] * lutt6[2];
-		out1[0] += inp1[6] * lutt6[3];
-		out1[0] += inp1[5] * lutt6[4];
-		out1[0] += inp1[4] * lutt6[5];
-		out1[0] += inp1[3] * lutt6[6];
-		out1[0] += inp1[2] * lutt6[7];
+		packed_multiply_accumulate(&out1[0], &inputs_matrix[0], &lutt6[0], 6);
+		packed_multiply_accumulate(&out1[1], &inputs_matrix[0], &lutt6[0], 7);
+		packed_multiply_accumulate(&out1[2], &inputs_matrix[0], &lutt6[0], 4);
+		packed_multiply_accumulate(&out1[3], &inputs_matrix[0], &lutt6[0], 5);
+		packed_multiply_accumulate(&out1[4], &inputs_matrix[0], &lutt6[0], 2);
+		packed_multiply_accumulate(&out1[5], &inputs_matrix[0], &lutt6[0], 3);
+		packed_multiply_accumulate(&out1[6], &inputs_matrix[0], &lutt6[0], 0);
+		packed_multiply_accumulate(&out1[7], &inputs_matrix[0], &lutt6[0], 1);
 
-		out1[1]  = inp1[6] * lutt6[0];
-		out1[1] += inp2[1] * lutt6[1]; // 1
-		out1[1] += inp1[4] * lutt6[2];
-		out1[1] += inp1[7] * lutt6[3];
-		out1[1] += inp1[2] * lutt6[4];
-		out1[1] += inp1[5] * lutt6[5];
-		out1[1] += inp1[0] * lutt6[6];
-		out1[1] += inp1[3] * lutt6[7];
-
-		out1[2]  = inp2[3] * lutt6[0];
-		out1[2] += inp2[2] * lutt6[1];
-		out1[2] += inp2[1] * lutt6[2];
-		out1[2] += inp2[0] * lutt6[3];
-		out1[2] += inp1[7] * lutt6[4];
-		out1[2] += inp1[6] * lutt6[5];
-		out1[2] += inp1[5] * lutt6[6];
-		out1[2] += inp1[4] * lutt6[7];
-
-		out1[3]  = inp2[0] * lutt6[0];
-		out1[3] += inp2[3] * lutt6[1];
-		out1[3] += inp1[6] * lutt6[2];
-		out1[3] += inp2[1] * lutt6[3];
-		out1[3] += inp1[4] * lutt6[4];
-		out1[3] += inp1[7] * lutt6[5];
-		out1[3] += inp1[2] * lutt6[6];
-		out1[3] += inp1[5] * lutt6[7];
-
-		out1[4]  = inp2[5] * lutt6[0];
-		out1[4] += inp2[4] * lutt6[1];
-		out1[4] += inp2[3] * lutt6[2];
-		out1[4] += inp2[2] * lutt6[3];
-		out1[4] += inp2[1] * lutt6[4];
-		out1[4] += inp2[0] * lutt6[5];
-		out1[4] += inp1[7] * lutt6[6];
-		out1[4] += inp1[6] * lutt6[7];
-
-		out1[5]  = inp2[2] * lutt6[0];
-		out1[5] += inp2[5] * lutt6[1];
-		out1[5] += inp2[0] * lutt6[2];
-		out1[5] += inp2[3] * lutt6[3];
-		out1[5] += inp1[6] * lutt6[4];
-		out1[5] += inp2[1] * lutt6[5];
-		out1[5] += inp1[4] * lutt6[6];
-		out1[5] += inp1[7] * lutt6[7];
-
-		out1[6]  = inp2[7] * lutt6[0];
-		out1[6] += inp2[6] * lutt6[1];
-		out1[6] += inp2[5] * lutt6[2];
-		out1[6] += inp2[4] * lutt6[3];
-		out1[6] += inp2[3] * lutt6[4];
-		out1[6] += inp2[2] * lutt6[5];
-		out1[6] += inp2[1] * lutt6[6];
-		out1[6] += inp2[0] * lutt6[7];
-
-		out1[7]  = inp2[4] * lutt6[0];
-		out1[7] += inp2[7] * lutt6[1];
-		out1[7] += inp2[2] * lutt6[2];
-		out1[7] += inp2[5] * lutt6[3];
-		out1[7] += inp2[0] * lutt6[4];
-		out1[7] += inp2[3] * lutt6[5];
-		out1[7] += inp1[6] * lutt6[6];
-		out1[7] += inp2[1] * lutt6[7];
-
-		outp[0] = /*CLAMP*/(s16)((out1[0] + 0x4000) >> 0xF);
-		outp[1] = /*CLAMP*/(s16)((out1[1] + 0x4000) >> 0xF);
-		outp[2] = /*CLAMP*/(s16)((out1[2] + 0x4000) >> 0xF);
-		outp[3] = /*CLAMP*/(s16)((out1[3] + 0x4000) >> 0xF);
-		outp[4] = /*CLAMP*/(s16)((out1[4] + 0x4000) >> 0xF);
-		outp[5] = /*CLAMP*/(s16)((out1[5] + 0x4000) >> 0xF);
-		outp[6] = /*CLAMP*/(s16)((out1[6] + 0x4000) >> 0xF);
-		outp[7] = /*CLAMP*/(s16)((out1[7] + 0x4000) >> 0xF);
-		inp1 = inp2;
-		inp2 += 8;
+		for (i = 0; i < 8; i++)
+			outp[i] = (out1[i] + 0x4000) >> 15; /* fractional round and shift */
+#if 0
+/*
+ * Clamp the result to fit within the legal range of 16-bit short elements.
+ * VMULF, I know, never needs this in games, because the only way for VMULF
+ * to produce an out-of-range value is if audio ucode does -32768 * -32768.
+ */
+		for (i = 0; i < 8; i++)
+			assert(outp[i] >= -32768 && outp[i] <= +32767);
+		for (i = 0; i < 8; i++)
+			outp[i] = pack_signed(outp[i]);
+#endif
 		outp += 8;
+
+		inp1 = inp2 + 0;
+		inp2 = inp2 + 8;
+
+		for (i = 0; i < 16; i++)
+			inputs_matrix[15 - i] = inp1[i];
 	}
 	//			memcpy (rdram+(t9&0xFFFFFF), dmem+0xFB0, 0x20);
 	memcpy(save, inp2 - 8, 0x10);
