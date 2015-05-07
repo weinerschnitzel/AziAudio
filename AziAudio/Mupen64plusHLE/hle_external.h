@@ -35,4 +35,3 @@ void HleProcessRdpList(void* user_defined);
 void HleShowCFB(void* user_defined);
 
 #endif
-
