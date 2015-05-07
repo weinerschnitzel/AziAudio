@@ -15,8 +15,9 @@ if not exist Mupen64plusHLE (
 mkdir Mupen64plusHLE
 )
 
-set FLAGS_x86=-I%obj%\dx_mingw^
- -I%obj%^
+set FLAGS_x86=^
+ -I"%src%\..\3rd Party"^
+ -I"%src%\..\3rd Party\directx\include"^
  -DSSE2_SUPPORT^
  -masm=intel^
  -msse2^
