@@ -173,21 +173,22 @@ void XAudio2SoundDriver::Teardown()
 
 void XAudio2SoundDriver::SetFrequency(DWORD Frequency)
 {
-//	Frequency = (Frequency+25) - ((Frequency+25) % 50);
-	if (Frequency < 45000 && Frequency > 43000) {
-		Frequency = 44100;
-	}
-	else if (Frequency < 33000 && Frequency > 31000)	{
-		Frequency = 32000;
-	}
-	else if (Frequency < 25000 && Frequency > 20000)	{
-		Frequency = 22050;
-	}
-	else if (Frequency < 15000 && Frequency > 10000) {
-		Frequency = 11025;
-	}
-	cacheSize = (Frequency / 25) * 4;// (((Frequency * 4) / 100) & ~0x3) * 8;
+	long freq;
 
+//	Frequency = (Frequency+25) - ((Frequency+25) % 50);
+
+	assert(Frequency <= 65535);
+	freq = (long)Frequency;
+
+	freq = filter_range(freq, 44100, 1000);
+	freq = filter_range(freq, 32000, 1000);
+	freq = filter_range(freq, 22050, 1000);
+	freq = filter_range(freq, 11025, 1000);
+
+	Frequency = (DWORD)freq;
+	assert(Frequency <= 44100);
+
+	cacheSize = (freq / 25) * 4;// (((Frequency * 4) / 100) & ~0x3) * 8;
 	if (Setup() < 0) /* failed to apply a sound device */
 		return;
 	g_source->SetSourceSampleRate(Frequency);
