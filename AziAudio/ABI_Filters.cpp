@@ -67,14 +67,16 @@ void FILTER2() {
 	outp = outbuff;
 	inp2 = (i16 *)(BufferSpace + inPtr);
 
-	for (x = 0; x < cnt; x += 0x10) {
-		for (i = 0; i < 8; i++)
-			inputs_matrix[15 - (i + 0)] = inp1[i];
-		for (i = 0; i < 8; i++)
-			inputs_matrix[15 - (i + 8)] = inp2[i];
-		inp1 = inp2 + 0;
-		inp2 = inp2 + 8;
+/*
+ * The first iteration has no contiguity between inp1 and inp2.
+ * Every iteration thereafter, they are contiguous:  inp1 = inp2; inp2 += 8;
+ */
+	for (i = 0; i < 8; i++)
+		inputs_matrix[15 - (i + 0)] = inp1[i];
+	for (i = 0; i < 8; i++)
+		inputs_matrix[15 - (i + 8)] = inp2[i];
 
+	for (x = 0; x < cnt; x += 0x10) {
 		packed_multiply_accumulate(&out1[0], &inputs_matrix[0], &lutt6[0], 6);
 		packed_multiply_accumulate(&out1[1], &inputs_matrix[0], &lutt6[0], 7);
 		packed_multiply_accumulate(&out1[2], &inputs_matrix[0], &lutt6[0], 4);
@@ -96,6 +98,12 @@ void FILTER2() {
 			outp[i] = pack_signed(outp[i]);
 #endif
 		outp += 8;
+
+		inp1 = inp2 + 0;
+		inp2 = inp2 + 8;
+
+		for (i = 0; i < 16; i++)
+			inputs_matrix[15 - i] = inp1[i];
 	}
 	//			memcpy (rdram+(t9&0xFFFFFF), dmem+0xFB0, 0x20);
 	memcpy(save, inp2 - 8, 0x10);
