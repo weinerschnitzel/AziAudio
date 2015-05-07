@@ -111,7 +111,7 @@ BOOL XAudio2SoundDriver::Setup()
 
 	wfm.wFormatTag = WAVE_FORMAT_PCM;
 	wfm.nChannels = 2;
-	wfm.nSamplesPerSec = 32000;
+	wfm.nSamplesPerSec = 44100;
 	wfm.wBitsPerSample = 16; // TODO: Allow 8bit audio...
 	wfm.nBlockAlign = wfm.wBitsPerSample / 8 * wfm.nChannels;
 	wfm.nAvgBytesPerSec = wfm.nSamplesPerSec * wfm.nBlockAlign;
@@ -173,8 +173,8 @@ void XAudio2SoundDriver::Teardown()
 
 void XAudio2SoundDriver::SetFrequency(DWORD Frequency)
 {
-	Frequency = (Frequency+25) - ((Frequency+25) % 50);
-	/*if (Frequency < 45000 && Frequency > 43000) {
+//	Frequency = (Frequency+25) - ((Frequency+25) % 50);
+	if (Frequency < 45000 && Frequency > 43000) {
 		Frequency = 44100;
 	}
 	else if (Frequency < 33000 && Frequency > 31000)	{
@@ -185,7 +185,7 @@ void XAudio2SoundDriver::SetFrequency(DWORD Frequency)
 	}
 	else if (Frequency < 15000 && Frequency > 10000) {
 		Frequency = 11025;
-	}*/
+	}
 	cacheSize = (Frequency / 25) * 4;// (((Frequency * 4) / 100) & ~0x3) * 8;
 
 	if (Setup() < 0) /* failed to apply a sound device */
