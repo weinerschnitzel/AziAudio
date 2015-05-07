@@ -459,26 +459,28 @@ void DirectSoundDriver::DeInitialize() {
 
 // Buffer Functions for the Audio Code
 void DirectSoundDriver::SetFrequency(DWORD Frequency2) {
+	long freq;
 	DWORD Frequency = Frequency2;
 	BOOL bAudioPlaying = audioIsPlaying;
+
 	printf("SetFrequency()\n");
 	// MusyX - (Frequency / 80) * 4
 	// 
 	if (bAudioPlaying == TRUE) {
 		StopAudio();
 	}
-	/*
-	if (Frequency < 45000 && Frequency > 43000) {
-	Frequency = 44100;
-	}
-	else if (Frequency < 33000 && Frequency > 31000)	{
-	Frequency = 32000;
-	}
-	else if (Frequency < 25000 && Frequency > 20000)	{
-	Frequency = 22050;
-	} else if (Frequency < 15000 && Frequency > 10000) {
-	Frequency = 11025;
-	}*/
+
+	assert(Frequency <= 65535);
+	freq = (long)Frequency;
+
+	freq = filter_range(freq, 44100, 1000);
+	freq = filter_range(freq, 32000, 1000);
+	freq = filter_range(freq, 22050, 1000);
+	freq = filter_range(freq, 11025, 1000);
+
+	Frequency = (DWORD)freq;
+	assert(Frequency <= 44100);
+
 	sLOCK_SIZE = (Frequency / 80) * 4;// 0x600;// (22050 / 30) * 4;// 0x4000;// (Frequency / 60) * 4;
 	SampleRate = Frequency;
 	SegmentSize = 0; // Trash it... we need to redo the Frequency anyway...
