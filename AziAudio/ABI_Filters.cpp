@@ -57,7 +57,8 @@ void FILTER2() {
 		lutt5[x] = lutt6[x] = (short)a;
 	}
 	i16 inputs_matrix[16];
-	pi16 inp1, inp2;
+	i16* inp1;
+	i16* inp2;
 	s32 out1[8];
 	s16 outbuff[0x3c0], *outp;
 	u32 inPtr = (u32)(k0 & 0xffff);
