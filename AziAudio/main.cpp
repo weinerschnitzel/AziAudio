@@ -9,13 +9,6 @@
 *                                                                           *
 ****************************************************************************/
 
-#if defined(_XBOX)
-#include <xtl.h>
-#else
-#include <windows.h>
-#include <commctrl.h>
-#endif
-
 #include "common.h"
 #include "AudioSpec.h"
 #ifdef USE_XAUDIO2
