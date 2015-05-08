@@ -14,7 +14,7 @@
 #ifndef _XBOX_ICC
 #include <xtl.h>
 #else
-#include <mytypes.h>
+#include "my_types.h"
 #endif
 
 #if defined(__cplusplus)
