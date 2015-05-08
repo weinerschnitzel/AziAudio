@@ -11,7 +11,11 @@
 
 #pragma once
 
+#if defined(_XBOX)
+#include <xtl.h>
+#else
 #include <Windows.h>
+#endif
 
 #define SND_IS_NOT_EMPTY 0x4000000
 #define SND_IS_FULL		 0x8000000
@@ -64,7 +68,7 @@ protected:
 		configHLE = true;
 		configRSP = true;
 		configVolume = 0;
-#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS) && !defined(_XBOX)
 		strcpy_s(configAudioLogFolder, 500, "D:\\");
 		strcpy_s(configDevice, 100, "");
 #else

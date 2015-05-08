@@ -63,6 +63,8 @@
  * In some better, older versions of MSVC, there often was no <stdint.h>.
  * We can still use the built-in MSVC types to create the <stdint.h> types.
  */
+#elif defined(_XBOX)
+#include "XBox/stdint.h"
 #else
 #include <stdint.h>
 #endif
