@@ -96,13 +96,8 @@ BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, L
 }
 
 
-<<<<<<< HEAD
-EXPORT void CALL DllAbout ( HWND hParent ){
-	MessageBoxA(hParent, "No About yet... ", "About Box", MB_OK);
-=======
 FUNC_TYPE(void) NAME_DEFINE(DllAbout) ( HWND hParent ){
-	MessageBox (hParent, "No About yet... ", "About Box", MB_OK);
->>>>>>> cbe9dfbea969dae5252b27fb069798b830603182
+	MessageBoxA(hParent, "No About yet... ", "About Box", MB_OK);
 }
 
 #if !defined(_XBOX)
