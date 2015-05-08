@@ -248,10 +248,9 @@ void MP3 () {
 }
 
 void InnerLoop () {
-				int x;
 				// Part 1: 100% Accurate
-
 				int i;
+
 				v[0] = *(s16 *)(mp3data+inPtr+(0x00^2)); v[31] = *(s16 *)(mp3data+inPtr+(0x3E^2)); v[0] += v[31];
 				v[1] = *(s16 *)(mp3data+inPtr+(0x02^2)); v[30] = *(s16 *)(mp3data+inPtr+(0x3C^2)); v[1] += v[30];
 				v[2] = *(s16 *)(mp3data+inPtr+(0x06^2)); v[28] = *(s16 *)(mp3data+inPtr+(0x38^2)); v[2] += v[28];
