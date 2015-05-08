@@ -96,7 +96,7 @@ BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, L
 }
 
 
-EXPORT void CALL DllAbout ( HWND hParent ){
+FUNC_TYPE(void) NAME_DEFINE(DllAbout) ( HWND hParent ){
 	MessageBox (hParent, "No About yet... ", "About Box", MB_OK);
 }
 
@@ -193,7 +193,7 @@ INT_PTR CALLBACK ConfigProc(
 }
 #endif
 
-EXPORT void CALL DllConfig(HWND hParent)
+FUNC_TYPE(void) NAME_DEFINE(DllConfig)(HWND hParent)
 {
 #if defined(_XBOX) 
 	MessageBox(hParent, "We don't use config dialog... ", "", MB_OK);
@@ -204,7 +204,7 @@ EXPORT void CALL DllConfig(HWND hParent)
 #endif
 }
 
-EXPORT void CALL DllTest ( HWND hParent ){
+FUNC_TYPE(void) NAME_DEFINE(DllTest) ( HWND hParent ){
 	MessageBox (hParent, "Nothing to test yet... ", "Test Box", MB_OK);
 }
 
@@ -218,7 +218,7 @@ DWORD junk;
 DWORD RSPRegs[10];
 BOOL audioIsInitialized = FALSE;
 
-EXPORT BOOL CALL InitiateAudio (AUDIO_INFO Audio_Info){
+FUNC_TYPE(BOOL) NAME_DEFINE(InitiateAudio) (AUDIO_INFO Audio_Info){
 
 	//RedirectIOToConsole();
 	Dacrate = 0;
@@ -264,13 +264,13 @@ EXPORT BOOL CALL InitiateAudio (AUDIO_INFO Audio_Info){
 	return TRUE;
 }
 
-EXPORT void CALL CloseDLL (void){
+FUNC_TYPE(void) NAME_DEFINE(CloseDLL) (void){
 	ChangeABI (0);
 	if (audioIsInitialized == TRUE) snd.DeInitialize();
 	snd.DeInitialize();
 }
 
-EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo ){
+FUNC_TYPE(void) NAME_DEFINE(GetDllInfo) ( PLUGIN_INFO * PluginInfo ){
 	PluginInfo->MemoryBswaped = TRUE;
 	PluginInfo->NormalMemory  = FALSE;
 	safe_strcpy(PluginInfo->Name, 100, PLUGIN_VERSION);
@@ -278,7 +278,7 @@ EXPORT void CALL GetDllInfo ( PLUGIN_INFO * PluginInfo ){
 	PluginInfo->Version = 0x0101; // Set this to retain backwards compatibility
 }
 
-EXPORT void CALL ProcessAList(void){
+FUNC_TYPE(void) NAME_DEFINE(ProcessAList)(void){
 	/*WINDOWINFO wi;
 	if ((GetKeyState(VK_CONTROL) & GetKeyState(VK_MENU) & GetKeyState(VK_F12) & 0x100) &&
 		(GetForegroundWindow() == AudioInfo.hwnd))
@@ -294,7 +294,7 @@ EXPORT void CALL ProcessAList(void){
 	}
 }
 
-EXPORT void CALL RomOpened(void) {
+FUNC_TYPE(void) NAME_DEFINE(RomOpened)(void) {
 	ChangeABI(0);
 	snd.DeInitialize();
 	Dacrate = 0;
@@ -302,7 +302,7 @@ EXPORT void CALL RomOpened(void) {
 //	RspClosed();
 }
 
-EXPORT void CALL RomClosed (void){
+FUNC_TYPE(void) NAME_DEFINE(RomClosed) (void){
 	ChangeABI (0);
 	snd.DeInitialize();
 	Dacrate = 0;
@@ -310,7 +310,7 @@ EXPORT void CALL RomClosed (void){
 //	RspClosed();
 }
 
-EXPORT void CALL AiDacrateChanged (int  SystemType) {
+FUNC_TYPE(void) NAME_DEFINE(AiDacrateChanged) (int  SystemType) {
 	DWORD Frequency, video_clock;
 
 	if (Dacrate == *AudioInfo.AI_DACRATE_REG)
@@ -336,7 +336,7 @@ EXPORT void CALL AiDacrateChanged (int  SystemType) {
 	if (audioIsInitialized == TRUE) snd.SetFrequency(Frequency);
 }
 
-EXPORT void CALL AiLenChanged (void){
+FUNC_TYPE(void) NAME_DEFINE(AiLenChanged) (void){
 	DWORD retVal; 
 	if (audioIsInitialized == FALSE)
 	{
@@ -362,7 +362,7 @@ EXPORT void CALL AiLenChanged (void){
 	// 3: Flag empty buffer as filled
 }
 
-EXPORT DWORD CALL AiReadLength (void){
+FUNC_TYPE(DWORD) NAME_DEFINE(AiReadLength) (void){
 	if (audioIsInitialized == FALSE) return 0;
 	*AudioInfo.AI_LEN_REG = snd.GetReadStatus ();
 	return *AudioInfo.AI_LEN_REG;
@@ -374,7 +374,7 @@ EXPORT DWORD CALL AiReadLength (void){
 // Deprecated Functions
 
 
-EXPORT void CALL AiUpdate (BOOL Wait) {
+FUNC_TYPE(void) NAME_DEFINE(AiUpdate) (BOOL Wait) {
 	static int intCount = 0;
 	if (Wait)
 	{
