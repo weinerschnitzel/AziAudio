@@ -362,7 +362,8 @@ void DirectSoundDriver::SetSegmentSize(DWORD length) {
 	dsbdesc.dwBufferBytes = SegmentSize * DS_SEGMENTS;
 	dsbdesc.lpwfxFormat = &wfm;
 
-	assert(!FAILED(hr = IDirectSound_CreateSoundBuffer(lpds, &dsbdesc, &lpdsbuf, NULL)));
+	hr = IDirectSound_CreateSoundBuffer(lpds, &dsbdesc, &lpdsbuf, NULL);
+	assert(!FAILED(hr));
 
 	IDirectSoundBuffer_Play(lpdsbuf, 0, 0, DSBPLAY_LOOPING);
 	lpdsbuff = this->lpdsbuf;
