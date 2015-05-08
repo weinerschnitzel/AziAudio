@@ -24,10 +24,6 @@
 
 #include "common.h"
 
-#if defined(_XBOX)
-#include "../XBox/stdint.h"
-#endif
-
 /*
  * 2015.05.05 modified by cxd4
  * The <stdint.h> `INT16_MIN' macro is a dependency of this RSP HLE code.
