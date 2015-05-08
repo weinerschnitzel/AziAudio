@@ -19,9 +19,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if defined(_XBOX)
-#include "stdbool.h"
-#endif
 #include <string.h>
 #include <stddef.h>
 
