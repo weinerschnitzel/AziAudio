@@ -313,8 +313,11 @@ typedef void(*p_func)(void);
 #if defined(_WIN32)
 #define EXPORT      __declspec(dllexport)
 #define CALL        __cdecl
-#else
+#elif (__GNUC__)
 #define EXPORT      __attribute__((visibility("default")))
+#define CALL
+#else
+#define EXPORT
 #define CALL
 #endif
 
