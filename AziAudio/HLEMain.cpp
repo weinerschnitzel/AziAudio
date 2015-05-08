@@ -114,7 +114,7 @@ void ChangeABI (int type) {
 			//memcpy (ABI, ABI5, 0x20*4);
 		break;
 		default:
-			MessageBox (NULL, "ABI set to ABI Unknown", "Audio uCode Changed", MB_OK);
+			MessageBoxA(NULL, "ABI set to ABI Unknown", "Audio uCode Changed", MB_OK);
 			memcpy (ABI, ABIUnknown, 0x20*4);
 			return; // Quick out to prevent Dynarec from getting it...
 	}

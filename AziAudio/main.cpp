@@ -92,7 +92,7 @@ BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, L
 
 
 EXPORT void CALL DllAbout ( HWND hParent ){
-	MessageBox (hParent, "No About yet... ", "About Box", MB_OK);
+	MessageBoxA(hParent, "No About yet... ", "About Box", MB_OK);
 }
 
 INT_PTR CALLBACK ConfigProc(
@@ -197,7 +197,7 @@ EXPORT void CALL DllConfig(HWND hParent)
 }
 
 EXPORT void CALL DllTest ( HWND hParent ){
-	MessageBox (hParent, "Nothing to test yet... ", "Test Box", MB_OK);
+	MessageBoxA(hParent, "Nothing to test yet... ", "Test Box", MB_OK);
 }
 
 // Initialization / Deinitalization Functions
@@ -311,7 +311,7 @@ EXPORT void CALL AiDacrateChanged (int  SystemType) {
 	Dacrate = *AudioInfo.AI_DACRATE_REG & 0x00003FFF;
 #ifdef _DEBUG
 	if (Dacrate != *AudioInfo.AI_DACRATE_REG)
-		MessageBox(
+		MessageBoxA(
 			NULL,
 			"Unknown/reserved bits in AI_DACRATE_REG set.",
 			"Warning",
@@ -319,7 +319,7 @@ EXPORT void CALL AiDacrateChanged (int  SystemType) {
 		);
 #endif
 	switch (SystemType) {
-		default         :  MessageBox(NULL, "Invalid SystemType.", NULL, MB_ICONERROR);
+		default         :  MessageBoxA(NULL, "Invalid SystemType.", NULL, MB_ICONERROR);
 		case SYSTEM_NTSC:  video_clock = 48681812; break;
 		case SYSTEM_PAL :  video_clock = 49656530; break;
 		case SYSTEM_MPAL:  video_clock = 48628316; break;

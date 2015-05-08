@@ -36,4 +36,24 @@
 #define inline __inline
 #endif
 
+/*
+ * 2015.05.07 cxd4
+ *
+ * `bool' is not C programming, even if C99 granted the request.
+ * Relevant C interpretation of Booleans is:  zero and nonzero.
+ *
+ * Past that, issues like allocation, packing or padding with Booleans are
+ * more than controllable in correct C with or without type definitions,
+ * especially in modern optimizing compilers.  The remaining issue is the
+ * ability to say "true" and "false"--again external features irrelevant to
+ * completeness of C implementation for the specific hardware architecture.
+ */
+#if !defined(FALSE) && !defined(TRUE)
+enum {
+    FALSE = 0,
+    TRUE = 1
+};
+#endif
+typedef int Boolean;
+
 #endif

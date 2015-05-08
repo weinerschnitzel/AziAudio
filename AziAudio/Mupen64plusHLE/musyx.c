@@ -19,7 +19,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <stdbool.h>
 #include <string.h>
 #include <stddef.h>
 
@@ -608,14 +607,14 @@ static void adpcm_decode_frames(struct hle_t* hle,
     int16_t frame[32];
     const uint8_t *nibbles = src + 8;
     unsigned i;
-    bool jump_gap = false;
+    Boolean jump_gap = FALSE;
 
     HleVerboseMessage(hle->user_defined,
                       "ADPCM decode: count=%d, skip=%d",
                       count, skip_samples);
 
     if (skip_samples >= 32) {
-        jump_gap = true;
+        jump_gap = TRUE;
         nibbles += 16;
         src += 4;
     }
@@ -634,7 +633,7 @@ static void adpcm_decode_frames(struct hle_t* hle,
         adpcm_compute_residuals(dst + 16, frame + 16, book, dst + 14, 8);
         adpcm_compute_residuals(dst + 24, frame + 24, book, dst + 22, 8);
 
-        if (jump_gap) {
+        if (jump_gap != FALSE) {
             nibbles += 8;
             src += 32;
         }
