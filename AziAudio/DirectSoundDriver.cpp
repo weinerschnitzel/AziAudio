@@ -11,7 +11,11 @@
 
 #include "common.h"
 #ifndef USE_XAUDIO2
+#if defined(_XBOX)
+#include <xtl.h>
+#else
 #include <windows.h>
+#endif
 #include <dsound.h>
 #include <stdio.h>
 #include "DirectSoundDriver.h"
@@ -358,7 +362,11 @@ void DirectSoundDriver::SetSegmentSize(DWORD length) {
 	memset(&dsbdesc, 0, sizeof(DSBUFFERDESC));
 	dsbdesc.dwSize = sizeof(DSBUFFERDESC);
 	//dsbdesc.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLPOSITIONNOTIFY;
+#if defined(_XBOX)
+	dsbdesc.dwFlags	= DSBCAPS_CTRLPOSITIONNOTIFY;
+#else
 	dsbdesc.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_LOCSOFTWARE;
+#endif
 	dsbdesc.dwBufferBytes = SegmentSize * DS_SEGMENTS;
 	dsbdesc.lpwfxFormat = &wfm;
 
@@ -385,7 +393,11 @@ BOOL DirectSoundDriver::Initialize(HWND hwnd) {
 
 	WaitForSingleObject(hMutex, INFINITE);
 
+#if defined(_XBOX)
+	hr = DirectSoundCreate(NULL, &lpds, NULL);
+#else
 	hr = DirectSoundCreate8(NULL, &lpds, NULL);
+#endif
 //	assert(!FAILED(hr)); // This happens if there is no sound device.
 	if (FAILED(hr))
 		return -2;
@@ -401,7 +413,11 @@ BOOL DirectSoundDriver::Initialize(HWND hwnd) {
 	memset(&dsPrimaryBuff, 0, sizeof(DSBUFFERDESC));
 
 	dsPrimaryBuff.dwSize = sizeof(DSBUFFERDESC);
+#if defined(_XBOX)
+	dsPrimaryBuff.dwFlags = DSBCAPS_CTRLPOSITIONNOTIFY;
+#else
 	dsPrimaryBuff.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME;
+#endif
 	dsPrimaryBuff.dwBufferBytes = 0;
 	dsPrimaryBuff.lpwfxFormat = NULL;
 	memset(&wfm, 0, sizeof(WAVEFORMATEX));

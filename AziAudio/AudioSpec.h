@@ -15,7 +15,11 @@ the plugin.
 #ifndef _AUDIO_H_INCLUDED__
 #define _AUDIO_H_INCLUDED__
 
+#if defined(_XBOX)
+#include <xtl.h>
+#else
 #include <windows.h>
+#endif
 #include "my_types.h"
 //#include "Audio #1.1EXT.h"
 

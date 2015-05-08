@@ -11,9 +11,15 @@
 
 #ifndef _COMMON_DOT_H_
 #define _COMMON_DOT_H_
-#include <windows.h>
-#include <stdio.h>
 
+#if defined (_XBOX)
+#include <xtl.h>
+#include "XBox/xbox_depp.h"
+#else
+#include <windows.h>
+#endif
+
+#include <stdio.h>
 #include <assert.h>
 
 //#define ENABLEPROFILING

@@ -9,8 +9,13 @@
 *                                                                           *
 ****************************************************************************/
 
+#if defined(_XBOX)
+#include <xtl.h>
+#else
 #include <windows.h>
 #include <commctrl.h>
+#endif
+
 #include "common.h"
 #include "AudioSpec.h"
 #ifdef USE_XAUDIO2
@@ -95,6 +100,7 @@ EXPORT void CALL DllAbout ( HWND hParent ){
 	MessageBox (hParent, "No About yet... ", "About Box", MB_OK);
 }
 
+#if !defined(_XBOX)
 INT_PTR CALLBACK ConfigProc(
   HWND hDlg,  // handle to dialog box
   UINT uMsg,     // message
@@ -185,11 +191,13 @@ INT_PTR CALLBACK ConfigProc(
 	return FALSE;
 
 }
-
+#endif
 
 EXPORT void CALL DllConfig(HWND hParent)
 {
-#if 0
+#if defined(_XBOX) 
+	MessageBox(hParent, "We don't use config dialog... ", "", MB_OK);
+#elif 0
 	MessageBox(hParent, "Nothing to config yet... ", "Config Box", MB_OK);
 #else
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG), hParent, ConfigProc);
@@ -407,6 +415,7 @@ EXPORT void CALL AiUpdate (BOOL Wait) {
 static const WORD MAX_CONSOLE_LINES = 500;
 
 void RedirectIOToConsole() {
+#if !defined(_XBOX)
 	int hConHandle;
 	long lStdHandle;
 	CONSOLE_SCREEN_BUFFER_INFO coninfo;
@@ -440,11 +449,12 @@ void RedirectIOToConsole() {
 	// make cout, wcout, cin, wcin, wcerr, cerr, wclog and clog 
 	// point to console as well
 	ios::sync_with_stdio();
+#endif
 }
 
 int safe_strcpy(char* dst, size_t limit, const char* src)
 {
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_XBOX)
     return strcpy_s(dst, limit, src);
 #else
     size_t bytes;
