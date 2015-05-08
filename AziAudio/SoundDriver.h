@@ -11,11 +11,7 @@
 
 #pragma once
 
-#if defined(_XBOX)
-#include <xtl.h>
-#else
-#include <Windows.h>
-#endif
+#include "common.h"
 
 #define SND_IS_NOT_EMPTY 0x4000000
 #define SND_IS_FULL		 0x8000000

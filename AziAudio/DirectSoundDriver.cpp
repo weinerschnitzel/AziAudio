@@ -11,11 +11,6 @@
 
 #include "common.h"
 #ifndef USE_XAUDIO2
-#if defined(_XBOX)
-#include <xtl.h>
-#else
-#include <windows.h>
-#endif
 #include <dsound.h>
 #include <stdio.h>
 #include "DirectSoundDriver.h"
