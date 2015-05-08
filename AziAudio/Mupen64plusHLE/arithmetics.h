@@ -43,7 +43,7 @@
 #define INT16_MAX               +32767
 #endif
 
-static inline int16_t clamp_s16(int_fast32_t x)
+static inline int16_t clamp_s16(int32_t x)
 {
     x = (x < INT16_MIN) ? INT16_MIN: x;
     x = (x > INT16_MAX) ? INT16_MAX: x;
