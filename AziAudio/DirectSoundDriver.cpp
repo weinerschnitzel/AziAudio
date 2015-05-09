@@ -471,7 +471,7 @@ void DirectSoundDriver::DeInitialize() {
 
 // Buffer Functions for the Audio Code
 void DirectSoundDriver::SetFrequency(DWORD Frequency2) {
-	long freq;
+
 	DWORD Frequency = Frequency2;
 	BOOL bAudioPlaying = audioIsPlaying;
 
@@ -481,17 +481,6 @@ void DirectSoundDriver::SetFrequency(DWORD Frequency2) {
 	if (bAudioPlaying == TRUE) {
 		StopAudio();
 	}
-
-	assert(Frequency <= 65535);
-	freq = (long)Frequency;
-
-	freq = filter_range(freq, 44100, 1000);
-	freq = filter_range(freq, 32000, 1000);
-	freq = filter_range(freq, 22050, 1000);
-	freq = filter_range(freq, 11025, 1000);
-
-	Frequency = (DWORD)freq;
-	assert(Frequency <= 44100);
 
 	sLOCK_SIZE = (Frequency / 80) * 4;// 0x600;// (22050 / 30) * 4;// 0x4000;// (Frequency / 60) * 4;
 	SampleRate = Frequency;
