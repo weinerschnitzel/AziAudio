@@ -98,6 +98,16 @@ s32 LoadMixer32(int offset)
 	return *(s32 *)(hleMixerWorkArea + offset);
 }
 
+void SaveMixer16(int offset, s16 value)
+{
+	*(s16 *)(hleMixerWorkArea + offset) = value;
+}
+
+void SaveMixer32(int offset, s32 value)
+{
+	*(s32 *)(hleMixerWorkArea + offset) = value;
+}
+
 void ENVMIXER() {
 	//static int envmixcnt = 0;
 	u8 flags = (u8)((k0 >> 16) & 0xff);
@@ -303,16 +313,16 @@ void ENVMIXER() {
 	/*LAcc = LAdderEnd;
 	RAcc = RAdderEnd;*/
 
-	*(s16 *)(hleMixerWorkArea + 0) = Wet; // 0-1
-	*(s16 *)(hleMixerWorkArea + 2) = Dry; // 2-3
-	*(s32 *)(hleMixerWorkArea + 4) = LTrg; // 4-5
-	*(s32 *)(hleMixerWorkArea + 6) = RTrg; // 6-7
-	*(s32 *)(hleMixerWorkArea + 8) = LRamp; // 8-9 (hleMixerWorkArea is a 16bit pointer)
-	*(s32 *)(hleMixerWorkArea + 10) = RRamp; // 10-11
-	*(s32 *)(hleMixerWorkArea + 12) = LAdderEnd; // 12-13
-	*(s32 *)(hleMixerWorkArea + 14) = RAdderEnd; // 14-15
-	*(s32 *)(hleMixerWorkArea + 16) = LAdderStart; // 12-13
-	*(s32 *)(hleMixerWorkArea + 18) = RAdderStart; // 14-15
+	SaveMixer16(0, Wet); // 0-1
+	SaveMixer16(2, Dry); // 2-3
+	SaveMixer32(4, LTrg); // 4-5
+	SaveMixer32(6, RTrg); // 6-7
+	SaveMixer32(8, LRamp); // 8-9 (hleMixerWorkArea is a 16bit pointer)
+	SaveMixer32(10, RRamp); // 10-11
+	SaveMixer32(12, LAdderEnd); // 12-13
+	SaveMixer32(14, RAdderEnd); // 14-15
+	SaveMixer32(16, LAdderStart); // 12-13
+	SaveMixer32(18, RAdderStart); // 14-15
 	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
 }
 
@@ -562,18 +572,18 @@ void ENVMIXER3() {
 	}
 	//}
 
-	*(s16 *)(hleMixerWorkArea + 0) = Wet; // 0-1
-	*(s16 *)(hleMixerWorkArea + 2) = Dry; // 2-3
-	*(s16 *)(hleMixerWorkArea + 4) = LTrg; // 4-5
-	*(s16 *)(hleMixerWorkArea + 6) = RTrg; // 6-7
-	*(s32 *)(hleMixerWorkArea + 8) = LAdder; // 8-9 (hleMixerWorkArea is a 16bit pointer)
-	*(s32 *)(hleMixerWorkArea + 10) = RAdder; // 10-11
-	*(s32 *)(hleMixerWorkArea + 12) = LAcc; // 12-13
-	*(s32 *)(hleMixerWorkArea + 14) = RAcc; // 14-15
-	*(s32 *)(hleMixerWorkArea + 16) = LVol; // 16-17
-	*(s32 *)(hleMixerWorkArea + 18) = RVol; // 18-19
-	*(s16 *)(hleMixerWorkArea + 20) = LSig; // 20-21
-	*(s16 *)(hleMixerWorkArea + 22) = RSig; // 22-23
+	SaveMixer16(0, Wet); // 0-1
+	SaveMixer16(2, Dry); // 2-3
+	SaveMixer16(4, LTrg); // 4-5
+	SaveMixer16(6, RTrg); // 6-7
+	SaveMixer32(8, LAdder); // 8-9 (hleMixerWorkArea is a 16bit pointer)
+	SaveMixer32(10, RAdder); // 10-11
+	SaveMixer32(12, LAcc); // 12-13
+	SaveMixer32(14, RAcc); // 14-15
+	SaveMixer32(16, LVol); // 16-17
+	SaveMixer32(18, RVol); // 18-19
+	SaveMixer16(20, LSig); // 20-21
+	SaveMixer16(22, RSig); // 22-23
 	//*(u32 *)(hleMixerWorkArea + 24) = 0x13371337; // 22-23
 	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
 }
