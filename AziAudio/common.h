@@ -58,10 +58,14 @@ extern rSettings RegSettings;
 unsigned long GenerateCRC (unsigned char *data, int size);
 
 #ifdef USE_XAUDIO2
-#define PLUGIN_VERSION "Azimer's XA2 Audio v0.70 WIP 5"
+#define PLUGIN_NAME     "Azimer's XA2 Audio"
 #else
-#define PLUGIN_VERSION "Azimer's DS8 Audio v0.70 WIP 5"
+#define PLUGIN_NAME     "Azimer's DS8 Audio"
 #endif
+#define PLUGIN_VERSION \
+PLUGIN_NAME \
+" v0.70 WIP 5"
+
 #ifdef ENABLEPROFILING
 
 	extern u64 ProfileStartTimes[30];

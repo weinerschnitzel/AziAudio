@@ -203,6 +203,7 @@ void StoreData(s32 vIndex, int mp3DataIndex)
 	*(s16 *)(mp3data + mp3DataIndex) = (short)v[vIndex];
 }
 
+
 void InnerLoop ();
 
 	u32 inPtr, outPtr;
@@ -210,6 +211,13 @@ void InnerLoop ();
 	u32 t6;// = 0x08A0; // I think these are temporary storage buffers
 	u32 t5;// = 0x0AC0;
 	u32 t4;// = (k0 & 0x1E);
+
+//The data will be stored in array v (type s32)
+s16 GetData(int address)
+{
+	return *(s16 *)(mp3data + inPtr + (address ^ 2));
+}
+
 
 void MP3 () {
 	// Initialization Code
@@ -257,25 +265,25 @@ void InnerLoop () {
 				// Part 1: 100% Accurate
 				int i;
 
-				v[0] = *(s16 *)(mp3data+inPtr+(0x00^2)); v[31] = *(s16 *)(mp3data+inPtr+(0x3E^2)); v[0] += v[31];
-				v[1] = *(s16 *)(mp3data+inPtr+(0x02^2)); v[30] = *(s16 *)(mp3data+inPtr+(0x3C^2)); v[1] += v[30];
-				v[2] = *(s16 *)(mp3data+inPtr+(0x06^2)); v[28] = *(s16 *)(mp3data+inPtr+(0x38^2)); v[2] += v[28];
-				v[3] = *(s16 *)(mp3data+inPtr+(0x04^2)); v[29] = *(s16 *)(mp3data+inPtr+(0x3A^2)); v[3] += v[29];
+				v[0] = GetData(0x00); v[31] = GetData(0x3E); v[0] += v[31];
+				v[1] = GetData(0x02); v[30] = GetData(0x3C); v[1] += v[30];
+				v[2] = GetData(0x06); v[28] = GetData(0x38); v[2] += v[28];
+				v[3] = GetData(0x04); v[29] = GetData(0x3A); v[3] += v[29];
 
-				v[4] = *(s16 *)(mp3data+inPtr+(0x0E^2)); v[24] = *(s16 *)(mp3data+inPtr+(0x30^2)); v[4] += v[24];
-				v[5] = *(s16 *)(mp3data+inPtr+(0x0C^2)); v[25] = *(s16 *)(mp3data+inPtr+(0x32^2)); v[5] += v[25];
-				v[6] = *(s16 *)(mp3data+inPtr+(0x08^2)); v[27] = *(s16 *)(mp3data+inPtr+(0x36^2)); v[6] += v[27];
-				v[7] = *(s16 *)(mp3data+inPtr+(0x0A^2)); v[26] = *(s16 *)(mp3data+inPtr+(0x34^2)); v[7] += v[26];
+				v[4] = GetData(0x0E); v[24] = GetData(0x30); v[4] += v[24];
+				v[5] = GetData(0x0C); v[25] = GetData(0x32); v[5] += v[25];
+				v[6] = GetData(0x08); v[27] = GetData(0x36); v[6] += v[27];
+				v[7] = GetData(0x0A); v[26] = GetData(0x34); v[7] += v[26];
 
-				v[8] = *(s16 *)(mp3data+inPtr+(0x1E^2)); v[16] = *(s16 *)(mp3data+inPtr+(0x20^2)); v[8] += v[16];
-				v[9] = *(s16 *)(mp3data+inPtr+(0x1C^2)); v[17] = *(s16 *)(mp3data+inPtr+(0x22^2)); v[9] += v[17];
-				v[10]= *(s16 *)(mp3data+inPtr+(0x18^2)); v[19] = *(s16 *)(mp3data+inPtr+(0x26^2)); v[10]+= v[19];
-				v[11]= *(s16 *)(mp3data+inPtr+(0x1A^2)); v[18] = *(s16 *)(mp3data+inPtr+(0x24^2)); v[11]+= v[18];
+				v[8] = GetData(0x1E); v[16] = GetData(0x20); v[8] += v[16];
+				v[9] = GetData(0x1C); v[17] = GetData(0x22); v[9] += v[17];
+				v[10]= GetData(0x18); v[19] = GetData(0x26); v[10]+= v[19];
+				v[11]= GetData(0x1A); v[18] = GetData(0x24); v[11]+= v[18];
 
-				v[12]= *(s16 *)(mp3data+inPtr+(0x10^2)); v[23] = *(s16 *)(mp3data+inPtr+(0x2E^2)); v[12]+= v[23];
-				v[13]= *(s16 *)(mp3data+inPtr+(0x12^2)); v[22] = *(s16 *)(mp3data+inPtr+(0x2C^2)); v[13]+= v[22];
-				v[14]= *(s16 *)(mp3data+inPtr+(0x16^2)); v[20] = *(s16 *)(mp3data+inPtr+(0x28^2)); v[14]+= v[20];
-				v[15]= *(s16 *)(mp3data+inPtr+(0x14^2)); v[21] = *(s16 *)(mp3data+inPtr+(0x2A^2)); v[15]+= v[21];
+				v[12]= GetData(0x10); v[23] = GetData(0x2E); v[12]+= v[23];
+				v[13]= GetData(0x12); v[22] = GetData(0x2C); v[13]+= v[22];
+				v[14]= GetData(0x16); v[20] = GetData(0x28); v[14]+= v[20];
+				v[15]= GetData(0x14); v[21] = GetData(0x2A); v[15]+= v[21];
 
 				// Part 2-4
 
@@ -378,25 +386,25 @@ void InnerLoop () {
 
 				// Part 6 - 100% Accurate
 
-				v[0] = *(s16 *)(mp3data+inPtr+(0x00^2)); v[31] = *(s16 *)(mp3data+inPtr+(0x3E^2)); v[0] -= v[31];
-				v[1] = *(s16 *)(mp3data+inPtr+(0x02^2)); v[30] = *(s16 *)(mp3data+inPtr+(0x3C^2)); v[1] -= v[30];
-				v[2] = *(s16 *)(mp3data+inPtr+(0x06^2)); v[28] = *(s16 *)(mp3data+inPtr+(0x38^2)); v[2] -= v[28];
-				v[3] = *(s16 *)(mp3data+inPtr+(0x04^2)); v[29] = *(s16 *)(mp3data+inPtr+(0x3A^2)); v[3] -= v[29];
+				v[0] = GetData(0x00); v[31] = GetData(0x3E); v[0] -= v[31];
+				v[1] = GetData(0x02); v[30] = GetData(0x3C); v[1] -= v[30];
+				v[2] = GetData(0x06); v[28] = GetData(0x38); v[2] -= v[28];
+				v[3] = GetData(0x04); v[29] = GetData(0x3A); v[3] -= v[29];
 
-				v[4] = *(s16 *)(mp3data+inPtr+(0x0E^2)); v[24] = *(s16 *)(mp3data+inPtr+(0x30^2)); v[4] -= v[24];
-				v[5] = *(s16 *)(mp3data+inPtr+(0x0C^2)); v[25] = *(s16 *)(mp3data+inPtr+(0x32^2)); v[5] -= v[25];
-				v[6] = *(s16 *)(mp3data+inPtr+(0x08^2)); v[27] = *(s16 *)(mp3data+inPtr+(0x36^2)); v[6] -= v[27];
-				v[7] = *(s16 *)(mp3data+inPtr+(0x0A^2)); v[26] = *(s16 *)(mp3data+inPtr+(0x34^2)); v[7] -= v[26];
+				v[4] = GetData(0x0E); v[24] = GetData(0x30); v[4] -= v[24];
+				v[5] = GetData(0x0C); v[25] = GetData(0x32); v[5] -= v[25];
+				v[6] = GetData(0x08); v[27] = GetData(0x36); v[6] -= v[27];
+				v[7] = GetData(0x0A); v[26] = GetData(0x34); v[7] -= v[26];
 
-				v[8] = *(s16 *)(mp3data+inPtr+(0x1E^2)); v[16] = *(s16 *)(mp3data+inPtr+(0x20^2)); v[8] -= v[16];
-				v[9] = *(s16 *)(mp3data+inPtr+(0x1C^2)); v[17] = *(s16 *)(mp3data+inPtr+(0x22^2)); v[9] -= v[17];
-				v[10]= *(s16 *)(mp3data+inPtr+(0x18^2)); v[19] = *(s16 *)(mp3data+inPtr+(0x26^2)); v[10]-= v[19];
-				v[11]= *(s16 *)(mp3data+inPtr+(0x1A^2)); v[18] = *(s16 *)(mp3data+inPtr+(0x24^2)); v[11]-= v[18];
+				v[8] = GetData(0x1E); v[16] = GetData(0x20); v[8] -= v[16];
+				v[9] = GetData(0x1C); v[17] = GetData(0x22); v[9] -= v[17];
+				v[10]= GetData(0x18); v[19] = GetData(0x26); v[10]-= v[19];
+				v[11]= GetData(0x1A); v[18] = GetData(0x24); v[11]-= v[18];
 
-				v[12]= *(s16 *)(mp3data+inPtr+(0x10^2)); v[23] = *(s16 *)(mp3data+inPtr+(0x2E^2)); v[12]-= v[23];
-				v[13]= *(s16 *)(mp3data+inPtr+(0x12^2)); v[22] = *(s16 *)(mp3data+inPtr+(0x2C^2)); v[13]-= v[22];
-				v[14]= *(s16 *)(mp3data+inPtr+(0x16^2)); v[20] = *(s16 *)(mp3data+inPtr+(0x28^2)); v[14]-= v[20];
-				v[15]= *(s16 *)(mp3data+inPtr+(0x14^2)); v[21] = *(s16 *)(mp3data+inPtr+(0x2A^2)); v[15]-= v[21];
+				v[12]= GetData(0x10); v[23] = GetData(0x2E); v[12]-= v[23];
+				v[13]= GetData(0x12); v[22] = GetData(0x2C); v[13]-= v[22];
+				v[14]= GetData(0x16); v[20] = GetData(0x28); v[14]-= v[20];
+				v[15]= GetData(0x14); v[21] = GetData(0x2A); v[15]-= v[21];
 
 				//0, 1, 3, 2, 7, 6, 4, 5, 7, 6, 4, 5, 0, 1, 3, 2
 				const u16 LUT6[16] = { 0xFFB2, 0xFD3A, 0xF10A, 0xF854,
