@@ -83,6 +83,11 @@ s32 MixVol(s16 left, s16 right)
 	return (left * right + 0x4000) >> 15;
 }
 
+short* LoadBufferSpace(u16 offset)
+{
+    return (short *)(BufferSpace + offset);
+}
+
 void ENVMIXER() {
 	//static int envmixcnt = 0;
 	u8 flags = (u8)((k0 >> 16) & 0xff);
@@ -93,11 +98,11 @@ void ENVMIXER() {
 	MessageBox (NULL, "Unaligned EnvMixer... please report this to Azimer with the following information: RomTitle, Place in the rom it occurred, and any save state just before the error", "AudioHLE Error", MB_OK);
 	}*/
 	// ------------------------------------------------------------
-	short *inp = (short *)(BufferSpace + AudioInBuffer);
-	short *out = (short *)(BufferSpace + AudioOutBuffer);
-	short *aux1 = (short *)(BufferSpace + AudioAuxA);
-	short *aux2 = (short *)(BufferSpace + AudioAuxC);
-	short *aux3 = (short *)(BufferSpace + AudioAuxE);
+	short *inp = LoadBufferSpace(AudioInBuffer);
+	short *out = LoadBufferSpace(AudioOutBuffer);
+	short *aux1 = LoadBufferSpace(AudioAuxA);
+	short *aux2 = LoadBufferSpace(AudioAuxC);
+	short *aux3 = LoadBufferSpace(AudioAuxE);
 	s32 MainR;
 	s32 MainL;
 	s32 AuxR;
@@ -316,11 +321,11 @@ void ENVMIXER2() {
 
 	//assert(0);
 
-	buffs3 = (s16 *)(BufferSpace + ((k0 >> 0x0c) & 0x0ff0));
-	bufft6 = (s16 *)(BufferSpace + ((t9 >> 0x14) & 0x0ff0));
-	bufft7 = (s16 *)(BufferSpace + ((t9 >> 0x0c) & 0x0ff0));
-	buffs0 = (s16 *)(BufferSpace + ((t9 >> 0x04) & 0x0ff0));
-	buffs1 = (s16 *)(BufferSpace + ((t9 << 0x04) & 0x0ff0));
+	buffs3 = LoadBufferSpace(((k0 >> 0x0c) & 0x0ff0));
+	bufft6 = LoadBufferSpace(((t9 >> 0x14) & 0x0ff0));
+	bufft7 = LoadBufferSpace(((t9 >> 0x0c) & 0x0ff0));
+	buffs0 = LoadBufferSpace(((t9 >> 0x04) & 0x0ff0));
+	buffs1 = LoadBufferSpace(((t9 << 0x04) & 0x0ff0));
 
 
 	v2[0] = 0 - (s16)((k0 & 0x2) >> 1);
@@ -414,11 +419,11 @@ void ENVMIXER3() {
 	u8 flags = (u8)((k0 >> 16) & 0xff);
 	u32 addy = (t9 & 0xFFFFFF);
 
-	short *inp = (short *)(BufferSpace + 0x4F0);
-	short *out = (short *)(BufferSpace + 0x9D0);
-	short *aux1 = (short *)(BufferSpace + 0xB40);
-	short *aux2 = (short *)(BufferSpace + 0xCB0);
-	short *aux3 = (short *)(BufferSpace + 0xE20);
+	short *inp = LoadBufferSpace(0x4F0);
+	short *out = LoadBufferSpace(0x9D0);
+	short *aux1 = LoadBufferSpace(0xB40);
+	short *aux2 = LoadBufferSpace(0xCB0);
+	short *aux3 = LoadBufferSpace(0xE20);
 	s32 MainR;
 	s32 MainL;
 	s32 AuxR;
