@@ -88,6 +88,16 @@ short* LoadBufferSpace(u16 offset)
     return (short *)(BufferSpace + offset);
 }
 
+s16 LoadMixer16(int offset)
+{
+	return *(s16 *)(hleMixerWorkArea + offset);
+}
+
+s32 LoadMixer32(int offset)
+{
+	return *(s32 *)(hleMixerWorkArea + offset);
+}
+
 void ENVMIXER() {
 	//static int envmixcnt = 0;
 	u8 flags = (u8)((k0 >> 16) & 0xff);
@@ -139,16 +149,16 @@ void ENVMIXER() {
 		// Load LVol, RVol, LAcc, and RAcc (all 32bit)
 		// Load Wet, Dry, LTrg, RTrg
 		memcpy((u8 *)hleMixerWorkArea, (rdram + addy), 80);
-		Wet = *(s16 *)(hleMixerWorkArea + 0); // 0-1
-		Dry = *(s16 *)(hleMixerWorkArea + 2); // 2-3
-		LTrg = *(s32 *)(hleMixerWorkArea + 4); // 4-5
-		RTrg = *(s32 *)(hleMixerWorkArea + 6); // 6-7
-		LRamp = *(s32 *)(hleMixerWorkArea + 8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
-		RRamp = *(s32 *)(hleMixerWorkArea + 10); // 10-11
-		LAdderEnd = *(s32 *)(hleMixerWorkArea + 12); // 12-13
-		RAdderEnd = *(s32 *)(hleMixerWorkArea + 14); // 14-15
-		LAdderStart = *(s32 *)(hleMixerWorkArea + 16); // 12-13
-		RAdderStart = *(s32 *)(hleMixerWorkArea + 18); // 14-15
+		Wet = LoadMixer16(0); // 0-1
+		Dry = LoadMixer16(2); // 2-3
+		LTrg = LoadMixer32(4); // 4-5
+		RTrg = LoadMixer32(6); // 6-7
+		LRamp = LoadMixer32(8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
+		RRamp = LoadMixer32(10); // 10-11
+		LAdderEnd = LoadMixer32(12); // 12-13
+		RAdderEnd = LoadMixer32(14); // 14-15
+		LAdderStart = LoadMixer32(16); // 12-13
+		RAdderStart = LoadMixer32(18); // 14-15
 	}
 
 	if (!(flags&A_AUX)) {
@@ -457,18 +467,18 @@ void ENVMIXER3() {
 	}
 	else {
 		memcpy((u8 *)hleMixerWorkArea, rdram + addy, 80);
-		Wet = *(s16 *)(hleMixerWorkArea + 0); // 0-1
-		Dry = *(s16 *)(hleMixerWorkArea + 2); // 2-3
-		LTrg = *(s16 *)(hleMixerWorkArea + 4); // 4-5
-		RTrg = *(s16 *)(hleMixerWorkArea + 6); // 6-7
-		LAdder = *(s32 *)(hleMixerWorkArea + 8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
-		RAdder = *(s32 *)(hleMixerWorkArea + 10); // 10-11
-		LAcc = *(s32 *)(hleMixerWorkArea + 12); // 12-13
-		RAcc = *(s32 *)(hleMixerWorkArea + 14); // 14-15
-		LVol = *(s32 *)(hleMixerWorkArea + 16); // 16-17
-		RVol = *(s32 *)(hleMixerWorkArea + 18); // 18-19
-		LSig = *(s16 *)(hleMixerWorkArea + 20); // 20-21
-		RSig = *(s16 *)(hleMixerWorkArea + 22); // 22-23
+		Wet = LoadMixer16(0); // 0-1
+		Dry = LoadMixer16(2); // 2-3
+		LTrg = LoadMixer16(4); // 4-5
+		RTrg = LoadMixer16(6); // 6-7
+		LAdder = LoadMixer32(8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
+		RAdder = LoadMixer32(10); // 10-11
+		LAcc = LoadMixer32(12); // 12-13
+		RAcc = LoadMixer32(14); // 14-15
+		LVol = LoadMixer32(16); // 16-17
+		RVol = LoadMixer32(18); // 18-19
+		LSig = LoadMixer16(20); // 20-21
+		RSig = LoadMixer16(22); // 22-23
 	}
 
 
