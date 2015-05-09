@@ -78,6 +78,11 @@ void ENVSETUP2() {
 	//fprintf (dfile, "	env[0] = %X / env[1] = %X / env[2] = %X / env[3] = %X\n", env[0], env[1], env[2], env[3]);
 }
 
+s32 MixVol(s16 left, s16 right)
+{
+	return (left * right + 0x4000) >> 15;
+}
+
 void ENVMIXER() {
 	//static int envmixcnt = 0;
 	u8 flags = (u8)((k0 >> 16) & 0xff);
@@ -146,10 +151,10 @@ void ENVMIXER() {
 		aux2 = aux3 = zero;
 	}
 
-	oMainL = (Dry * (LTrg >> 16) + 0x4000) >> 15;
-	oAuxL = (Wet * (LTrg >> 16) + 0x4000) >> 15;
-	oMainR = (Dry * (RTrg >> 16) + 0x4000) >> 15;
-	oAuxR = (Wet * (RTrg >> 16) + 0x4000) >> 15;
+	oMainL = MixVol(Dry, (LTrg >> 16));
+	oAuxL = MixVol(Wet, (LTrg >> 16));
+	oMainR = MixVol(Dry, (RTrg >> 16));
+	oAuxR = MixVol(Wet, (RTrg >> 16));
 
 	for (int y = 0; y < AudioCount; y += 0x10) {
 
@@ -192,8 +197,8 @@ void ENVMIXER() {
 					AuxL = oAuxL;
 				}
 				else {
-					MainL = (Dry * ((s32)LAcc >> 16) + 0x4000) >> 15;
-					AuxL = (Wet * ((s32)LAcc >> 16) + 0x4000) >> 15;
+					MainL = MixVol(Dry, ((s32)LAcc >> 16));
+					AuxL = MixVol(Wet, ((s32)LAcc >> 16));
 				}
 			}
 			else {
@@ -204,8 +209,8 @@ void ENVMIXER() {
 					AuxL = oAuxL;
 				}
 				else {
-					MainL = (Dry * ((s32)LAcc >> 16) + 0x4000) >> 15;
-					AuxL = (Wet * ((s32)LAcc >> 16) + 0x4000) >> 15;
+					MainL = MixVol(Dry, ((s32)LAcc >> 16));
+					AuxL = MixVol(Wet, ((s32)LAcc >> 16));
 				}
 			}
 
@@ -217,8 +222,8 @@ void ENVMIXER() {
 					AuxR = oAuxR;
 				}
 				else {
-					MainR = (Dry * ((s32)RAcc >> 16) + 0x4000) >> 15;
-					AuxR = (Wet * ((s32)RAcc >> 16) + 0x4000) >> 15;
+					MainR = MixVol(Dry, ((s32)RAcc >> 16));
+					AuxR = MixVol(Wet, ((s32)RAcc >> 16));
 				}
 			}
 			else {
@@ -229,8 +234,8 @@ void ENVMIXER() {
 					AuxR = oAuxR;
 				}
 				else {
-					MainR = (Dry * ((s32)RAcc >> 16) + 0x4000) >> 15;
-					AuxR = (Wet * ((s32)RAcc >> 16) + 0x4000) >> 15;
+					MainR = MixVol(Dry, ((s32)RAcc >> 16));
+					AuxR = MixVol(Wet, ((s32)RAcc >> 16));
 				}
 			}
 
@@ -251,8 +256,8 @@ void ENVMIXER() {
 			AuxR  = (Wet * RTrg + 0x8000)  >> 16;
 			AuxL  = (Wet * LTrg + 0x8000)  >> 16;*/
 
-			o1 += (/*(o1*0x7fff)+*/(i1*MainR) + 0x4000) >> 15;
-			a1 += (/*(a1*0x7fff)+*/(i1*MainL) + 0x4000) >> 15;
+			o1 += MixVol(/*(o1*0x7fff)+*/ i1, MainR);
+			a1 += MixVol(/*(a1*0x7fff)+*/ i1, MainL);
 
 			/*		o1=((s64)(((s64)o1*0xfffe)+((s64)i1*MainR*2)+0x8000)>>16);
 
@@ -267,8 +272,8 @@ void ENVMIXER() {
 				//a2=((s64)(((s64)a2*0xfffe)+((s64)i1*AuxR*2)+0x8000)>>16);
 
 				//a3=((s64)(((s64)a3*0xfffe)+((s64)i1*AuxL*2)+0x8000)>>16);
-				a2 += (/*(a2*0x7fff)+*/(i1*AuxR) + 0x4000) >> 15;
-				a3 += (/*(a3*0x7fff)+*/(i1*AuxL) + 0x4000) >> 15;
+				a2 += MixVol(/*(a2*0x7fff)+*/i1, AuxR);
+				a3 += MixVol(/*(a3*0x7fff)+*/i1, AuxL);
 
 				a2 = pack_signed(a2);
 				a3 = pack_signed(a3);
@@ -503,15 +508,15 @@ void ENVMIXER3() {
 			}
 		}
 		// ****************************************************************
-		MainL = ((Dry * LVol) + 0x4000) >> 15;
-		MainR = ((Dry * RVol) + 0x4000) >> 15;
+		MainL = MixVol(Dry, LVol);
+		MainR = MixVol(Dry, RVol);
 
 		o1 = out[y ^ 1];
 		a1 = aux1[y ^ 1];
 		i1 = inp[y ^ 1];
 
-		o1 += ((i1*MainL) + 0x4000) >> 15;
-		a1 += ((i1*MainR) + 0x4000) >> 15;
+		o1 += MixVol(i1, MainL);
+		a1 += MixVol(i1, MainR);
 
 		// ****************************************************************
 
@@ -528,11 +533,11 @@ void ENVMIXER3() {
 		a2 = aux2[y ^ 1];
 		a3 = aux3[y ^ 1];
 
-		AuxL = ((Wet * LVol) + 0x4000) >> 15;
-		AuxR = ((Wet * RVol) + 0x4000) >> 15;
+		AuxL = MixVol(Wet, LVol);
+		AuxR = MixVol(Wet, RVol);
 
-		a2 += ((i1*AuxL) + 0x4000) >> 15;
-		a3 += ((i1*AuxR) + 0x4000) >> 15;
+		a2 += MixVol(i1, AuxL);
+		a3 += MixVol(i1, AuxR);
 
 		a2 = pack_signed(a2);
 		a3 = pack_signed(a3);
