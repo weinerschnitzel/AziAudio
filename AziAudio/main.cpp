@@ -9,13 +9,6 @@
 *                                                                           *
 ****************************************************************************/
 
-#if defined(_XBOX)
-#include <xtl.h>
-#else
-#include <windows.h>
-#include <commctrl.h>
-#endif
-
 #include "common.h"
 #include "AudioSpec.h"
 #ifdef USE_XAUDIO2
@@ -96,7 +89,7 @@ BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, L
 }
 
 
-FUNC_TYPE(void) NAME_DEFINE(DllAbout) ( HWND hParent ){
+EXPORT void CALL DllAbout(HWND hParent) {
 	MessageBoxA(hParent, "No About yet... ", "About Box", MB_OK);
 }
 
@@ -193,7 +186,7 @@ INT_PTR CALLBACK ConfigProc(
 }
 #endif
 
-FUNC_TYPE(void) NAME_DEFINE(DllConfig)(HWND hParent)
+EXPORT void CALL DllConfig(HWND hParent)
 {
 #if defined(_XBOX) 
 	MessageBox(hParent, "We don't use config dialog... ", "", MB_OK);
@@ -204,7 +197,7 @@ FUNC_TYPE(void) NAME_DEFINE(DllConfig)(HWND hParent)
 #endif
 }
 
-FUNC_TYPE(void) NAME_DEFINE(DllTest) ( HWND hParent ){
+EXPORT void CALL DllTest(HWND hParent) {
 	MessageBoxA(hParent, "Nothing to test yet... ", "Test Box", MB_OK);
 }
 
@@ -218,7 +211,7 @@ DWORD junk;
 DWORD RSPRegs[10];
 BOOL audioIsInitialized = FALSE;
 
-FUNC_TYPE(BOOL) NAME_DEFINE(InitiateAudio) (AUDIO_INFO Audio_Info){
+EXPORT BOOL CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 
 	//RedirectIOToConsole();
 	Dacrate = 0;
@@ -264,13 +257,13 @@ FUNC_TYPE(BOOL) NAME_DEFINE(InitiateAudio) (AUDIO_INFO Audio_Info){
 	return TRUE;
 }
 
-FUNC_TYPE(void) NAME_DEFINE(CloseDLL) (void){
+EXPORT void CALL CloseDLL(void) {
 	ChangeABI (0);
 	if (audioIsInitialized == TRUE) snd.DeInitialize();
 	snd.DeInitialize();
 }
 
-FUNC_TYPE(void) NAME_DEFINE(GetDllInfo) ( PLUGIN_INFO * PluginInfo ){
+EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo) {
 	PluginInfo->MemoryBswaped = TRUE;
 	PluginInfo->NormalMemory  = FALSE;
 	safe_strcpy(PluginInfo->Name, 100, PLUGIN_VERSION);
@@ -278,7 +271,7 @@ FUNC_TYPE(void) NAME_DEFINE(GetDllInfo) ( PLUGIN_INFO * PluginInfo ){
 	PluginInfo->Version = 0x0101; // Set this to retain backwards compatibility
 }
 
-FUNC_TYPE(void) NAME_DEFINE(ProcessAList)(void){
+EXPORT void CALL ProcessAList(void) {
 	/*WINDOWINFO wi;
 	if ((GetKeyState(VK_CONTROL) & GetKeyState(VK_MENU) & GetKeyState(VK_F12) & 0x100) &&
 		(GetForegroundWindow() == AudioInfo.hwnd))
@@ -294,7 +287,7 @@ FUNC_TYPE(void) NAME_DEFINE(ProcessAList)(void){
 	}
 }
 
-FUNC_TYPE(void) NAME_DEFINE(RomOpened)(void) {
+EXPORT void CALL RomOpened(void) {
 	ChangeABI(0);
 	snd.DeInitialize();
 	Dacrate = 0;
@@ -302,7 +295,7 @@ FUNC_TYPE(void) NAME_DEFINE(RomOpened)(void) {
 //	RspClosed();
 }
 
-FUNC_TYPE(void) NAME_DEFINE(RomClosed) (void){
+EXPORT void CALL RomClosed(void) {
 	ChangeABI (0);
 	snd.DeInitialize();
 	Dacrate = 0;
@@ -310,7 +303,7 @@ FUNC_TYPE(void) NAME_DEFINE(RomClosed) (void){
 //	RspClosed();
 }
 
-FUNC_TYPE(void) NAME_DEFINE(AiDacrateChanged) (int  SystemType) {
+EXPORT void CALL AiDacrateChanged(int SystemType) {
 	DWORD Frequency, video_clock;
 
 	if (Dacrate == *AudioInfo.AI_DACRATE_REG)
@@ -336,7 +329,7 @@ FUNC_TYPE(void) NAME_DEFINE(AiDacrateChanged) (int  SystemType) {
 	if (audioIsInitialized == TRUE) snd.SetFrequency(Frequency);
 }
 
-FUNC_TYPE(void) NAME_DEFINE(AiLenChanged) (void){
+EXPORT void CALL AiLenChanged(void) {
 	DWORD retVal; 
 	if (audioIsInitialized == FALSE)
 	{
@@ -362,7 +355,7 @@ FUNC_TYPE(void) NAME_DEFINE(AiLenChanged) (void){
 	// 3: Flag empty buffer as filled
 }
 
-FUNC_TYPE(DWORD) NAME_DEFINE(AiReadLength) (void){
+EXPORT DWORD CALL AiReadLength(void) {
 	if (audioIsInitialized == FALSE) return 0;
 	*AudioInfo.AI_LEN_REG = snd.GetReadStatus ();
 	return *AudioInfo.AI_LEN_REG;
@@ -374,7 +367,7 @@ FUNC_TYPE(DWORD) NAME_DEFINE(AiReadLength) (void){
 // Deprecated Functions
 
 
-FUNC_TYPE(void) NAME_DEFINE(AiUpdate) (BOOL Wait) {
+EXPORT void CALL AiUpdate(BOOL Wait) {
 	static int intCount = 0;
 	if (Wait)
 	{

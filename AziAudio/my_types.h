@@ -58,13 +58,18 @@
  * Something which strictly emphasizes pre-C99 standard compliance likely
  * does not have any <stdint.h> that we could include (nor built-in types).
  */
+#elif defined(_XBOX) || defined(_XENON)
+/*
+ * Since the Microsoft APIs frequently use `long` instead of `int` to ensure
+ * a minimum of 32-bit DWORD size, they were forced to propose a "LLP64" ABI.
+ */
+#define MICROSOFT_ABI
 #elif defined(_MSC_VER) && (_MSC_VER < 1600)
 /*
  * In some better, older versions of MSVC, there often was no <stdint.h>.
  * We can still use the built-in MSVC types to create the <stdint.h> types.
  */
-#elif defined(_XBOX)
-#include "XBox/stdint.h"
+#define MICROSOFT_ABI
 #else
 #include <stdint.h>
 #endif
@@ -146,14 +151,6 @@
  && defined(HAVE_INT32)\
  && defined(HAVE_INT64)
 #define HAVE_STANDARD_INTEGER_TYPES
-#endif
-
-/*
- * Since the Microsoft Windows API frequently uses `long` instead of `int` to
- * guarantee 32-bit DWORD types, they were forced to propose a "LLP64" ABI.
- */
-#if defined(_MSC_VER)
-#define MICROSOFT_ABI
 #endif
 
 #if defined(HAVE_INT8_EXACT)
@@ -316,8 +313,11 @@ typedef void(*p_func)(void);
 #if defined(_WIN32)
 #define EXPORT      __declspec(dllexport)
 #define CALL        __cdecl
-#else
+#elif (__GNUC__)
 #define EXPORT      __attribute__((visibility("default")))
+#define CALL
+#else
+#define EXPORT
 #define CALL
 #endif
 

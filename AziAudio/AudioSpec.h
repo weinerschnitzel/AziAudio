@@ -15,11 +15,7 @@ the plugin.
 #ifndef _AUDIO_H_INCLUDED__
 #define _AUDIO_H_INCLUDED__
 
-#if defined(_XBOX)
-#include <xtl.h>
-#else
-#include <windows.h>
-#endif
+#include "common.h"
 #include "my_types.h"
 //#include "Audio #1.1EXT.h"
 
@@ -77,14 +73,6 @@ typedef struct {
 	void (*CheckInterrupts)( void );
 } AUDIO_INFO;
 
-#ifdef _XBOX
-#define NAME_DEFINE(name) _AUDIO_AZIAUD_##name
-#define FUNC_TYPE(type) type
-#else
-#define NAME_DEFINE(name)  CALL name
-#define FUNC_TYPE(type) EXPORT type
-#endif
-
 /******************************************************************
   Function: AiDacrateChanged
   Purpose:  This function is called to notify the dll that the
@@ -95,7 +83,7 @@ typedef struct {
                SYSTEM_MPAL	2
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(AiDacrateChanged) (int  SystemType);
+EXPORT void CALL AiDacrateChanged(int SystemType);
 
 /******************************************************************
   Function: AiLenChanged
@@ -104,7 +92,7 @@ FUNC_TYPE(void) NAME_DEFINE(AiDacrateChanged) (int  SystemType);
   input:    none
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(AiLenChanged) (void);
+EXPORT void CALL AiLenChanged(void);
 
 /******************************************************************
   Function: AiReadLength
@@ -113,7 +101,7 @@ FUNC_TYPE(void) NAME_DEFINE(AiLenChanged) (void);
   input:    none
   output:   The amount of bytes still left to play.
 *******************************************************************/ 
-FUNC_TYPE(DWORD) NAME_DEFINE(AiReadLength) (void);
+EXPORT DWORD CALL AiReadLength(void);
 
 /******************************************************************
   Function: AiUpdate
@@ -127,7 +115,7 @@ FUNC_TYPE(DWORD) NAME_DEFINE(AiReadLength) (void);
             till there is a messgae in the its message queue.
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(AiUpdate) (BOOL Wait);
+EXPORT void CALL AiUpdate(BOOL Wait);
 
 /******************************************************************
   Function: CloseDLL
@@ -136,7 +124,7 @@ FUNC_TYPE(void) NAME_DEFINE(AiUpdate) (BOOL Wait);
   input:    none
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(CloseDLL) (void);
+EXPORT void CALL CloseDLL(void);
 
 /******************************************************************
   Function: DllAbout
@@ -145,7 +133,7 @@ FUNC_TYPE(void) NAME_DEFINE(CloseDLL) (void);
   input:    a handle to the window that calls this function
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(DllAbout) ( HWND hParent );
+EXPORT void CALL DllAbout(HWND hParent);
 
 /******************************************************************
   Function: DllConfig
@@ -154,7 +142,7 @@ FUNC_TYPE(void) NAME_DEFINE(DllAbout) ( HWND hParent );
   input:    a handle to the window that calls this function
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(DllConfig) ( HWND hParent );
+EXPORT void CALL DllConfig(HWND hParent);
 
 /******************************************************************
   Function: DllTest
@@ -163,7 +151,7 @@ FUNC_TYPE(void) NAME_DEFINE(DllConfig) ( HWND hParent );
   input:    a handle to the window that calls this function
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(DllTest) ( HWND hParent );
+EXPORT void CALL DllTest(HWND hParent);
 
 /******************************************************************
   Function: GetDllInfo
@@ -173,7 +161,7 @@ FUNC_TYPE(void) NAME_DEFINE(DllTest) ( HWND hParent );
             filled by the function. (see def above)
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(GetDllInfo) ( PLUGIN_INFO * PluginInfo );
+EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo);
 
 /******************************************************************
   Function: InitiateSound
@@ -190,7 +178,7 @@ FUNC_TYPE(void) NAME_DEFINE(GetDllInfo) ( PLUGIN_INFO * PluginInfo );
   and then call the function CheckInterrupts to tell the emulator
   that there is a waiting interrupt.
 *******************************************************************/ 
-FUNC_TYPE(BOOL) NAME_DEFINE(InitiateAudio) (AUDIO_INFO Audio_Info);
+EXPORT BOOL CALL InitiateAudio(AUDIO_INFO Audio_Info);
 
 /******************************************************************
   Function: ProcessAList
@@ -200,7 +188,7 @@ FUNC_TYPE(BOOL) NAME_DEFINE(InitiateAudio) (AUDIO_INFO Audio_Info);
   input:    none
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(ProcessAList)(void);
+EXPORT void CALL ProcessAList(void);
 
 /******************************************************************
   Function: RomClosed
@@ -208,11 +196,11 @@ FUNC_TYPE(void) NAME_DEFINE(ProcessAList)(void);
   input:    none
   output:   none
 *******************************************************************/ 
-FUNC_TYPE(void) NAME_DEFINE(RomClosed) (void);
-FUNC_TYPE(void) NAME_DEFINE(RomOpened)(void);
-FUNC_TYPE(void) NAME_DEFINE(PluginLoaded)(void);
+EXPORT void CALL RomClosed(void);
+EXPORT void CALL RomOpened(void);
+EXPORT void CALL PluginLoaded(void);
 
-FUNC_TYPE(void) NAME_DEFINE(AiCallBack) (void);
+EXPORT void CALL AiCallBack(void);
 
 extern AUDIO_INFO AudioInfo;
 

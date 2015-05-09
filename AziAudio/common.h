@@ -17,6 +17,7 @@
 #include "XBox/xbox_depp.h"
 #else
 #include <windows.h>
+#include <commctrl.h>
 #endif
 
 #include <stdio.h>

@@ -10,11 +10,33 @@
 #pragma warning(disable:4244)	// conversion, possible loss of data
 #pragma warning(disable:4731)	// frame pointer register modified by inline assembly code
 
+/*
+ * name-mangling needed to statically link the zilmar-spec plugin within
+ * Surreal64, which requires unique function names per each "plugin"
+ */
+#if 1
+#define AiDacrateChanged        _AUDIO_AZIAUD_##AiDacrateChanged
+#define AiLenChanged            _AUDIO_AZIAUD_##AiLenChanged
+#define AiReadLength            _AUDIO_AZIAUD_##AiReadLength
+#define AiUpdate                _AUDIO_AZIAUD_##AiUpdate
+#define CloseDLL                _AUDIO_AZIAUD_##CloseDLL
+#define DllAbout                _AUDIO_AZIAUD_##DllAbout
+#define DllConfig               _AUDIO_AZIAUD_##DllConfig
+#define DllTest                 _AUDIO_AZIAUD_##DllTest
+#define GetDllInfo              _AUDIO_AZIAUD_##GetDllInfo
+#define InitiateAudio           _AUDIO_AZIAUD_##InitiateAudio
+#define ProcessAList            _AUDIO_AZIAUD_##ProcessAList
+#define RomClosed               _AUDIO_AZIAUD_##RomClosed
+#define RomOpened               _AUDIO_AZIAUD_##RomOpened
+
+#define PluginLoaded            _AUDIO_AZIAUD_##PluginLoaded
+#define AiCallBack              _AUDIO_AZIAUD_##AiCallBack
+#endif
 
 #ifndef _XBOX_ICC
 #include <xtl.h>
 #else
-#include <mytypes.h>
+#include "my_types.h"
 #endif
 
 #if defined(__cplusplus)
