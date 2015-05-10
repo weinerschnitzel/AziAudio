@@ -42,7 +42,7 @@ void DMEMMOVE() {
 	u32 count = ((t9 + 3) & 0xfffc);
 
 	for (cnt = 0; cnt < count; cnt++) {
-		*(u8 *)(BufferSpace + ((cnt + v1) ^ 3)) = *(u8 *)(BufferSpace + ((cnt + v0) ^ 3));
+		*(u8 *)(BufferSpace + BES(cnt + v1)) = *(u8 *)(BufferSpace + BES(cnt + v0));
 	}
 }
 
@@ -61,7 +61,7 @@ void DMEMMOVE2() { // Needs accuracy verification...
 
 	//memcpy (dmem+v1, dmem+v0, count-1);
 	for (cnt = 0; cnt < count; cnt++) {
-		*(u8 *)(BufferSpace + ((cnt + v1) ^ 3)) = *(u8 *)(BufferSpace + ((cnt + v0) ^ 3));
+		*(u8 *)(BufferSpace + BES(cnt + v1)) = *(u8 *)(BufferSpace + BES(cnt + v0));
 	}
 }
 
@@ -74,7 +74,7 @@ void DMEMMOVE3() { // Needs accuracy verification...
 
 	//memcpy (dmem+v1, dmem+v0, count-1);
 	for (cnt = 0; cnt < count; cnt++) {
-		*(u8 *)(BufferSpace + ((cnt + v1) ^ 3)) = *(u8 *)(BufferSpace + ((cnt + v0) ^ 3));
+		*(u8 *)(BufferSpace + BES(cnt + v1)) = *(u8 *)(BufferSpace + BES(cnt + v0));
 	}
 }
 

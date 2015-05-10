@@ -80,7 +80,7 @@ void ADPCM() { // Work in progress! :)
 		// area of memory in the case of A_LOOP or just
 		// the values we calculated the last time
 
-		code = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+		code = BufferSpace[BES(AudioInBuffer + inPtr)];
 		index = code & 0xf;
 		index <<= 4;									// index into the adpcm code table
 		book1 = (short *)&adpcmtable[index];
@@ -98,7 +98,7 @@ void ADPCM() { // Work in progress! :)
 		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
 			// which yields 8 short pcm values
 		{
-			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -110,7 +110,7 @@ void ADPCM() { // Work in progress! :)
 		j = 0;
 		while (j<8)
 		{
-			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -214,7 +214,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	int inp2[8];
 	out += 16;
 	while (count>0) {
-		code = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+		code = BufferSpace[BES(AudioInBuffer + inPtr)];
 		index = code & 0xf;
 		index <<= 4;
 		book1 = (short *)&adpcmtable[index];
@@ -226,7 +226,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		j = 0;
 
 		while (j<8) {
-			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, mask1, 8, code, srange, vscale); // this will in effect be signed
@@ -248,7 +248,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		j = 0;
 		while (j<8) {
-			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, mask1, 8, code, srange, vscale);
@@ -345,7 +345,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		// area of memory in the case of A_LOOP or just
 		// the values we calculated the last time
 
-		code = BufferSpace[(0x4f0 + inPtr) ^ 3];
+		code = BufferSpace[BES(0x4f0 + inPtr)];
 		index = code & 0xf;
 		index <<= 4;									// index into the adpcm code table
 		book1 = (short *)&adpcmtable[index];
@@ -363,7 +363,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
 			// which yields 8 short pcm values
 		{
-			icode = BufferSpace[(0x4f0 + inPtr) ^ 3];
+			icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -375,7 +375,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		j = 0;
 		while (j<8)
 		{
-			icode = BufferSpace[(0x4f0 + inPtr) ^ 3];
+			icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed

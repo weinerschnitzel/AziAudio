@@ -81,7 +81,7 @@ void INTERL2() {
 	src = (BYTE *)(BufferSpace);//[In];
 	dst = (BYTE *)(BufferSpace);//[Out];
 	while (Count) {
-		*(short *)(dst + (Out ^ 3)) = *(short *)(src + (In ^ 3));
+		*(short *)(dst + BES(Out)) = *(short *)(src + BES(In));
 		Out += 2;
 		In += 4;
 		Count--;
@@ -165,7 +165,7 @@ void MIXER() {
 		return;
 
 	for (int x = 0; x < AudioCount; x += 2) {
-		temp = (*(s16 *)(BufferSpace + dmemin + x) * gain) >> 15;
+		temp  = (*(s16 *)(BufferSpace + dmemin + x) * gain) >> 15;
 		temp += *(s16 *)(BufferSpace + dmemout + x);
 		temp = pack_signed((s32)temp);
 
