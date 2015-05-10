@@ -22,7 +22,7 @@ void InitInput(int *inp, int index, BYTE icode, u8 mask, u8 shifter, BYTE code, 
 		int catchme = 1;
 }
 
-void ADPCMFillArray(int *a, short *book1, short *book2, int l1, int l2, int *inp)
+void ADPCMFillArray(int *a, s16* book1, s16* book2, int l1, int l2, int *inp)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -41,17 +41,19 @@ void ADPCM() { // Work in progress! :)
 	WORD Gain = (u16)(k0 & 0xffff);
 	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = 0;
-	//short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
-	short *out = (short *)(BufferSpace + AudioOutBuffer);
-	BYTE *in = (BYTE *)(BufferSpace + AudioInBuffer);
-	short count = (short)AudioCount;
+	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
+	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
+	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
+	s16 count = (s16)AudioCount;
 	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
 	int a[8];
-	short *book1, *book2;
+	s16* book1;
+	s16* book2;
+
 	/*
 	if (Address > (1024*1024*8))
 	Address = (t9 & 0xffffff);
@@ -83,7 +85,7 @@ void ADPCM() { // Work in progress! :)
 		code = BufferSpace[BES(AudioInBuffer + inPtr)];
 		index = code & 0xf;
 		index <<= 4;									// index into the adpcm code table
-		book1 = (short *)&adpcmtable[index];
+		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
 		vscale = (0x8000 >> ((12 - code) - 1));			// very strange. 0x8000 would be .5 in 16:16 format
@@ -153,17 +155,18 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	WORD Gain = (u16)(k0 & 0xffff);
 	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = 0;
-	//short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
-	short *out = (short *)(BufferSpace + AudioOutBuffer);
-	BYTE *in = (BYTE *)(BufferSpace + AudioInBuffer);
-	short count = (short)AudioCount;
+	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
+	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
+	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
+	s16 count = (s16)AudioCount;
 	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
 	int a[8];
-	short *book1, *book2;
+	s16* book1;
+	s16* book2;
 
 	u8 srange;
 	u8 inpinc;
@@ -194,7 +197,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[HES(loopval + i*2)];
+		 out[i]=*(s16 *)&rdram[HES(loopval + i*2)];
 		 }*/
 			memcpy(out, &rdram[loopval], 32);
 		}
@@ -202,7 +205,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[HES(Address + i*2)];
+		 out[i]=*(s16 *)&rdram[HES(Address + i*2)];
 		 }*/
 			memcpy(out, &rdram[Address], 32);
 		}
@@ -217,7 +220,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		code = BufferSpace[BES(AudioInBuffer + inPtr)];
 		index = code & 0xf;
 		index <<= 4;
-		book1 = (short *)&adpcmtable[index];
+		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;
 		vscale = (0x8000 >> ((srange - code) - 1));
@@ -299,17 +302,18 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	//WORD Gain=(u16)(k0&0xffff);
 	DWORD Address = (k0 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = (t9 >> 12) & 0xf;
-	//short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
-	short *out = (short *)(BufferSpace + (t9 & 0xfff) + 0x4f0);
+	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
+	s16 *out = (s16 *)(BufferSpace + (t9 & 0xfff) + 0x4f0);
 	BYTE *in = (BYTE *)(BufferSpace + ((t9 >> 12) & 0xf) + 0x4f0);
-	short count = (short)((t9 >> 16) & 0xfff);
+	s16 count = (s16)((t9 >> 16) & 0xfff);
 	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
 	int a[8];
-	short *book1, *book2;
+	s16* book1;
+	s16* book2;
 
 	memset(out, 0, 32);
 
@@ -319,7 +323,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[HES(loopval + i*2)];
+		 out[i]=*(s16 *)&rdram[HES(loopval + i*2)];
 		 }*/
 			memcpy(out, &rdram[loopval], 32);
 		}
@@ -327,7 +331,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[HES(Address + i*2)];
+		 out[i]=*(s16 *)&rdram[HES(Address + i*2)];
 		 }*/
 			memcpy(out, &rdram[Address], 32);
 		}
@@ -348,7 +352,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		code = BufferSpace[BES(0x4f0 + inPtr)];
 		index = code & 0xf;
 		index <<= 4;									// index into the adpcm code table
-		book1 = (short *)&adpcmtable[index];
+		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
 		vscale = (0x8000 >> ((12 - code) - 1));			// very strange. 0x8000 would be .5 in 16:16 format

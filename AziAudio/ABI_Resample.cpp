@@ -65,9 +65,9 @@ void RESAMPLE() {
 	DWORD Accum = 0;
 	DWORD location;
 	s16 *lut;
-	short *dst;
+	s16 *dst;
 	s16 *src;
-	dst = (short *)(BufferSpace);
+	dst = (s16 *)(BufferSpace);
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = (AudioInBuffer / 2);
 	u32 dstPtr = (AudioOutBuffer / 2);
@@ -130,9 +130,9 @@ void RESAMPLE2() {
 	DWORD Accum = 0;
 	DWORD location;
 	s16 *lut;
-	short *dst;
+	s16 *dst;
 	s16 *src;
-	dst = (short *)(BufferSpace);
+	dst = (s16 *)(BufferSpace);
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = (AudioInBuffer / 2);
 	u32 dstPtr = (AudioOutBuffer / 2);
@@ -182,9 +182,9 @@ void RESAMPLE3() {
 	DWORD Accum = 0;
 	DWORD location;
 	s16 *lut;
-	short *dst;
+	s16 *dst;
 	s16 *src;
-	dst = (short *)(BufferSpace);
+	dst = (s16 *)(BufferSpace);
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = ((((t9 >> 2) & 0xfff) + 0x4f0) / 2);
 	u32 dstPtr;//=(AudioOutBuffer/2);

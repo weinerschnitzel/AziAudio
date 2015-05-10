@@ -194,13 +194,13 @@ void MP3AB0 () {
 
 int CalcDeWindow(u32 addptr, int mp3DataIndex, u32 offset, int offsetValue)
 {
-	return ((int)*(s16 *)(mp3data + (addptr)+ mp3DataIndex) * (short)DeWindowLUT[offset + offsetValue] + 0x4000) >> 0xF;
+	return ((int)*(s16 *)(mp3data + (addptr)+ mp3DataIndex) * (s16)DeWindowLUT[offset + offsetValue] + 0x4000) >> 0xF;
 }
 
 // ** Store v[vIndex] -> (mp3DataIndex)**
 void StoreData(s32 vIndex, int mp3DataIndex)
 {
-	*(s16 *)(mp3data + mp3DataIndex) = (short)v[vIndex];
+	*(s16 *)(mp3data + mp3DataIndex) = (s16)v[vIndex];
 }
 
 
@@ -312,26 +312,26 @@ void InnerLoop () {
 				v[16] = -v[16] -v[17];
 				v[2] = v[18] + v[19];
 				// ** Store v[11] -> (T6 + 0)**
-				StoreData(11, (t6 + (short)0x0));
+				StoreData(11, (t6 + (s16)0x0000));
 				
 				v[11] = -v[11];
 				// ** Store v[16] -> (T3 + 0)**
-				StoreData(16, (t3 + (short)0x0));
+				StoreData(16, (t3 + (s16)0x0000));
 				// ** Store v[11] -> (T5 + 0)**
-				StoreData(11, (t5 + (short)0x0));
+				StoreData(11, (t5 + (s16)0x0000));
 				// 0x13E8 - Verified....
 				v[2] = -v[2];
 				// ** Store v[2] -> (T2 + 0)**
-				StoreData(2, (t2 + (short)0x0));
+				StoreData(2, (t2 + (s16)0x0000));
 				v[3]  = (((v[18] - v[19]) * 0x16A09) >> 0x10) + v[2];
 				// ** Store v[3] -> (T0 + 0)**
-				StoreData(3, (t0 + (short)0x0));
+				StoreData(3, (t0 + (s16)0x0000));
 				// 0x1400 - Verified
 				v[4] = -v[20] -v[21];
 				v[6] = v[22] + v[23];
 				v[5] = ((v[20] - v[21]) * 0x16A09) >> 0x10;
 				// ** Store v[4] -> (T3 + 0xFF80)
-				StoreData(4, (t3 + (short)0xFF80));
+				StoreData(4, (t3 + (s16)0xFF80));
 				v[7] = ((v[22] - v[23]) * 0x2D413) >> 0x10;
 				v[5] = v[5] - v[4];
 				v[7] = v[7] - v[5];
@@ -339,11 +339,11 @@ void InnerLoop () {
 				v[5] = v[5] - v[6];
 				v[4] = -v[4] - v[6];
 				// *** Store v[7] -> (T1 + 0xFF80)
-				StoreData(7, (t1 + (short)0xFF80));
+				StoreData(7, (t1 + (s16)0xFF80));
 				// *** Store v[4] -> (T2 + 0xFF80)
-				StoreData(4, (t2 + (short)0xFF80));
+				StoreData(4, (t2 + (s16)0xFF80));
 				// *** Store v[5] -> (T0 + 0xFF80)
-				StoreData(5, (t0 + (short)0xFF80));
+				StoreData(5, (t0 + (s16)0xFF80));
 				v[8] = v[24] + v[25];
 
 
@@ -363,25 +363,25 @@ void InnerLoop () {
 				v[17] = v[13] - v[10];
 				v[9] = v[9] + v[14];
 				// ** Store v[9] -> (T6 + 0x40)
-				StoreData(9, (t6 + (short)0x40));
+				StoreData(9, (t6 + (s16)0x0040));
 				v[11] = v[11] - v[13];
 				// ** Store v[17] -> (T0 + 0xFFC0)
-				StoreData(17, (t0 + (short)0xFFC0));
+				StoreData(17, (t0 + (s16)0xFFC0));
 				v[12] = v[8] - v[12];
 				// ** Store v[11] -> (T0 + 0x40)
-				StoreData(11, (t0 + (short)0x40));
+				StoreData(11, (t0 + (s16)0x0040));
 				v[8] = -v[8];
 				// ** Store v[15] -> (T1 + 0xFFC0)
-				StoreData(15, (t1 + (short)0xFFC0));
+				StoreData(15, (t1 + (s16)0xFFC0));
 				v[10] = -v[10] -v[12];
 				// ** Store v[12] -> (T2 + 0x40)
-				StoreData(12, (t2 + (short)0x40));
+				StoreData(12, (t2 + (s16)0x0040));
 				// ** Store v[8] -> (T3 + 0xFFC0)
-				StoreData(8, (t3 + (short)0xFFC0));
+				StoreData(8, (t3 + (s16)0xFFC0));
 				// ** Store v[14] -> (T5 + 0x40)
-				StoreData(14, (t5 + (short)0x40));
+				StoreData(14, (t5 + (s16)0x0040));
 				// ** Store v[10] -> (T2 + 0xFFC0)
-				StoreData(10, (t2 + (short)0xFFC0));
+				StoreData(10, (t2 + (s16)0xFFC0));
 				// 0x14FC - Verified...
 
 				// Part 6 - 100% Accurate
@@ -424,7 +424,7 @@ void InnerLoop () {
 				// Part 7: - 100% Accurate + SSV - Unoptimized
 
 				v[0] = ( v[17] + v[16] ) >> 1;
-				v[1] = ((v[17] * (int)((short)0xA57E * 2)) + (v[16] * 0xB504)) >> 0x10;
+				v[1] = ((v[17] * (int)((s16)0xA57E * 2)) + (v[16] * 0xB504)) >> 0x10;
 				v[2] = -v[18] -v[19];
 				v[3] = ((v[18] - v[19]) * 0x16A09) >> 0x10;
 				v[4] = v[20] + v[21] + v[0];
@@ -433,14 +433,14 @@ void InnerLoop () {
 				v[7] = (((v[22] - v[23]) * 0x2D413) >> 0x10) + v[0] + v[1] + v[3];
 				// 0x16A8
 				// Save v[0] -> (T3 + 0xFFE0)
-				*(s16 *)(mp3data+((t3+(short)0xFFE0))) = (short)-v[0];
+				*(s16 *)(mp3data+((t3 + (s16)0xFFE0))) = (s16)-v[0];
 				v[8] = v[24] + v[25];
 				v[9] = ((v[24] - v[25]) * 0x16A09) >> 0x10;
 				v[10] = ((v[26] + v[27]) << 1) + v[8];
 				v[11] = (((v[26] - v[27]) * 0x2D413) >> 0x10) + v[8] + v[9];
 				v[12] = v[4] - ((v[28] + v[29]) << 1);
 				// ** Store v12 -> (T2 + 0x20)
-				StoreData(12, (t2 + (short)0x20));
+				StoreData(12, (t2 + (s16)0x0020));
 				v[13] = (((v[28] - v[29]) * 0x2D413) >> 0x10) - v[12] - v[5];
 				v[14] = v[30] + v[31];
 				v[14] = v[14] + v[14];
@@ -448,51 +448,51 @@ void InnerLoop () {
 				v[14] = v[6] - v[14];
 				v[15] = (((v[30] - v[31]) * 0x5A827) >> 0x10) - v[7];
 				// Store v14 -> (T5 + 0x20)
-				StoreData(14, (t5 + (short)0x20));
+				StoreData(14, (t5 + (s16)0x0020));
 				v[14] = v[14] + v[1];
 				// Store v[14] -> (T6 + 0x20)
-				StoreData(14, (t6 + (short)0x20));
+				StoreData(14, (t6 + (s16)0x0020));
 				// Store v[15] -> (T1 + 0xFFE0)
-				StoreData(15, (t1 + (short)0xFFE0));
+				StoreData(15, (t1 + (s16)0xFFE0));
 				v[9] = v[9] + v[10];
 				v[1] = v[1] + v[6];
 				v[6] = v[10] - v[6];
 				v[1] = v[9] - v[1];
 				// Store v[6] -> (T5 + 0x60)
-				StoreData(6, (t5 + (short)0x60));
+				StoreData(6, (t5 + (s16)0x0060));
 				v[10] = v[10] + v[2];
 				v[10] = v[4] - v[10];
 				// Store v[10] -> (T2 + 0xFFA0)
-				StoreData(10, (t2 + (short)0xFFA0));
+				StoreData(10, (t2 + (s16)0xFFA0));
 				v[12] = v[2] - v[12];
 				// Store v[12] -> (T2 + 0xFFE0)
-				StoreData(12, (t2 + (short)0xFFE0));
+				StoreData(12, (t2 + (s16)0xFFE0));
 				v[5] = v[4] + v[5];
 				v[4] = v[8] - v[4];
 				// Store v[4] -> (T2 + 0x60)
-				StoreData(4, (t2 + (short)0x60));
+				StoreData(4, (t2 + (s16)0x0060));
 				v[0] = v[0] - v[8];
 				// Store v[0] -> (T3 + 0xFFA0)
-				StoreData(0, (t3 + (short)0xFFA0));
+				StoreData(0, (t3 + (s16)0xFFA0));
 				v[7] = v[7] - v[11];
 				// Store v[7] -> (T1 + 0xFFA0)
-				StoreData(7, (t1 + (short)0xFFA0));
+				StoreData(7, (t1 + (s16)0xFFA0));
 				v[11] = v[11] - v[3];
 				// Store v[1] -> (T6 + 0x60)
-				StoreData(1, (t6 + (short)0x60));
+				StoreData(1, (t6 + (s16)0x0060));
 				v[11] = v[11] - v[5];
 				// Store v[11] -> (T0 + 0x60)
-				StoreData(11, (t0 + (short)0x60));
+				StoreData(11, (t0 + (s16)0x0060));
 				v[3] = v[3] - v[13];
 				// Store v[3] -> (T0 + 0x20)
-				StoreData(3, (t0 + (short)0x20));
+				StoreData(3, (t0 + (s16)0x0020));
 				v[13] = v[13] + v[2];
 				// Store v[13] -> (T0 + 0xFFE0)
-				StoreData(13, (t0 + (short)0xFFE0));
+				StoreData(13, (t0 + (s16)0xFFE0));
 				//v[2] = ;
 				v[2] = (v[5] - v[2]) - v[9];
 				// Store v[2] -> (T0 + 0xFFA0)
-				StoreData(2, (t0 + (short)0xFFA0));
+				StoreData(2, (t0 + (s16)0xFFA0));
 				// 0x7A8 - Verified...
 
 				// Step 8 - Dewindowing

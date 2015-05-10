@@ -12,7 +12,7 @@
 #include "audiohle.h"
 
 void ADDMIXER() {
-	short Count = (k0 >> 12) & 0x00ff0;
+	s16 Count = (k0 >> 12) & 0x0FF0;
 	u16 InBuffer = (t9 >> 16);
 	u16 OutBuffer = t9 & 0xffff;
 
@@ -20,7 +20,7 @@ void ADDMIXER() {
 	s32 temp;
 	inp = (s16 *)(BufferSpace + InBuffer);
 	outp = (s16 *)(BufferSpace + OutBuffer);
-	for (int cntr = 0; cntr < Count; cntr += 2) {
+	for (s16 cntr = 0; cntr < Count; cntr += 2) {
 		temp = *outp + *inp;
 		temp = pack_signed(temp);
 		outp++;	inp++;
@@ -73,15 +73,16 @@ void INTERLEAVE() {
 }
 
 void INTERL2() {
-	short Count = k0 & 0xffff;
+	s16 Count = k0 & 0xFFFF;
 	WORD  Out = t9 & 0xffff;
 	WORD In = (t9 >> 16);
+	u8* src;
+	u8* dst;
 
-	BYTE *src, *dst;
-	src = (BYTE *)(BufferSpace);//[In];
-	dst = (BYTE *)(BufferSpace);//[Out];
-	while (Count) {
-		*(short *)(dst + BES(Out)) = *(short *)(src + BES(In));
+	src = &BufferSpace[0];//[In];
+	dst = &BufferSpace[0];//[Out];
+	while (Count != 0) {
+		*(s16 *)(dst + BES(Out)) = *(s16 *)(src + BES(In));
 		Out += 2;
 		In += 4;
 		Count--;

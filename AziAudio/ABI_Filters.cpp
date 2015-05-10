@@ -44,17 +44,17 @@ void FILTER2() {
 
 	if (t4 == 0) {
 		//				memcpy (dmem+0xFB0, rdram+(t9&0xFFFFFF), 0x20);
-		lutt5 = (short *)(save + 0x10);
+		lutt5 = (s16 *)(save + 0x10);
 	}
 
-	lutt5 = (short *)(save + 0x10);
+	lutt5 = (s16 *)(save + 0x10);
 
-	//			lutt5 = (short *)(dmem + 0xFC0);
-	//			lutt6 = (short *)(dmem + 0xFE0);
+	//			lutt5 = (s16 *)(dmem + 0xFC0);
+	//			lutt6 = (s16 *)(dmem + 0xFE0);
 	for (int x = 0; x < 8; x++) {
 		s32 a;
 		a = (lutt5[x] + lutt6[x]) >> 1;
-		lutt5[x] = lutt6[x] = (short)a;
+		lutt5[x] = lutt6[x] = (s16)a;
 	}
 	i16 inputs_matrix[16];
 	i16* inp1;
