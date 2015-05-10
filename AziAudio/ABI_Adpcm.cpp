@@ -194,7 +194,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[(loopval+i*2)^2];
+		 out[i]=*(short *)&rdram[HES(loopval + i*2)];
 		 }*/
 			memcpy(out, &rdram[loopval], 32);
 		}
@@ -202,7 +202,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[(Address+i*2)^2];
+		 out[i]=*(short *)&rdram[HES(Address + i*2)];
 		 }*/
 			memcpy(out, &rdram[Address], 32);
 		}
@@ -319,7 +319,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[(loopval+i*2)^2];
+		 out[i]=*(short *)&rdram[HES(loopval + i*2)];
 		 }*/
 			memcpy(out, &rdram[loopval], 32);
 		}
@@ -327,7 +327,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[(Address+i*2)^2];
+		 out[i]=*(short *)&rdram[HES(Address + i*2)];
 		 }*/
 			memcpy(out, &rdram[Address], 32);
 		}

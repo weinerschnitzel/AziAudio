@@ -86,7 +86,7 @@ void RESAMPLE() {
 	}
 	else {
 		for (int x = 0; x < 4; x++)
-			src[(srcPtr + x) ^ 1] = 0;//*(u16 *)(rdram+((addy+x)^2));
+			src[(srcPtr + x) ^ 1] = 0;//*(u16 *)(rdram + HES(addy + x));
 	}
 
 	assert((Flags & 0x2) == 0);

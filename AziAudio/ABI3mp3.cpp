@@ -215,7 +215,7 @@ void InnerLoop ();
 //The data will be stored in array v (type s32)
 s16 GetData(int address)
 {
-	return *(s16 *)(mp3data + inPtr + (address ^ 2));
+	return *(s16 *)(mp3data + inPtr + HES(address));
 }
 
 
@@ -515,8 +515,8 @@ void InnerLoop () {
 					for (int i = 7; i >= 0; i--) {
 						v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
 						v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
-						v6 += CalcDeWindow(addptr, 0x20, offset, 0x20); 
-						v8 += CalcDeWindow(addptr, 0x30, offset, 0x28); 
+						v6 += CalcDeWindow(addptr, 0x20, offset, 0x20);
+						v8 += CalcDeWindow(addptr, 0x30, offset, 0x28);
 						addptr += 2; offset++;
 					}
 					s32 v0 = v2 + v4;
@@ -524,8 +524,8 @@ void InnerLoop () {
 					//Clamp(v0);
 					//Clamp(v18);
 					// clamp???
-					*(s16 *)(mp3data + (outPtr ^ 2)) = (s16)v0;
-					*(s16 *)(mp3data + ((outPtr + 2) ^ 2)) = (s16)v18;
+					*(s16 *)(mp3data + HES(outPtr + 0)) = (s16)v0;
+					*(s16 *)(mp3data + HES(outPtr + 2)) = (s16)v18;
 					outPtr += 4;
 					addptr += 0x30;
 					offset += 0x38;
@@ -535,7 +535,7 @@ void InnerLoop () {
 				v2 = v4 = 0;
 				for (int i = 0; i < 4; i++) {
 					v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
-					v2 += CalcDeWindow(addptr, 0x10, offset, 0x08); 
+					v2 += CalcDeWindow(addptr, 0x10, offset, 0x08);
 					addptr += 2; offset++;
 					v4 += CalcDeWindow(addptr, 0x00, offset, 0x00);
 					v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
@@ -545,11 +545,11 @@ void InnerLoop () {
 				s32 mult4 = *(s32 *)(mp3data + 0xCEC);
 				if (t4 & 0x2) {
 					v2 = (v2 * *(u32 *)(mp3data + 0xCE8)) >> 0x10;
-					*(s16 *)(mp3data + (outPtr ^ 2)) = (s16)v2;
+					*(s16 *)(mp3data + HES(outPtr)) = (s16)v2;
 				}
 				else {
 					v4 = (v4 * *(u32 *)(mp3data + 0xCE8)) >> 0x10;
-					*(s16 *)(mp3data + (outPtr ^ 2)) = (s16)v4;
+					*(s16 *)(mp3data + HES(outPtr)) = (s16)v4;
 					mult4 = *(u32 *)(mp3data + 0xCE8);
 				}
 				addptr -= 0x50;
@@ -560,14 +560,14 @@ void InnerLoop () {
 					offset = (0x22F - (t4 >> 1) + x * 0x40);
 
 					for (int i = 0; i < 4; i++) {
-						v2 += CalcDeWindow(addptr, 0x20, offset, 0x00);
+						v2 += CalcDeWindow(addptr + 0, 0x20, offset, 0x00);
 						v2 -= CalcDeWindow(addptr + 2, 0x20, offset, 0x01);
-						v4 += CalcDeWindow(addptr, 0x30, offset, 0x08); 
+						v4 += CalcDeWindow(addptr + 0, 0x30, offset, 0x08);
 						v4 -= CalcDeWindow(addptr + 2, 0x30, offset, 0x09);
-						v6 += CalcDeWindow(addptr, 0x00, offset, 0x20); 
+						v6 += CalcDeWindow(addptr + 0, 0x00, offset, 0x20);
 						v6 -= CalcDeWindow(addptr + 2, 0x00, offset, 0x21);
-						v8 += CalcDeWindow(addptr, 0x10, offset, 0x28); 
-						v8 -= CalcDeWindow(addptr + 2, 0x10, offset, 0x29); 
+						v8 += CalcDeWindow(addptr + 0, 0x10, offset, 0x28);
+						v8 -= CalcDeWindow(addptr + 2, 0x10, offset, 0x29);
 						addptr += 4; offset += 2;
 					}
 					s32 v0 = v2 + v4;
@@ -575,8 +575,8 @@ void InnerLoop () {
 					//Clamp(v0);
 					//Clamp(v18);
 					// clamp???
-					*(s16 *)(mp3data + ((outPtr + 2) ^ 2)) = (s16)v0;
-					*(s16 *)(mp3data + ((outPtr + 4) ^ 2)) = (s16)v18;
+					*(s16 *)(mp3data + HES(outPtr + 2)) = (s16)v0;
+					*(s16 *)(mp3data + HES(outPtr + 4)) = (s16)v18;
 					outPtr += 4;
 					addptr -= 0x50;
 				}
@@ -593,17 +593,17 @@ void InnerLoop () {
 				hi1 = (int)hi1 >> 0x10;
 				for (int i = 0; i < 8; i++) {
 					// v0
-					v = pack_signed(*(s16 *)(mp3data + ((tmp - 0x40) ^ 2)) * hi0);
-					*(s16 *)((u8 *)mp3data + ((tmp - 0x40) ^ 2)) = (s16)v;
+					v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x40)) * hi0);
+					*(s16 *)((u8 *)mp3data + HES(tmp - 0x40)) = (s16)v;
 					// v17
-					v = pack_signed(*(s16 *)(mp3data + ((tmp - 0x30) ^ 2)) * hi0);
-					*(s16 *)((u8 *)mp3data + ((tmp - 0x30) ^ 2)) = (s16)v;
+					v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x30)) * hi0);
+					*(s16 *)((u8 *)mp3data + HES(tmp - 0x30)) = (s16)v;
 					// v2
-					v = pack_signed(*(s16 *)(mp3data + ((tmp - 0x1E) ^ 2)) * hi1);
-					*(s16 *)((u8 *)mp3data + ((tmp - 0x1E) ^ 2)) = (s16)v;
+					v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x1E)) * hi1);
+					*(s16 *)((u8 *)mp3data + HES(tmp - 0x1E)) = (s16)v;
 					// v4
-					v = pack_signed(*(s16 *)(mp3data + ((tmp - 0x0E) ^ 2)) * hi1);
-					*(s16 *)((u8 *)mp3data + ((tmp - 0xE) ^ 2)) = (s16)v;
+					v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x0E)) * hi1);
+					*(s16 *)((u8 *)mp3data + HES(tmp - 0x0E)) = (s16)v;
 					tmp += 2;
 				}
 }

@@ -182,7 +182,7 @@ void MIXER2() { // Needs accuracy verification...
 
 	for (u32 x = 0; x < count; x += 2) { // I think I can do this a lot easier 
 
-		temp = (*(s16 *)(BufferSpace + dmemin + x) * gain) >> 16;
+		temp  = (*(s16 *)(BufferSpace + dmemin + x) * gain) >> 16;
 		temp += *(s16 *)(BufferSpace + dmemout + x);
 		temp = pack_signed((s32)temp);
 
