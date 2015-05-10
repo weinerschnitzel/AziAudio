@@ -124,9 +124,9 @@ void ADPCM() { // Work in progress! :)
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -135,9 +135,9 @@ void ADPCM() { // Work in progress! :)
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -270,9 +270,9 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -281,9 +281,9 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -389,10 +389,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
-			//*(out+j)=a[j^1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
+			//*(out+j)=a[MES(j)];
 		}
 		//out += 0x10;
 		l1 = a[6];
@@ -402,10 +402,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
-			//*(out+j+0x1f8)=a[j^1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
+			//*(out+j+0x1f8)=a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];

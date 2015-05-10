@@ -40,7 +40,7 @@ static inline s32 mixer_macc(s32* Acc, s32* AdderStart, s32* AdderEnd, s32 Ramp)
 	/*** ... comes out to something not the same as the C code he commented. ***/
 	volume = (*AdderEnd - *AdderStart) >> 3;
 	*Acc = *AdderStart;
-	*AdderEnd = ((s64)(*AdderEnd) * (s64)Ramp) >> 16;
+	*AdderEnd   = ((s64)(*AdderEnd) * (s64)Ramp) >> 16;
 	*AdderStart = ((s64)(*Acc)      * (s64)Ramp) >> 16;
 #endif
 	return (volume);
@@ -170,12 +170,12 @@ void ENVMIXER() {
 		}
 
 		for (int x = 0; x < 8; x++) {
-			i1 = (int)inp[ptr ^ 1];
-			o1 = (int)out[ptr ^ 1];
-			a1 = (int)aux1[ptr ^ 1];
+			i1 = (int)inp[MES(ptr)];
+			o1 = (int)out[MES(ptr)];
+			a1 = (int)aux1[MES(ptr)];
 			if (AuxIncRate) {
-				a2 = (int)aux2[ptr ^ 1];
-				a3 = (int)aux3[ptr ^ 1];
+				a2 = (int)aux2[MES(ptr)];
+				a3 = (int)aux3[MES(ptr)];
 			}
 			// TODO: here...
 			//LAcc = LTrg;
@@ -261,8 +261,8 @@ void ENVMIXER() {
 			o1 = pack_signed(o1);
 			a1 = pack_signed(a1);
 
-			out[ptr ^ 1] = o1;
-			aux1[ptr ^ 1] = a1;
+			out[MES(ptr)] = o1;
+			aux1[MES(ptr)] = a1;
 			if (AuxIncRate) {
 				//a2=((s64)(((s64)a2*0xfffe)+((s64)i1*AuxR*2)+0x8000)>>16);
 
@@ -273,8 +273,8 @@ void ENVMIXER() {
 				a2 = pack_signed(a2);
 				a3 = pack_signed(a3);
 
-				aux2[ptr ^ 1] = a2;
-				aux3[ptr ^ 1] = a3;
+				aux2[MES(ptr)] = a2;
+				aux3[MES(ptr)] = a3;
 			}
 			ptr++;
 		}
@@ -335,65 +335,64 @@ void ENVMIXER2() {
 		t3 = 0;
 	}
 
-
 	while (count > 0) {
 		int temp;
 		for (x = 0; x < 0x8; x++) {
-			vec9 = (s16)(((s32)buffs3[x ^ 1] * (u32)env[0]) >> 0x10) ^ v2[0];
-			vec10 = (s16)(((s32)buffs3[x ^ 1] * (u32)env[2]) >> 0x10) ^ v2[1];
-			temp = bufft6[x ^ 1] + vec9;
+			vec9  = (s16)(((s32)buffs3[MES(x)] * (u32)env[0]) >> 0x10) ^ v2[0];
+			vec10 = (s16)(((s32)buffs3[MES(x)] * (u32)env[2]) >> 0x10) ^ v2[1];
+			temp = bufft6[MES(x)] + vec9;
 			temp = pack_signed(temp);
-			bufft6[x ^ 1] = temp;
-			temp = bufft7[x ^ 1] + vec10;
+			bufft6[MES(x)] = temp;
+			temp = bufft7[MES(x)] + vec10;
 			temp = pack_signed(temp);
-			bufft7[x ^ 1] = temp;
+			bufft7[MES(x)] = temp;
 			vec9 = (s16)(((s32)vec9  * (u32)env[4]) >> 0x10) ^ v2[2];
 			vec10 = (s16)(((s32)vec10 * (u32)env[4]) >> 0x10) ^ v2[3];
 			if (k0 & 0x10) {
-				temp = buffs0[x ^ 1] + vec10;
+				temp = buffs0[MES(x)] + vec10;
 				temp = pack_signed(temp);
-				buffs0[x ^ 1] = temp;
-				temp = buffs1[x ^ 1] + vec9;
+				buffs0[MES(x)] = temp;
+				temp = buffs1[MES(x)] + vec9;
 				temp = pack_signed(temp);
-				buffs1[x ^ 1] = temp;
+				buffs1[MES(x)] = temp;
 			}
 			else {
-				temp = buffs0[x ^ 1] + vec9;
+				temp = buffs0[MES(x)] + vec9;
 				temp = pack_signed(temp);
-				buffs0[x ^ 1] = temp;
-				temp = buffs1[x ^ 1] + vec10;
+				buffs0[MES(x)] = temp;
+				temp = buffs1[MES(x)] + vec10;
 				temp = pack_signed(temp);
-				buffs1[x ^ 1] = temp;
+				buffs1[MES(x)] = temp;
 			}
 		}
 
 		if (!isMKABI)
 		for (x = 0x8; x < 0x10; x++) {
-			vec9 = (s16)(((s32)buffs3[x ^ 1] * (u32)env[1]) >> 0x10) ^ v2[0];
-			vec10 = (s16)(((s32)buffs3[x ^ 1] * (u32)env[3]) >> 0x10) ^ v2[1];
-			temp = bufft6[x ^ 1] + vec9;
+			vec9  = (s16)(((s32)buffs3[MES(x)] * (u32)env[1]) >> 0x10) ^ v2[0];
+			vec10 = (s16)(((s32)buffs3[MES(x)] * (u32)env[3]) >> 0x10) ^ v2[1];
+			temp = bufft6[MES(x)] + vec9;
 			temp = pack_signed(temp);
-			bufft6[x ^ 1] = temp;
-			temp = bufft7[x ^ 1] + vec10;
+			bufft6[MES(x)] = temp;
+			temp = bufft7[MES(x)] + vec10;
 			temp = pack_signed(temp);
-			bufft7[x ^ 1] = temp;
-			vec9 = (s16)(((s32)vec9  * (u32)env[5]) >> 0x10) ^ v2[2];
+			bufft7[MES(x)] = temp;
+			vec9  = (s16)(((s32)vec9  * (u32)env[5]) >> 0x10) ^ v2[2];
 			vec10 = (s16)(((s32)vec10 * (u32)env[5]) >> 0x10) ^ v2[3];
 			if (k0 & 0x10) {
-				temp = buffs0[x ^ 1] + vec10;
+				temp = buffs0[MES(x)] + vec10;
 				temp = pack_signed(temp);
-				buffs0[x ^ 1] = temp;
-				temp = buffs1[x ^ 1] + vec9;
+				buffs0[MES(x)] = temp;
+				temp = buffs1[MES(x)] + vec9;
 				temp = pack_signed(temp);
-				buffs1[x ^ 1] = temp;
+				buffs1[MES(x)] = temp;
 			}
 			else {
-				temp = buffs0[x ^ 1] + vec9;
+				temp = buffs0[MES(x)] + vec9;
 				temp = pack_signed(temp);
-				buffs0[x ^ 1] = temp;
-				temp = buffs1[x ^ 1] + vec10;
+				buffs0[MES(x)] = temp;
+				temp = buffs1[MES(x)] + vec10;
 				temp = pack_signed(temp);
-				buffs1[x ^ 1] = temp;
+				buffs1[MES(x)] = temp;
 			}
 		}
 		bufft6 += adder; bufft7 += adder;
@@ -506,9 +505,9 @@ void ENVMIXER3() {
 		MainL = ((Dry * LVol) + 0x4000) >> 15;
 		MainR = ((Dry * RVol) + 0x4000) >> 15;
 
-		o1 = out[y ^ 1];
-		a1 = aux1[y ^ 1];
-		i1 = inp[y ^ 1];
+		o1 = out[MES(y)];
+		a1 = aux1[MES(y)];
+		i1 = inp[MES(y)];
 
 		o1 += ((i1*MainL) + 0x4000) >> 15;
 		a1 += ((i1*MainR) + 0x4000) >> 15;
@@ -520,13 +519,13 @@ void ENVMIXER3() {
 
 		// ****************************************************************
 
-		out[y ^ 1] = o1;
-		aux1[y ^ 1] = a1;
+		out[MES(y)] = o1;
+		aux1[MES(y)] = a1;
 
 		// ****************************************************************
 		//if (!(flags&A_AUX)) {
-		a2 = aux2[y ^ 1];
-		a3 = aux3[y ^ 1];
+		a2 = aux2[MES(y)];
+		a3 = aux3[MES(y)];
 
 		AuxL = ((Wet * LVol) + 0x4000) >> 15;
 		AuxR = ((Wet * RVol) + 0x4000) >> 15;
@@ -537,8 +536,8 @@ void ENVMIXER3() {
 		a2 = pack_signed(a2);
 		a3 = pack_signed(a3);
 
-		aux2[y ^ 1] = a2;
-		aux3[y ^ 1] = a3;
+		aux2[MES(y)] = a2;
+		aux3[MES(y)] = a3;
 	}
 	//}
 

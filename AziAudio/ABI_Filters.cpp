@@ -22,7 +22,7 @@ static void packed_multiply_accumulate(pi32 acc, pi16 vs, pi16 vt, int offset)
 
 	result = 0;
 	for (i = 0; i < 8; i++)
-		result += (s32)vs[(i + offset) ^ 1] * (s32)vt[i ^ 1];
+		result += (s32)vs[MES(i + offset)] * (s32)vt[MES(i + 0)];
 	*(acc) = result;
 	return;
 }

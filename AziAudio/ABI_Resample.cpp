@@ -51,7 +51,7 @@ s32 IncrAccum(s16 *src, u32 srcPtr, s16 *lut)
 	s32 accum = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		s32 temp = ((s32)*(s16*)(src + ((srcPtr + i) ^ 1))*((s32)((s16)lut[i])));
+		s32 temp = ((s32)*(s16*)(src + MES(srcPtr + i)) * ((s32)((s16)lut[i])));
 		accum += (s32)(temp >> 15);
 	}
 
@@ -81,12 +81,12 @@ void RESAMPLE() {
 	if ((Flags & 0x1) == 0) {
 		//memcpy (src+srcPtr, rdram+addy, 0x8);
 		for (int x = 0; x < 4; x++)
-			src[(srcPtr + x) ^ 1] = ((u16 *)rdram)[((addy / 2) + x) ^ 1];
+			src[MES(srcPtr + x)] = ((u16 *)rdram)[MES((addy / 2) + x)];
 		Accum = *(u16 *)(rdram + addy + 10);
 	}
 	else {
 		for (int x = 0; x < 4; x++)
-			src[(srcPtr + x) ^ 1] = 0;//*(u16 *)(rdram + HES(addy + x));
+			src[MES(srcPtr + x)] = 0;//*(u16 *)(rdram + HES(addy + x));
 	}
 
 	assert((Flags & 0x2) == 0);
@@ -111,14 +111,14 @@ void RESAMPLE() {
 		accum = IncrAccum(src, srcPtr, lut);
 		accum = pack_signed(accum);
 
-		dst[dstPtr ^ 1] = (s16)(accum);
+		dst[MES(dstPtr)] = (s16)(accum);
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
 		Accum &= 0xffff;
 	}
 	for (int x = 0; x < 4; x++)
-		((u16 *)rdram)[((addy / 2) + x) ^ 1] = src[(srcPtr + x) ^ 1];
+		((u16 *)rdram)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
 	//memcpy (RSWORK, src+srcPtr, 0x8);
 	*(u16 *)(rdram + addy + 10) = (u16)Accum;
 }
@@ -145,12 +145,12 @@ void RESAMPLE2() {
 
 	if ((Flags & 0x1) == 0) {
 		for (int x = 0; x < 4; x++) //memcpy (src+srcPtr, rdram+addy, 0x8);
-			src[(srcPtr + x) ^ 1] = ((u16 *)rdram)[((addy / 2) + x) ^ 1];
+			src[MES(srcPtr + x)] = ((u16 *)rdram)[MES((addy / 2) + x)];
 		Accum = *(u16 *)(rdram + addy + 10);
 	}
 	else {
 		for (int x = 0; x < 4; x++)
-			src[(srcPtr + x) ^ 1] = 0;//*(u16 *)(rdram+((addy+x)^2));
+			src[MES(srcPtr + x)] = 0;//*(u16 *)(rdram + HES(addy + x));
 	}
 
 	//	assert((Flags & 0x2) == 0);
@@ -163,14 +163,14 @@ void RESAMPLE2() {
 		accum = IncrAccum(src, srcPtr, lut);
 		accum = pack_signed(accum);
 
-		dst[dstPtr ^ 1] = (s16)(accum);
+		dst[MES(dstPtr)] = (s16)(accum);
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
 		Accum &= 0xffff;
 	}
 	for (int x = 0; x < 4; x++)
-		((u16 *)rdram)[((addy / 2) + x) ^ 1] = src[(srcPtr + x) ^ 1];
+		((u16 *)rdram)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
 	*(u16 *)(rdram + addy + 10) = (u16)Accum;
 	//memcpy (RSWORK, src+srcPtr, 0x8);
 }
@@ -204,12 +204,12 @@ void RESAMPLE3() {
 
 	if ((Flags & 0x1) == 0) {
 		for (int x = 0; x < 4; x++) //memcpy (src+srcPtr, rdram+addy, 0x8);
-			src[(srcPtr + x) ^ 1] = ((u16 *)rdram)[((addy / 2) + x) ^ 1];
+			src[MES(srcPtr + x)] = ((u16 *)rdram)[MES((addy / 2) + x)];
 		Accum = *(u16 *)(rdram + addy + 10);
 	}
 	else {
 		for (int x = 0; x < 4; x++)
-			src[(srcPtr + x) ^ 1] = 0;//*(u16 *)(rdram+((addy+x)^2));
+			src[MES(srcPtr + x)] = 0;//*(u16 *)(rdram + HES(addy + x));
 	}
 
 #ifdef _DEBUG
@@ -222,28 +222,29 @@ void RESAMPLE3() {
 		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
 		accum = IncrAccum(src, srcPtr, lut);
-		/*		temp =  ((s64)*(s16*)(src+((srcPtr+0)^1))*((s64)((s16)lut[0]<<1)));
+		/*
+		temp =  ((s64)*(s16*)(src + MES(srcPtr+0))*((s64)((s16)lut[0]<<1)));
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
 		temp = (s32)(temp >> 16);
 		temp = pack_signed((s32)temp);
 		accum = (s32)(s16)temp;
 
-		temp = ((s64)*(s16*)(src+((srcPtr+1)^1))*((s64)((s16)lut[1]<<1)));
+		temp = ((s64)*(s16*)(src + MES(srcPtr+1))*((s64)((s16)lut[1]<<1)));
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
 		temp = (s32)(temp >> 16);
 		temp = pack_signed((s32)temp);
 		accum += (s32)(s16)temp;
 
-		temp = ((s64)*(s16*)(src+((srcPtr+2)^1))*((s64)((s16)lut[2]<<1)));
+		temp = ((s64)*(s16*)(src + MES(srcPtr+2))*((s64)((s16)lut[2]<<1)));
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
 		temp = (s32)(temp >> 16);
 		temp = pack_signed((s32)temp);
 		accum += (s32)(s16)temp;
 
-		temp = ((s64)*(s16*)(src+((srcPtr+3)^1))*((s64)((s16)lut[3]<<1)));
+		temp = ((s64)*(s16*)(src + MES(srcPtr+3))*((s64)((s16)lut[3]<<1)));
 		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 		else temp = (temp^0x8000);
 		temp = (s32)(temp >> 16);
@@ -252,13 +253,13 @@ void RESAMPLE3() {
 
 		accum = pack_signed(accum);
 
-		dst[dstPtr ^ 1] = (s16)(accum);
+		dst[MES(dstPtr)] = (s16)(accum);
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
 		Accum &= 0xffff;
 	}
 	for (int x = 0; x < 4; x++)
-		((u16 *)rdram)[((addy / 2) + x) ^ 1] = src[(srcPtr + x) ^ 1];
+		((u16 *)rdram)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
 	*(u16 *)(rdram + addy + 10) = (u16)Accum;
 }
