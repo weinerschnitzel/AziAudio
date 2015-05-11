@@ -468,3 +468,15 @@ int safe_strcpy(char* dst, size_t limit, const char* src)
     return (failure);
 #endif
 }
+
+long filter_range(long x, long base, int leeway)
+{
+    const long minimum = base - leeway; /* does not prevent signed underflow */
+    const long maximum = base + leeway; /* does not prevent signed overflow */
+
+    if (x < minimum)
+        return (x); /* filter_range(44095, 44100, 4) should return 44095. */
+    if (x > maximum)
+        return (x); /* filter_range(44105, 44100, 4) should return 44105. */
+    return (base);
+}

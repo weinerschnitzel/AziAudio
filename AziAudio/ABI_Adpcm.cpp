@@ -22,7 +22,7 @@ void InitInput(int *inp, int index, BYTE icode, u8 mask, u8 shifter, BYTE code, 
 		int catchme = 1;
 }
 
-void ADPCMFillArray(int *a, short *book1, short *book2, int l1, int l2, int *inp)
+void ADPCMFillArray(int *a, s16* book1, s16* book2, int l1, int l2, int *inp)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -41,17 +41,19 @@ void ADPCM() { // Work in progress! :)
 	WORD Gain = (u16)(k0 & 0xffff);
 	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = 0;
-	//short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
-	short *out = (short *)(BufferSpace + AudioOutBuffer);
-	BYTE *in = (BYTE *)(BufferSpace + AudioInBuffer);
-	short count = (short)AudioCount;
+	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
+	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
+	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
+	s16 count = (s16)AudioCount;
 	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
 	int a[8];
-	short *book1, *book2;
+	s16* book1;
+	s16* book2;
+
 	/*
 	if (Address > (1024*1024*8))
 	Address = (t9 & 0xffffff);
@@ -80,10 +82,10 @@ void ADPCM() { // Work in progress! :)
 		// area of memory in the case of A_LOOP or just
 		// the values we calculated the last time
 
-		code = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+		code = BufferSpace[BES(AudioInBuffer + inPtr)];
 		index = code & 0xf;
 		index <<= 4;									// index into the adpcm code table
-		book1 = (short *)&adpcmtable[index];
+		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
 		vscale = (0x8000 >> ((12 - code) - 1));			// very strange. 0x8000 would be .5 in 16:16 format
@@ -98,7 +100,7 @@ void ADPCM() { // Work in progress! :)
 		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
 			// which yields 8 short pcm values
 		{
-			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -110,7 +112,7 @@ void ADPCM() { // Work in progress! :)
 		j = 0;
 		while (j<8)
 		{
-			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -124,9 +126,9 @@ void ADPCM() { // Work in progress! :)
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -135,9 +137,9 @@ void ADPCM() { // Work in progress! :)
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -153,17 +155,18 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	WORD Gain = (u16)(k0 & 0xffff);
 	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = 0;
-	//short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
-	short *out = (short *)(BufferSpace + AudioOutBuffer);
-	BYTE *in = (BYTE *)(BufferSpace + AudioInBuffer);
-	short count = (short)AudioCount;
+	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
+	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
+	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
+	s16 count = (s16)AudioCount;
 	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
 	int a[8];
-	short *book1, *book2;
+	s16* book1;
+	s16* book2;
 
 	u8 srange;
 	u8 inpinc;
@@ -194,7 +197,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[(loopval+i*2)^2];
+		 out[i]=*(s16 *)&rdram[HES(loopval + i*2)];
 		 }*/
 			memcpy(out, &rdram[loopval], 32);
 		}
@@ -202,7 +205,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[(Address+i*2)^2];
+		 out[i]=*(s16 *)&rdram[HES(Address + i*2)];
 		 }*/
 			memcpy(out, &rdram[Address], 32);
 		}
@@ -214,10 +217,10 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	int inp2[8];
 	out += 16;
 	while (count>0) {
-		code = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+		code = BufferSpace[BES(AudioInBuffer + inPtr)];
 		index = code & 0xf;
 		index <<= 4;
-		book1 = (short *)&adpcmtable[index];
+		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;
 		vscale = (0x8000 >> ((srange - code) - 1));
@@ -226,7 +229,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		j = 0;
 
 		while (j<8) {
-			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, mask1, 8, code, srange, vscale); // this will in effect be signed
@@ -248,7 +251,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		j = 0;
 		while (j<8) {
-			icode = BufferSpace[(AudioInBuffer + inPtr) ^ 3];
+			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, mask1, 8, code, srange, vscale);
@@ -270,9 +273,9 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -281,9 +284,9 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -299,17 +302,18 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	//WORD Gain=(u16)(k0&0xffff);
 	DWORD Address = (k0 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = (t9 >> 12) & 0xf;
-	//short *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
-	short *out = (short *)(BufferSpace + (t9 & 0xfff) + 0x4f0);
+	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
+	s16 *out = (s16 *)(BufferSpace + (t9 & 0xfff) + 0x4f0);
 	BYTE *in = (BYTE *)(BufferSpace + ((t9 >> 12) & 0xf) + 0x4f0);
-	short count = (short)((t9 >> 16) & 0xfff);
+	s16 count = (s16)((t9 >> 16) & 0xfff);
 	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
 	int a[8];
-	short *book1, *book2;
+	s16* book1;
+	s16* book2;
 
 	memset(out, 0, 32);
 
@@ -319,7 +323,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[(loopval+i*2)^2];
+		 out[i]=*(s16 *)&rdram[HES(loopval + i*2)];
 		 }*/
 			memcpy(out, &rdram[loopval], 32);
 		}
@@ -327,7 +331,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		{/*
 		 for(int i=0;i<16;i++)
 		 {
-		 out[i]=*(short *)&rdram[(Address+i*2)^2];
+		 out[i]=*(s16 *)&rdram[HES(Address + i*2)];
 		 }*/
 			memcpy(out, &rdram[Address], 32);
 		}
@@ -345,10 +349,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		// area of memory in the case of A_LOOP or just
 		// the values we calculated the last time
 
-		code = BufferSpace[(0x4f0 + inPtr) ^ 3];
+		code = BufferSpace[BES(0x4f0 + inPtr)];
 		index = code & 0xf;
 		index <<= 4;									// index into the adpcm code table
-		book1 = (short *)&adpcmtable[index];
+		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
 		vscale = (0x8000 >> ((12 - code) - 1));			// very strange. 0x8000 would be .5 in 16:16 format
@@ -363,7 +367,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
 			// which yields 8 short pcm values
 		{
-			icode = BufferSpace[(0x4f0 + inPtr) ^ 3];
+			icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -375,7 +379,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		j = 0;
 		while (j<8)
 		{
-			icode = BufferSpace[(0x4f0 + inPtr) ^ 3];
+			icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -389,10 +393,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
-			//*(out+j)=a[j^1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
+			//*(out+j)=a[MES(j)];
 		}
 		//out += 0x10;
 		l1 = a[6];
@@ -402,10 +406,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 		for (j = 0; j<8; j++)
 		{
-			a[j ^ 1] >>= 11;
-			a[j ^ 1] = pack_signed(a[j ^ 1]);
-			*(out++) = a[j ^ 1];
-			//*(out+j+0x1f8)=a[j^1];
+			a[MES(j)] >>= 11;
+			a[MES(j)] = pack_signed(a[MES(j)]);
+			*(out++) = a[MES(j)];
+			//*(out+j+0x1f8)=a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];

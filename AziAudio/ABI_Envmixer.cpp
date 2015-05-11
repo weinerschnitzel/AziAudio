@@ -40,7 +40,7 @@ static inline s32 mixer_macc(s32* Acc, s32* AdderStart, s32* AdderEnd, s32 Ramp)
 	/*** ... comes out to something not the same as the C code he commented. ***/
 	volume = (*AdderEnd - *AdderStart) >> 3;
 	*Acc = *AdderStart;
-	*AdderEnd = ((s64)(*AdderEnd) * (s64)Ramp) >> 16;
+	*AdderEnd   = ((s64)(*AdderEnd) * (s64)Ramp) >> 16;
 	*AdderStart = ((s64)(*Acc)      * (s64)Ramp) >> 16;
 #endif
 	return (volume);
@@ -78,36 +78,6 @@ void ENVSETUP2() {
 	//fprintf (dfile, "	env[0] = %X / env[1] = %X / env[2] = %X / env[3] = %X\n", env[0], env[1], env[2], env[3]);
 }
 
-s32 MixVol(s16 left, s16 right)
-{
-	return (left * right + 0x4000) >> 15;
-}
-
-short* LoadBufferSpace(u16 offset)
-{
-    return (short *)(BufferSpace + offset);
-}
-
-s16 LoadMixer16(int offset)
-{
-	return *(s16 *)(hleMixerWorkArea + offset);
-}
-
-s32 LoadMixer32(int offset)
-{
-	return *(s32 *)(hleMixerWorkArea + offset);
-}
-
-void SaveMixer16(int offset, s16 value)
-{
-	*(s16 *)(hleMixerWorkArea + offset) = value;
-}
-
-void SaveMixer32(int offset, s32 value)
-{
-	*(s32 *)(hleMixerWorkArea + offset) = value;
-}
-
 void ENVMIXER() {
 	//static int envmixcnt = 0;
 	u8 flags = (u8)((k0 >> 16) & 0xff);
@@ -118,19 +88,19 @@ void ENVMIXER() {
 	MessageBox (NULL, "Unaligned EnvMixer... please report this to Azimer with the following information: RomTitle, Place in the rom it occurred, and any save state just before the error", "AudioHLE Error", MB_OK);
 	}*/
 	// ------------------------------------------------------------
-	short *inp = LoadBufferSpace(AudioInBuffer);
-	short *out = LoadBufferSpace(AudioOutBuffer);
-	short *aux1 = LoadBufferSpace(AudioAuxA);
-	short *aux2 = LoadBufferSpace(AudioAuxC);
-	short *aux3 = LoadBufferSpace(AudioAuxE);
+	s16* inp  = LoadBufferSpace(AudioInBuffer);
+	s16* out  = LoadBufferSpace(AudioOutBuffer);
+	s16* aux1 = LoadBufferSpace(AudioAuxA);
+	s16* aux2 = LoadBufferSpace(AudioAuxC);
+	s16* aux3 = LoadBufferSpace(AudioAuxE);
 	s32 MainR;
 	s32 MainL;
 	s32 AuxR;
 	s32 AuxL;
 	int i1, o1, a1, a2, a3;
 	WORD AuxIncRate = 1;
-	short zero[8];
-	memset(zero, 0, 16);
+	s16 zero[8];
+	memset(zero, 0, sizeof(s16) * 8);
 	s32 LVol, RVol;
 	s32 LAcc, RAcc;
 	s32 LTrg, RTrg;
@@ -159,16 +129,16 @@ void ENVMIXER() {
 		// Load LVol, RVol, LAcc, and RAcc (all 32bit)
 		// Load Wet, Dry, LTrg, RTrg
 		memcpy((u8 *)hleMixerWorkArea, (rdram + addy), 80);
-		Wet = LoadMixer16(0); // 0-1
-		Dry = LoadMixer16(2); // 2-3
-		LTrg = LoadMixer32(4); // 4-5
-		RTrg = LoadMixer32(6); // 6-7
-		LRamp = LoadMixer32(8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
-		RRamp = LoadMixer32(10); // 10-11
-		LAdderEnd = LoadMixer32(12); // 12-13
-		RAdderEnd = LoadMixer32(14); // 14-15
-		LAdderStart = LoadMixer32(16); // 12-13
-		RAdderStart = LoadMixer32(18); // 14-15
+		Wet = *(s16 *)(hleMixerWorkArea + 0); // 0-1
+		Dry = *(s16 *)(hleMixerWorkArea + 2); // 2-3
+		LTrg = *(s32 *)(hleMixerWorkArea + 4); // 4-5
+		RTrg = *(s32 *)(hleMixerWorkArea + 6); // 6-7
+		LRamp = *(s32 *)(hleMixerWorkArea + 8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
+		RRamp = *(s32 *)(hleMixerWorkArea + 10); // 10-11
+		LAdderEnd = *(s32 *)(hleMixerWorkArea + 12); // 12-13
+		RAdderEnd = *(s32 *)(hleMixerWorkArea + 14); // 14-15
+		LAdderStart = *(s32 *)(hleMixerWorkArea + 16); // 12-13
+		RAdderStart = *(s32 *)(hleMixerWorkArea + 18); // 14-15
 	}
 
 	if (!(flags&A_AUX)) {
@@ -176,10 +146,10 @@ void ENVMIXER() {
 		aux2 = aux3 = zero;
 	}
 
-	oMainL = MixVol(Dry, (LTrg >> 16));
-	oAuxL = MixVol(Wet, (LTrg >> 16));
-	oMainR = MixVol(Dry, (RTrg >> 16));
-	oAuxR = MixVol(Wet, (RTrg >> 16));
+	oMainL = (Dry * (LTrg >> 16) + 0x4000) >> 15;
+	oAuxL = (Wet * (LTrg >> 16) + 0x4000) >> 15;
+	oMainR = (Dry * (RTrg >> 16) + 0x4000) >> 15;
+	oAuxR = (Wet * (RTrg >> 16) + 0x4000) >> 15;
 
 	for (int y = 0; y < AudioCount; y += 0x10) {
 
@@ -200,12 +170,12 @@ void ENVMIXER() {
 		}
 
 		for (int x = 0; x < 8; x++) {
-			i1 = (int)inp[ptr ^ 1];
-			o1 = (int)out[ptr ^ 1];
-			a1 = (int)aux1[ptr ^ 1];
+			i1 = (int)inp[MES(ptr)];
+			o1 = (int)out[MES(ptr)];
+			a1 = (int)aux1[MES(ptr)];
 			if (AuxIncRate) {
-				a2 = (int)aux2[ptr ^ 1];
-				a3 = (int)aux3[ptr ^ 1];
+				a2 = (int)aux2[MES(ptr)];
+				a3 = (int)aux3[MES(ptr)];
 			}
 			// TODO: here...
 			//LAcc = LTrg;
@@ -222,8 +192,8 @@ void ENVMIXER() {
 					AuxL = oAuxL;
 				}
 				else {
-					MainL = MixVol(Dry, ((s32)LAcc >> 16));
-					AuxL = MixVol(Wet, ((s32)LAcc >> 16));
+					MainL = (Dry * ((s32)LAcc >> 16) + 0x4000) >> 15;
+					AuxL = (Wet * ((s32)LAcc >> 16) + 0x4000) >> 15;
 				}
 			}
 			else {
@@ -234,8 +204,8 @@ void ENVMIXER() {
 					AuxL = oAuxL;
 				}
 				else {
-					MainL = MixVol(Dry, ((s32)LAcc >> 16));
-					AuxL = MixVol(Wet, ((s32)LAcc >> 16));
+					MainL = (Dry * ((s32)LAcc >> 16) + 0x4000) >> 15;
+					AuxL = (Wet * ((s32)LAcc >> 16) + 0x4000) >> 15;
 				}
 			}
 
@@ -247,8 +217,8 @@ void ENVMIXER() {
 					AuxR = oAuxR;
 				}
 				else {
-					MainR = MixVol(Dry, ((s32)RAcc >> 16));
-					AuxR = MixVol(Wet, ((s32)RAcc >> 16));
+					MainR = (Dry * ((s32)RAcc >> 16) + 0x4000) >> 15;
+					AuxR = (Wet * ((s32)RAcc >> 16) + 0x4000) >> 15;
 				}
 			}
 			else {
@@ -259,8 +229,8 @@ void ENVMIXER() {
 					AuxR = oAuxR;
 				}
 				else {
-					MainR = MixVol(Dry, ((s32)RAcc >> 16));
-					AuxR = MixVol(Wet, ((s32)RAcc >> 16));
+					MainR = (Dry * ((s32)RAcc >> 16) + 0x4000) >> 15;
+					AuxR = (Wet * ((s32)RAcc >> 16) + 0x4000) >> 15;
 				}
 			}
 
@@ -281,8 +251,8 @@ void ENVMIXER() {
 			AuxR  = (Wet * RTrg + 0x8000)  >> 16;
 			AuxL  = (Wet * LTrg + 0x8000)  >> 16;*/
 
-			o1 += MixVol(/*(o1*0x7fff)+*/ i1, MainR);
-			a1 += MixVol(/*(a1*0x7fff)+*/ i1, MainL);
+			o1 += (/*(o1*0x7fff)+*/(i1*MainR) + 0x4000) >> 15;
+			a1 += (/*(a1*0x7fff)+*/(i1*MainL) + 0x4000) >> 15;
 
 			/*		o1=((s64)(((s64)o1*0xfffe)+((s64)i1*MainR*2)+0x8000)>>16);
 
@@ -291,20 +261,20 @@ void ENVMIXER() {
 			o1 = pack_signed(o1);
 			a1 = pack_signed(a1);
 
-			out[ptr ^ 1] = o1;
-			aux1[ptr ^ 1] = a1;
+			out[MES(ptr)] = o1;
+			aux1[MES(ptr)] = a1;
 			if (AuxIncRate) {
 				//a2=((s64)(((s64)a2*0xfffe)+((s64)i1*AuxR*2)+0x8000)>>16);
 
 				//a3=((s64)(((s64)a3*0xfffe)+((s64)i1*AuxL*2)+0x8000)>>16);
-				a2 += MixVol(/*(a2*0x7fff)+*/i1, AuxR);
-				a3 += MixVol(/*(a3*0x7fff)+*/i1, AuxL);
+				a2 += (/*(a2*0x7fff)+*/(i1*AuxR) + 0x4000) >> 15;
+				a3 += (/*(a3*0x7fff)+*/(i1*AuxL) + 0x4000) >> 15;
 
 				a2 = pack_signed(a2);
 				a3 = pack_signed(a3);
 
-				aux2[ptr ^ 1] = a2;
-				aux3[ptr ^ 1] = a3;
+				aux2[MES(ptr)] = a2;
+				aux3[MES(ptr)] = a3;
 			}
 			ptr++;
 		}
@@ -313,16 +283,16 @@ void ENVMIXER() {
 	/*LAcc = LAdderEnd;
 	RAcc = RAdderEnd;*/
 
-	SaveMixer16(0, Wet); // 0-1
-	SaveMixer16(2, Dry); // 2-3
-	SaveMixer32(4, LTrg); // 4-5
-	SaveMixer32(6, RTrg); // 6-7
-	SaveMixer32(8, LRamp); // 8-9 (hleMixerWorkArea is a 16bit pointer)
-	SaveMixer32(10, RRamp); // 10-11
-	SaveMixer32(12, LAdderEnd); // 12-13
-	SaveMixer32(14, RAdderEnd); // 14-15
-	SaveMixer32(16, LAdderStart); // 12-13
-	SaveMixer32(18, RAdderStart); // 14-15
+	*(s16 *)(hleMixerWorkArea + 0) = Wet; // 0-1
+	*(s16 *)(hleMixerWorkArea + 2) = Dry; // 2-3
+	*(s32 *)(hleMixerWorkArea + 4) = LTrg; // 4-5
+	*(s32 *)(hleMixerWorkArea + 6) = RTrg; // 6-7
+	*(s32 *)(hleMixerWorkArea + 8) = LRamp; // 8-9 (hleMixerWorkArea is a 16bit pointer)
+	*(s32 *)(hleMixerWorkArea + 10) = RRamp; // 10-11
+	*(s32 *)(hleMixerWorkArea + 12) = LAdderEnd; // 12-13
+	*(s32 *)(hleMixerWorkArea + 14) = RAdderEnd; // 14-15
+	*(s32 *)(hleMixerWorkArea + 16) = LAdderStart; // 12-13
+	*(s32 *)(hleMixerWorkArea + 18) = RAdderStart; // 14-15
 	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
 }
 
@@ -341,11 +311,11 @@ void ENVMIXER2() {
 
 	//assert(0);
 
-	buffs3 = LoadBufferSpace(((k0 >> 0x0c) & 0x0ff0));
-	bufft6 = LoadBufferSpace(((t9 >> 0x14) & 0x0ff0));
-	bufft7 = LoadBufferSpace(((t9 >> 0x0c) & 0x0ff0));
-	buffs0 = LoadBufferSpace(((t9 >> 0x04) & 0x0ff0));
-	buffs1 = LoadBufferSpace(((t9 << 0x04) & 0x0ff0));
+	buffs3 = (s16 *)(BufferSpace + ((k0 >> 0x0c) & 0x0ff0));
+	bufft6 = (s16 *)(BufferSpace + ((t9 >> 0x14) & 0x0ff0));
+	bufft7 = (s16 *)(BufferSpace + ((t9 >> 0x0c) & 0x0ff0));
+	buffs0 = (s16 *)(BufferSpace + ((t9 >> 0x04) & 0x0ff0));
+	buffs1 = (s16 *)(BufferSpace + ((t9 << 0x04) & 0x0ff0));
 
 
 	v2[0] = 0 - (s16)((k0 & 0x2) >> 1);
@@ -365,65 +335,64 @@ void ENVMIXER2() {
 		t3 = 0;
 	}
 
-
 	while (count > 0) {
 		int temp;
 		for (x = 0; x < 0x8; x++) {
-			vec9 = (s16)(((s32)buffs3[x ^ 1] * (u32)env[0]) >> 0x10) ^ v2[0];
-			vec10 = (s16)(((s32)buffs3[x ^ 1] * (u32)env[2]) >> 0x10) ^ v2[1];
-			temp = bufft6[x ^ 1] + vec9;
+			vec9  = (s16)(((s32)buffs3[MES(x)] * (u32)env[0]) >> 0x10) ^ v2[0];
+			vec10 = (s16)(((s32)buffs3[MES(x)] * (u32)env[2]) >> 0x10) ^ v2[1];
+			temp = bufft6[MES(x)] + vec9;
 			temp = pack_signed(temp);
-			bufft6[x ^ 1] = temp;
-			temp = bufft7[x ^ 1] + vec10;
+			bufft6[MES(x)] = temp;
+			temp = bufft7[MES(x)] + vec10;
 			temp = pack_signed(temp);
-			bufft7[x ^ 1] = temp;
+			bufft7[MES(x)] = temp;
 			vec9 = (s16)(((s32)vec9  * (u32)env[4]) >> 0x10) ^ v2[2];
 			vec10 = (s16)(((s32)vec10 * (u32)env[4]) >> 0x10) ^ v2[3];
 			if (k0 & 0x10) {
-				temp = buffs0[x ^ 1] + vec10;
+				temp = buffs0[MES(x)] + vec10;
 				temp = pack_signed(temp);
-				buffs0[x ^ 1] = temp;
-				temp = buffs1[x ^ 1] + vec9;
+				buffs0[MES(x)] = temp;
+				temp = buffs1[MES(x)] + vec9;
 				temp = pack_signed(temp);
-				buffs1[x ^ 1] = temp;
+				buffs1[MES(x)] = temp;
 			}
 			else {
-				temp = buffs0[x ^ 1] + vec9;
+				temp = buffs0[MES(x)] + vec9;
 				temp = pack_signed(temp);
-				buffs0[x ^ 1] = temp;
-				temp = buffs1[x ^ 1] + vec10;
+				buffs0[MES(x)] = temp;
+				temp = buffs1[MES(x)] + vec10;
 				temp = pack_signed(temp);
-				buffs1[x ^ 1] = temp;
+				buffs1[MES(x)] = temp;
 			}
 		}
 
 		if (!isMKABI)
 		for (x = 0x8; x < 0x10; x++) {
-			vec9 = (s16)(((s32)buffs3[x ^ 1] * (u32)env[1]) >> 0x10) ^ v2[0];
-			vec10 = (s16)(((s32)buffs3[x ^ 1] * (u32)env[3]) >> 0x10) ^ v2[1];
-			temp = bufft6[x ^ 1] + vec9;
+			vec9  = (s16)(((s32)buffs3[MES(x)] * (u32)env[1]) >> 0x10) ^ v2[0];
+			vec10 = (s16)(((s32)buffs3[MES(x)] * (u32)env[3]) >> 0x10) ^ v2[1];
+			temp = bufft6[MES(x)] + vec9;
 			temp = pack_signed(temp);
-			bufft6[x ^ 1] = temp;
-			temp = bufft7[x ^ 1] + vec10;
+			bufft6[MES(x)] = temp;
+			temp = bufft7[MES(x)] + vec10;
 			temp = pack_signed(temp);
-			bufft7[x ^ 1] = temp;
-			vec9 = (s16)(((s32)vec9  * (u32)env[5]) >> 0x10) ^ v2[2];
+			bufft7[MES(x)] = temp;
+			vec9  = (s16)(((s32)vec9  * (u32)env[5]) >> 0x10) ^ v2[2];
 			vec10 = (s16)(((s32)vec10 * (u32)env[5]) >> 0x10) ^ v2[3];
 			if (k0 & 0x10) {
-				temp = buffs0[x ^ 1] + vec10;
+				temp = buffs0[MES(x)] + vec10;
 				temp = pack_signed(temp);
-				buffs0[x ^ 1] = temp;
-				temp = buffs1[x ^ 1] + vec9;
+				buffs0[MES(x)] = temp;
+				temp = buffs1[MES(x)] + vec9;
 				temp = pack_signed(temp);
-				buffs1[x ^ 1] = temp;
+				buffs1[MES(x)] = temp;
 			}
 			else {
-				temp = buffs0[x ^ 1] + vec9;
+				temp = buffs0[MES(x)] + vec9;
 				temp = pack_signed(temp);
-				buffs0[x ^ 1] = temp;
-				temp = buffs1[x ^ 1] + vec10;
+				buffs0[MES(x)] = temp;
+				temp = buffs1[MES(x)] + vec10;
 				temp = pack_signed(temp);
-				buffs1[x ^ 1] = temp;
+				buffs1[MES(x)] = temp;
 			}
 		}
 		bufft6 += adder; bufft7 += adder;
@@ -439,19 +408,19 @@ void ENVMIXER3() {
 	u8 flags = (u8)((k0 >> 16) & 0xff);
 	u32 addy = (t9 & 0xFFFFFF);
 
-	short *inp = LoadBufferSpace(0x4F0);
-	short *out = LoadBufferSpace(0x9D0);
-	short *aux1 = LoadBufferSpace(0xB40);
-	short *aux2 = LoadBufferSpace(0xCB0);
-	short *aux3 = LoadBufferSpace(0xE20);
+	s16* inp  = LoadBufferSpace(0x4F0);
+	s16* out  = LoadBufferSpace(0x9D0);
+	s16* aux1 = LoadBufferSpace(0xB40);
+	s16* aux2 = LoadBufferSpace(0xCB0);
+	s16* aux3 = LoadBufferSpace(0xE20);
 	s32 MainR;
 	s32 MainL;
 	s32 AuxR;
 	s32 AuxL;
 	int i1, o1, a1, a2, a3;
 	WORD AuxIncRate = 1;
-	short zero[8];
-	memset(zero, 0, 16);
+	s16 zero[8];
+	memset(zero, 0, sizeof(s16) * 8);
 
 	s32 LAdder, LAcc, LVol;
 	s32 RAdder, RAcc, RVol;
@@ -477,18 +446,18 @@ void ENVMIXER3() {
 	}
 	else {
 		memcpy((u8 *)hleMixerWorkArea, rdram + addy, 80);
-		Wet = LoadMixer16(0); // 0-1
-		Dry = LoadMixer16(2); // 2-3
-		LTrg = LoadMixer16(4); // 4-5
-		RTrg = LoadMixer16(6); // 6-7
-		LAdder = LoadMixer32(8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
-		RAdder = LoadMixer32(10); // 10-11
-		LAcc = LoadMixer32(12); // 12-13
-		RAcc = LoadMixer32(14); // 14-15
-		LVol = LoadMixer32(16); // 16-17
-		RVol = LoadMixer32(18); // 18-19
-		LSig = LoadMixer16(20); // 20-21
-		RSig = LoadMixer16(22); // 22-23
+		Wet = *(s16 *)(hleMixerWorkArea + 0); // 0-1
+		Dry = *(s16 *)(hleMixerWorkArea + 2); // 2-3
+		LTrg = *(s16 *)(hleMixerWorkArea + 4); // 4-5
+		RTrg = *(s16 *)(hleMixerWorkArea + 6); // 6-7
+		LAdder = *(s32 *)(hleMixerWorkArea + 8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
+		RAdder = *(s32 *)(hleMixerWorkArea + 10); // 10-11
+		LAcc = *(s32 *)(hleMixerWorkArea + 12); // 12-13
+		RAcc = *(s32 *)(hleMixerWorkArea + 14); // 14-15
+		LVol = *(s32 *)(hleMixerWorkArea + 16); // 16-17
+		RVol = *(s32 *)(hleMixerWorkArea + 18); // 18-19
+		LSig = *(s16 *)(hleMixerWorkArea + 20); // 20-21
+		RSig = *(s16 *)(hleMixerWorkArea + 22); // 22-23
 	}
 
 
@@ -533,15 +502,15 @@ void ENVMIXER3() {
 			}
 		}
 		// ****************************************************************
-		MainL = MixVol(Dry, LVol);
-		MainR = MixVol(Dry, RVol);
+		MainL = ((Dry * LVol) + 0x4000) >> 15;
+		MainR = ((Dry * RVol) + 0x4000) >> 15;
 
-		o1 = out[y ^ 1];
-		a1 = aux1[y ^ 1];
-		i1 = inp[y ^ 1];
+		o1 = out[MES(y)];
+		a1 = aux1[MES(y)];
+		i1 = inp[MES(y)];
 
-		o1 += MixVol(i1, MainL);
-		a1 += MixVol(i1, MainR);
+		o1 += ((i1*MainL) + 0x4000) >> 15;
+		a1 += ((i1*MainR) + 0x4000) >> 15;
 
 		// ****************************************************************
 
@@ -550,40 +519,40 @@ void ENVMIXER3() {
 
 		// ****************************************************************
 
-		out[y ^ 1] = o1;
-		aux1[y ^ 1] = a1;
+		out[MES(y)] = o1;
+		aux1[MES(y)] = a1;
 
 		// ****************************************************************
 		//if (!(flags&A_AUX)) {
-		a2 = aux2[y ^ 1];
-		a3 = aux3[y ^ 1];
+		a2 = aux2[MES(y)];
+		a3 = aux3[MES(y)];
 
-		AuxL = MixVol(Wet, LVol);
-		AuxR = MixVol(Wet, RVol);
+		AuxL = ((Wet * LVol) + 0x4000) >> 15;
+		AuxR = ((Wet * RVol) + 0x4000) >> 15;
 
-		a2 += MixVol(i1, AuxL);
-		a3 += MixVol(i1, AuxR);
+		a2 += ((i1*AuxL) + 0x4000) >> 15;
+		a3 += ((i1*AuxR) + 0x4000) >> 15;
 
 		a2 = pack_signed(a2);
 		a3 = pack_signed(a3);
 
-		aux2[y ^ 1] = a2;
-		aux3[y ^ 1] = a3;
+		aux2[MES(y)] = a2;
+		aux3[MES(y)] = a3;
 	}
 	//}
 
-	SaveMixer16(0, Wet); // 0-1
-	SaveMixer16(2, Dry); // 2-3
-	SaveMixer16(4, LTrg); // 4-5
-	SaveMixer16(6, RTrg); // 6-7
-	SaveMixer32(8, LAdder); // 8-9 (hleMixerWorkArea is a 16bit pointer)
-	SaveMixer32(10, RAdder); // 10-11
-	SaveMixer32(12, LAcc); // 12-13
-	SaveMixer32(14, RAcc); // 14-15
-	SaveMixer32(16, LVol); // 16-17
-	SaveMixer32(18, RVol); // 18-19
-	SaveMixer16(20, LSig); // 20-21
-	SaveMixer16(22, RSig); // 22-23
+	*(s16 *)(hleMixerWorkArea + 0) = Wet; // 0-1
+	*(s16 *)(hleMixerWorkArea + 2) = Dry; // 2-3
+	*(s16 *)(hleMixerWorkArea + 4) = LTrg; // 4-5
+	*(s16 *)(hleMixerWorkArea + 6) = RTrg; // 6-7
+	*(s32 *)(hleMixerWorkArea + 8) = LAdder; // 8-9 (hleMixerWorkArea is a 16bit pointer)
+	*(s32 *)(hleMixerWorkArea + 10) = RAdder; // 10-11
+	*(s32 *)(hleMixerWorkArea + 12) = LAcc; // 12-13
+	*(s32 *)(hleMixerWorkArea + 14) = RAcc; // 14-15
+	*(s32 *)(hleMixerWorkArea + 16) = LVol; // 16-17
+	*(s32 *)(hleMixerWorkArea + 18) = RVol; // 18-19
+	*(s16 *)(hleMixerWorkArea + 20) = LSig; // 20-21
+	*(s16 *)(hleMixerWorkArea + 22) = RSig; // 22-23
 	//*(u32 *)(hleMixerWorkArea + 24) = 0x13371337; // 22-23
 	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
 }

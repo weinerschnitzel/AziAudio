@@ -16,6 +16,12 @@
 #define SND_IS_NOT_EMPTY 0x4000000
 #define SND_IS_FULL		 0x8000000
 
+/*
+ * Filters an integer for proximity within the range (base +/- leeway).
+ * Created mostly just to solve the deviant N64 frequencies problem.
+ */
+extern long filter_range(long x, long base, int leeway);
+
 class SoundDriver
 {
 public:
