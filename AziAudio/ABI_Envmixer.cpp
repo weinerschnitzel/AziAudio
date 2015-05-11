@@ -88,11 +88,11 @@ void ENVMIXER() {
 	MessageBox (NULL, "Unaligned EnvMixer... please report this to Azimer with the following information: RomTitle, Place in the rom it occurred, and any save state just before the error", "AudioHLE Error", MB_OK);
 	}*/
 	// ------------------------------------------------------------
-	s16 *inp = (s16 *)(BufferSpace + AudioInBuffer);
-	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
-	s16 *aux1 = (s16 *)(BufferSpace + AudioAuxA);
-	s16 *aux2 = (s16 *)(BufferSpace + AudioAuxC);
-	s16 *aux3 = (s16 *)(BufferSpace + AudioAuxE);
+	s16* inp  = LoadBufferSpace(AudioInBuffer);
+	s16* out  = LoadBufferSpace(AudioOutBuffer);
+	s16* aux1 = LoadBufferSpace(AudioAuxA);
+	s16* aux2 = LoadBufferSpace(AudioAuxC);
+	s16* aux3 = LoadBufferSpace(AudioAuxE);
 	s32 MainR;
 	s32 MainL;
 	s32 AuxR;
@@ -408,11 +408,11 @@ void ENVMIXER3() {
 	u8 flags = (u8)((k0 >> 16) & 0xff);
 	u32 addy = (t9 & 0xFFFFFF);
 
-	s16 *inp = (s16 *)(BufferSpace + 0x4F0);
-	s16 *out = (s16 *)(BufferSpace + 0x9D0);
-	s16 *aux1 = (s16 *)(BufferSpace + 0xB40);
-	s16 *aux2 = (s16 *)(BufferSpace + 0xCB0);
-	s16 *aux3 = (s16 *)(BufferSpace + 0xE20);
+	s16* inp  = LoadBufferSpace(0x4F0);
+	s16* out  = LoadBufferSpace(0x9D0);
+	s16* aux1 = LoadBufferSpace(0xB40);
+	s16* aux2 = LoadBufferSpace(0xCB0);
+	s16* aux3 = LoadBufferSpace(0xE20);
 	s32 MainR;
 	s32 MainL;
 	s32 AuxR;
