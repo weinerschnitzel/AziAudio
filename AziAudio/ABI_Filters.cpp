@@ -18,11 +18,22 @@
 static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
 {
 	i32 result;
+#ifdef SSE2_SUPPORT
+	__m128i xmm_source, xmm_target;
+	i32 pre_buffer[4];
+
+	xmm_source = _mm_loadu_si128((__m128i *)vs);
+	xmm_target = _mm_loadu_si128((__m128i *)vt);
+	xmm_source = _mm_madd_epi16(xmm_source, xmm_target);
+	_mm_storeu_si128((__m128i *)pre_buffer, xmm_source);
+	result = pre_buffer[0] + pre_buffer[1] + pre_buffer[2] + pre_buffer[3];
+#else
 	register int i;
 
 	result = 0;
 	for (i = 0; i < 8; i++)
 		result += (s32)vs[i] * (s32)vt[i];
+#endif
 	*(acc) = result;
 	return;
 }
