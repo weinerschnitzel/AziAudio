@@ -17,21 +17,12 @@
  */
 static void packed_multiply_accumulate(pi32 acc, pi16 vs, pi16 vt, int offset)
 {
-	i16 source[16], target[8];
 	i32 result;
 	register int i;
 
-	for (i = 0; i < 16; i++)
-		source[i] = vs[i];
-	for (i = 0; i < 8; i++)
-		target[i] = vt[i];
-	swap_elements(&source[0]);
-	swap_elements(&source[8]);
-	swap_elements(&target[0]);
-
 	result = 0;
 	for (i = 0; i < 8; i++)
-		result += (s32)source[i + offset] * (s32)target[i];
+		result += (s32)vs[i + offset] * (s32)vt[i];
 	*(acc) = result;
 	return;
 }
@@ -82,8 +73,10 @@ void FILTER2() {
  */
 	for (i = 0; i < 8; i++)
 		inputs_matrix[15 - (i + 0)] = inp1[i];
+	swap_elements(&inputs_matrix[8]);
 	for (i = 0; i < 8; i++)
 		inputs_matrix[15 - (i + 8)] = inp2[i];
+	swap_elements(&inputs_matrix[0]);
 
 	for (x = 0; x < cnt; x += 0x10) {
 		packed_multiply_accumulate(&out1[0], &inputs_matrix[0], &lutt6[0], 6);
@@ -115,6 +108,8 @@ void FILTER2() {
 
 		for (i = 0; i < 16; i++)
 			inputs_matrix[15 - i] = inp1[i];
+		swap_elements(&inputs_matrix[0]);
+		swap_elements(&inputs_matrix[8]);
 	}
 	//			memcpy (rdram+(t9&0xFFFFFF), dmem+0xFB0, 0x20);
 	memcpy(save, inp2 - 8, 0x10);
