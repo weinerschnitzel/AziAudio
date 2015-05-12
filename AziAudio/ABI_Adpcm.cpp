@@ -86,7 +86,7 @@ void ADPCM() { // Work in progress! :)
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
-		vscale = (0x8000 >> ((12 - code) - 1));			// very strange. 0x8000 would be .5 in 16:16 format
+		vscale = (0x8000u >> ((12 - code) - 1));		// very strange. 0x8000 would be .5 in 16:16 format
 		// so this appears to be a fractional scale based
 		// on the 12 based inverse of the scale value.  note
 		// that this could be negative, in which case we do
@@ -219,7 +219,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;
-		vscale = (0x8000 >> ((srange - code) - 1));
+		vscale = (0x8000u >> ((srange - code) - 1));
 
 		inPtr++;
 		j = 0;
@@ -349,7 +349,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
-		vscale = (0x8000 >> ((12 - code) - 1));			// very strange. 0x8000 would be .5 in 16:16 format
+		vscale = (0x8000u >> ((12 - code) - 1));		// very strange. 0x8000 would be .5 in 16:16 format
 		// so this appears to be a fractional scale based
 		// on the 12 based inverse of the scale value.  note
 		// that this could be negative, in which case we do
