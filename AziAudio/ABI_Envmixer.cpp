@@ -127,7 +127,7 @@ void ENVMIXER() {
 	s32 MainL;
 	s32 AuxR;
 	s32 AuxL;
-	int i1, o1, a1, a2, a3;
+	s32 i1, o1, a1, a2, a3;
 	WORD AuxIncRate = 1;
 	s16 zero[8];
 	memset(zero, 0, sizeof(s16) * 8);
@@ -200,12 +200,12 @@ void ENVMIXER() {
 		}
 
 		for (int x = 0; x < 8; x++) {
-			i1 = (int)inp[MES(ptr)];
-			o1 = (int)out[MES(ptr)];
-			a1 = (int)aux1[MES(ptr)];
+			i1 = inp[MES(ptr)];
+			o1 = out[MES(ptr)];
+			a1 = aux1[MES(ptr)];
 			if (AuxIncRate) {
-				a2 = (int)aux2[MES(ptr)];
-				a3 = (int)aux3[MES(ptr)];
+				a2 = aux2[MES(ptr)];
+				a3 = aux3[MES(ptr)];
 			}
 			// TODO: here...
 			//LAcc = LTrg;
@@ -447,7 +447,7 @@ void ENVMIXER3() {
 	s32 MainL;
 	s32 AuxR;
 	s32 AuxL;
-	int i1, o1, a1, a2, a3;
+	s32 i1, o1, a1, a2, a3;
 	WORD AuxIncRate = 1;
 	s16 zero[8];
 	memset(zero, 0, sizeof(s16) * 8);
