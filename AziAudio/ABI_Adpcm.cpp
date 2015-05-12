@@ -13,26 +13,26 @@
 
 u16 adpcmtable[0x88];
 
-void InitInput(int *inp, int index, BYTE icode, u8 mask, u8 shifter, BYTE code, u8 srange, int vscale)
+void InitInput(s32 *inp, int index, BYTE icode, u8 mask, u8 shifter, BYTE code, u8 srange, int vscale)
 {
 	inp[index] = (s16)((icode & mask) << shifter);
 	if (code < srange)	
-		inp[index] = ((int)((int)inp[index] * (int)vscale) >> 16);
+		inp[index] = (inp[index] * vscale) >> 16;
 	else 
 		int catchme = 1;
 }
 
-void ADPCMFillArray(int *a, s16* book1, s16* book2, int l1, int l2, int *inp)
+void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s32 l1, s32 l2, s32 *inp)
 {
 	for (int i = 0; i < 8; i++)
 	{
-		a[i] = (int)book1[i] * (int)l1;
-		a[i] += (int)book2[i] * (int)l2;
+		a[i]  = (s32)book1[i] * (s32)l1;
+		a[i] += (s32)book2[i] * (s32)l2;
 		for (int i2 = 0; i2 < i; i2++)
 		{
-			a[i] += (int)book2[(i - 1) - i2] * inp[i2];
+			a[i] += (s32)book2[(i - 1) - i2] * inp[i2];
 		}
-		a[i] += (int)inp[i] * (int)2048;
+		a[i] += 2048 * inp[i];
 	}
 }
 
@@ -50,7 +50,7 @@ void ADPCM() { // Work in progress! :)
 	int vscale;
 	WORD index;
 	WORD j;
-	int a[8];
+	s32 a[8];
 	s16* book1;
 	s16* book2;
 
@@ -70,10 +70,10 @@ void ADPCM() { // Work in progress! :)
 		}
 	}
 
-	int l1 = out[15];
-	int l2 = out[14];
-	int inp1[8];
-	int inp2[8];
+	s32 l1 = out[15];
+	s32 l2 = out[14];
+	s32 inp1[8];
+	s32 inp2[8];
 	out += 16;
 	while (count>0)
 	{
@@ -164,7 +164,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	int vscale;
 	WORD index;
 	WORD j;
-	int a[8];
+	s32 a[8];
 	s16* book1;
 	s16* book2;
 
@@ -211,10 +211,10 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		}
 	}
 
-	int l1 = out[15];
-	int l2 = out[14];
-	int inp1[8];
-	int inp2[8];
+	s32 l1 = out[15];
+	s32 l2 = out[14];
+	s32 inp1[8];
+	s32 inp2[8];
 	out += 16;
 	while (count>0) {
 		code = BufferSpace[BES(AudioInBuffer + inPtr)];
@@ -311,7 +311,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	int vscale;
 	WORD index;
 	WORD j;
-	int a[8];
+	s32 a[8];
 	s16* book1;
 	s16* book2;
 
@@ -337,10 +337,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		}
 	}
 
-	int l1 = out[15];
-	int l2 = out[14];
-	int inp1[8];
-	int inp2[8];
+	s32 l1 = out[15];
+	s32 l2 = out[14];
+	s32 inp1[8];
+	s32 inp2[8];
 	out += 16;
 	while (count>0)
 	{
