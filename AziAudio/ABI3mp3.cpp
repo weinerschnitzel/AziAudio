@@ -204,14 +204,12 @@ static void rsp_SH(int rt, s16 offset, u32 base)
     u32 address;
 
     address = base + offset; /* u32 base == GPR[base] */
-#if 1
+#if 0
     assert((address & ~0xFFFul) == 0);
-#else
-    address = address & 0x00000FFFu;
 #endif
 
     DMEM = &mp3data[0]; /* mp3data[] has exactly 4096 bytes allocated. */
-#if 1
+#if 0
     assert((address & 1) == 0);
 #endif
     *(s16 *)(DMEM + address) = (s16)(v[rt] & 0x0000FFFFul);
