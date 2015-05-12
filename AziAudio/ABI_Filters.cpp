@@ -15,14 +15,14 @@
  * Some combination of RSP LWC2 pack-type operations and vector multiply-
  * accumulate going on here, doing some fancy matrix math from data memory.
  */
-static void packed_multiply_accumulate(pi32 acc, pi16 vs, pi16 vt, int offset)
+static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
 {
 	i32 result;
 	register int i;
 
 	result = 0;
 	for (i = 0; i < 8; i++)
-		result += (s32)vs[i + offset] * (s32)vt[i];
+		result += (s32)vs[i] * (s32)vt[i];
 	*(acc) = result;
 	return;
 }
@@ -79,14 +79,14 @@ void FILTER2() {
 	swap_elements(&inputs_matrix[0]);
 
 	for (x = 0; x < cnt; x += 0x10) {
-		packed_multiply_accumulate(&out1[0], &inputs_matrix[0], &lutt6[0], 6);
-		packed_multiply_accumulate(&out1[1], &inputs_matrix[0], &lutt6[0], 7);
-		packed_multiply_accumulate(&out1[2], &inputs_matrix[0], &lutt6[0], 4);
-		packed_multiply_accumulate(&out1[3], &inputs_matrix[0], &lutt6[0], 5);
-		packed_multiply_accumulate(&out1[4], &inputs_matrix[0], &lutt6[0], 2);
-		packed_multiply_accumulate(&out1[5], &inputs_matrix[0], &lutt6[0], 3);
-		packed_multiply_accumulate(&out1[6], &inputs_matrix[0], &lutt6[0], 0);
-		packed_multiply_accumulate(&out1[7], &inputs_matrix[0], &lutt6[0], 1);
+		packed_multiply_accumulate(&out1[0], &inputs_matrix[6], &lutt6[0]);
+		packed_multiply_accumulate(&out1[1], &inputs_matrix[7], &lutt6[0]);
+		packed_multiply_accumulate(&out1[2], &inputs_matrix[4], &lutt6[0]);
+		packed_multiply_accumulate(&out1[3], &inputs_matrix[5], &lutt6[0]);
+		packed_multiply_accumulate(&out1[4], &inputs_matrix[2], &lutt6[0]);
+		packed_multiply_accumulate(&out1[5], &inputs_matrix[3], &lutt6[0]);
+		packed_multiply_accumulate(&out1[6], &inputs_matrix[0], &lutt6[0]);
+		packed_multiply_accumulate(&out1[7], &inputs_matrix[1], &lutt6[0]);
 
 		for (i = 0; i < 8; i++)
 			outp[i] = (out1[i] + 0x4000) >> 15; /* fractional round and shift */
