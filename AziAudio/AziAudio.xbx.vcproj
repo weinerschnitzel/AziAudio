@@ -280,9 +280,6 @@
 						RelativePath=".\Mupen64plusHLE\memory.h">
 					</File>
 					<File
-						RelativePath=".\Mupen64plusHLE\stdbool.h">
-					</File>
-					<File
 						RelativePath=".\Mupen64plusHLE\ucodes.h">
 					</File>
 				</Filter>
@@ -312,9 +309,6 @@
 			</File>
 			<File
 				RelativePath=".\SoundDriver.h">
-			</File>
-			<File
-				RelativePath=".\XBox\stdint.h">
 			</File>
 			<File
 				RelativePath=".\XBox\xbox_depp.h">

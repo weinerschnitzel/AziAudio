@@ -14,6 +14,11 @@ int MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
 	return FALSE;
 }
 
+int MessageBoxA(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
+{
+	return MessageBox(hWnd, lpText, lpCaption, uType);
+}
+
 BOOL TerminateThread(HANDLE hThread, DWORD dwExitCode)
 {
 	ExitThread(dwExitCode);

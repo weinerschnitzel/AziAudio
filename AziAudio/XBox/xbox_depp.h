@@ -71,6 +71,7 @@ extern "C" {
 
 BOOL PathFileExists(const char *pszPath);
 int MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType);
+int MessageBoxA(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType);
 BOOL TerminateThread(HANDLE hThread, DWORD dwExitCode);
 BOOL IsWindow(HWND hWnd);
 BOOL ShowWindow(HWND hWnd, int CmdShow);
