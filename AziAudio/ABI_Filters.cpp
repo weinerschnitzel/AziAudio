@@ -17,12 +17,21 @@
  */
 static void packed_multiply_accumulate(pi32 acc, pi16 vs, pi16 vt, int offset)
 {
+	i16 source[16], target[8];
 	i32 result;
 	register int i;
 
+	for (i = 0; i < 16; i++)
+		source[i] = vs[i];
+	for (i = 0; i < 8; i++)
+		target[i] = vt[i];
+	swap_elements(&source[0]);
+	swap_elements(&source[8]);
+	swap_elements(&target[0]);
+
 	result = 0;
 	for (i = 0; i < 8; i++)
-		result += (s32)vs[MES(i + offset)] * (s32)vt[MES(i + 0)];
+		result += (s32)source[i + offset] * (s32)target[i];
 	*(acc) = result;
 	return;
 }
