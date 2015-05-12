@@ -13,7 +13,7 @@
 
 u16 adpcmtable[0x88];
 
-void InitInput(s32 *inp, int index, BYTE icode, u8 mask, u8 shifter, BYTE code, u8 srange, int vscale)
+void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, BYTE code, u8 srange, int vscale)
 {
 	inp[index] = (s16)((icode & mask) << shifter);
 	if (code < srange)	
@@ -45,7 +45,6 @@ void ADPCM() { // Work in progress! :)
 	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
 	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
 	s16 count = (s16)AudioCount;
-	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
@@ -100,7 +99,7 @@ void ADPCM() { // Work in progress! :)
 		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
 			// which yields 8 short pcm values
 		{
-			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
+			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -112,7 +111,7 @@ void ADPCM() { // Work in progress! :)
 		j = 0;
 		while (j<8)
 		{
-			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
+			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -159,7 +158,6 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
 	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
 	s16 count = (s16)AudioCount;
-	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
@@ -229,7 +227,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		j = 0;
 
 		while (j<8) {
-			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
+			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, mask1, 8, code, srange, vscale); // this will in effect be signed
@@ -251,7 +249,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		j = 0;
 		while (j<8) {
-			icode = BufferSpace[BES(AudioInBuffer + inPtr)];
+			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, mask1, 8, code, srange, vscale);
@@ -306,7 +304,6 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	s16 *out = (s16 *)(BufferSpace + (t9 & 0xfff) + 0x4f0);
 	BYTE *in = (BYTE *)(BufferSpace + ((t9 >> 12) & 0xf) + 0x4f0);
 	s16 count = (s16)((t9 >> 16) & 0xfff);
-	BYTE icode;
 	BYTE code;
 	int vscale;
 	WORD index;
@@ -367,7 +364,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
 			// which yields 8 short pcm values
 		{
-			icode = BufferSpace[BES(0x4f0 + inPtr)];
+			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
 			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
@@ -379,7 +376,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		j = 0;
 		while (j<8)
 		{
-			icode = BufferSpace[BES(0x4f0 + inPtr)];
+			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
 			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
