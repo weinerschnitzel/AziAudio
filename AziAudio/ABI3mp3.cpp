@@ -192,9 +192,16 @@ void MP3AB0 () {
 	}
 }
 
-int CalcDeWindow(u32 addptr, int mp3DataIndex, u32 offset, int offsetValue)
+s32 CalcDeWindow(u32 addptr, int mp3DataIndex, u32 offset, int offsetValue)
 {
-	return ((int)*(s16 *)(mp3data + (addptr)+ mp3DataIndex) * (s16)DeWindowLUT[offset + offsetValue] + 0x4000) >> 0xF;
+    s32 product;
+
+    product =
+        (s32)*(s16 *)(mp3data + addptr + mp3DataIndex)
+      * (s32)(s16)DeWindowLUT[offset + offsetValue]
+    ;
+    product = (product + 0x4000) >> 15; /* single-precision fraction rounding */
+    return (product);
 }
 
 // ** Store v[vIndex] -> (mp3DataIndex)**
