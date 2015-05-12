@@ -262,348 +262,346 @@ void MP3 () {
 }
 
 void InnerLoop () {
-				// Part 1: 100% Accurate
-				int i;
+	// Part 1: 100% Accurate
+	int i;
 
-				v[0] = GetData(0x00); v[31] = GetData(0x3E); v[0] += v[31];
-				v[1] = GetData(0x02); v[30] = GetData(0x3C); v[1] += v[30];
-				v[2] = GetData(0x06); v[28] = GetData(0x38); v[2] += v[28];
-				v[3] = GetData(0x04); v[29] = GetData(0x3A); v[3] += v[29];
+	v[0] = GetData(0x00); v[31] = GetData(0x3E); v[0] += v[31];
+	v[1] = GetData(0x02); v[30] = GetData(0x3C); v[1] += v[30];
+	v[2] = GetData(0x06); v[28] = GetData(0x38); v[2] += v[28];
+	v[3] = GetData(0x04); v[29] = GetData(0x3A); v[3] += v[29];
 
-				v[4] = GetData(0x0E); v[24] = GetData(0x30); v[4] += v[24];
-				v[5] = GetData(0x0C); v[25] = GetData(0x32); v[5] += v[25];
-				v[6] = GetData(0x08); v[27] = GetData(0x36); v[6] += v[27];
-				v[7] = GetData(0x0A); v[26] = GetData(0x34); v[7] += v[26];
+	v[4] = GetData(0x0E); v[24] = GetData(0x30); v[4] += v[24];
+	v[5] = GetData(0x0C); v[25] = GetData(0x32); v[5] += v[25];
+	v[6] = GetData(0x08); v[27] = GetData(0x36); v[6] += v[27];
+	v[7] = GetData(0x0A); v[26] = GetData(0x34); v[7] += v[26];
 
-				v[8] = GetData(0x1E); v[16] = GetData(0x20); v[8] += v[16];
-				v[9] = GetData(0x1C); v[17] = GetData(0x22); v[9] += v[17];
-				v[10]= GetData(0x18); v[19] = GetData(0x26); v[10]+= v[19];
-				v[11]= GetData(0x1A); v[18] = GetData(0x24); v[11]+= v[18];
+	v[8] = GetData(0x1E); v[16] = GetData(0x20); v[8] += v[16];
+	v[9] = GetData(0x1C); v[17] = GetData(0x22); v[9] += v[17];
+	v[10]= GetData(0x18); v[19] = GetData(0x26); v[10]+= v[19];
+	v[11]= GetData(0x1A); v[18] = GetData(0x24); v[11]+= v[18];
 
-				v[12]= GetData(0x10); v[23] = GetData(0x2E); v[12]+= v[23];
-				v[13]= GetData(0x12); v[22] = GetData(0x2C); v[13]+= v[22];
-				v[14]= GetData(0x16); v[20] = GetData(0x28); v[14]+= v[20];
-				v[15]= GetData(0x14); v[21] = GetData(0x2A); v[15]+= v[21];
+	v[12]= GetData(0x10); v[23] = GetData(0x2E); v[12]+= v[23];
+	v[13]= GetData(0x12); v[22] = GetData(0x2C); v[13]+= v[22];
+	v[14]= GetData(0x16); v[20] = GetData(0x28); v[14]+= v[20];
+	v[15]= GetData(0x14); v[21] = GetData(0x2A); v[15]+= v[21];
 
-				// Part 2-4
+	// Part 2-4
+	MP3AB0 ();
 
-				MP3AB0 ();
+	// Part 5 - 1-Wide Butterflies - 100% Accurate but need SSVs!!!
 
-				// Part 5 - 1-Wide Butterflies - 100% Accurate but need SSVs!!!
+	u32 t0 = t6 + 0x100;
+	u32 t1 = t6 + 0x200;
+	u32 t2 = t5 + 0x100;
+	u32 t3 = t5 + 0x200;
+/*
+	RSP_GPR[0x8].W = t0;
+	RSP_GPR[0x9].W = t1;
+	RSP_GPR[0xA].W = t2;
+	RSP_GPR[0xB].W = t3;
 
-				u32 t0 = t6 + 0x100;
-				u32 t1 = t6 + 0x200;
-				u32 t2 = t5 + 0x100;
-				u32 t3 = t5 + 0x200;
-				/*RSP_GPR[0x8].W = t0;
-				RSP_GPR[0x9].W = t1;
-				RSP_GPR[0xA].W = t2;
-				RSP_GPR[0xB].W = t3;
-
-				RSP_Vect[0].DW[1] = 0xB504A57E00016A09;
-				RSP_Vect[0].DW[0] = 0x0002D4130005A827;
+	RSP_Vect[0].DW[1] = 0xB504A57E00016A09;
+	RSP_Vect[0].DW[0] = 0x0002D4130005A827;
 */
-				assert(((t1 | t2 | t3 | t5 | t6) & 0x1) == 0);
+	assert(((t1 | t2 | t3 | t5 | t6) & 0x1) == 0);
 
-				// 0x13A8
-				v[1] = 0;
-				v[11] = ((v[16] - v[17]) * 0xB504) >> 0x10;
+	// 0x13A8
+	v[1] = 0;
+	v[11] = ((v[16] - v[17]) * 0xB504) >> 0x10;
 
-				v[16] = -v[16] -v[17];
-				v[2] = v[18] + v[19];
-				// ** Store v[11] -> (T6 + 0)**
-				StoreData(11, (t6 + (s16)0x0000));
-				
-				v[11] = -v[11];
-				// ** Store v[16] -> (T3 + 0)**
-				StoreData(16, (t3 + (s16)0x0000));
-				// ** Store v[11] -> (T5 + 0)**
-				StoreData(11, (t5 + (s16)0x0000));
-				// 0x13E8 - Verified....
-				v[2] = -v[2];
-				// ** Store v[2] -> (T2 + 0)**
-				StoreData(2, (t2 + (s16)0x0000));
-				v[3]  = (((v[18] - v[19]) * 0x16A09) >> 0x10) + v[2];
-				// ** Store v[3] -> (T0 + 0)**
-				StoreData(3, (t0 + (s16)0x0000));
-				// 0x1400 - Verified
-				v[4] = -v[20] -v[21];
-				v[6] = v[22] + v[23];
-				v[5] = ((v[20] - v[21]) * 0x16A09) >> 0x10;
-				// ** Store v[4] -> (T3 + 0xFF80)
-				StoreData(4, (t3 + (s16)0xFF80));
-				v[7] = ((v[22] - v[23]) * 0x2D413) >> 0x10;
-				v[5] = v[5] - v[4];
-				v[7] = v[7] - v[5];
-				v[6] = v[6] + v[6];
-				v[5] = v[5] - v[6];
-				v[4] = -v[4] - v[6];
-				// *** Store v[7] -> (T1 + 0xFF80)
-				StoreData(7, (t1 + (s16)0xFF80));
-				// *** Store v[4] -> (T2 + 0xFF80)
-				StoreData(4, (t2 + (s16)0xFF80));
-				// *** Store v[5] -> (T0 + 0xFF80)
-				StoreData(5, (t0 + (s16)0xFF80));
-				v[8] = v[24] + v[25];
+	v[16] = -v[16] -v[17];
+	v[2] = v[18] + v[19];
+	// ** Store v[11] -> (T6 + 0)**
+	StoreData(11, (t6 + (s16)0x0000));
 
+	v[11] = -v[11];
+	// ** Store v[16] -> (T3 + 0)**
+	StoreData(16, (t3 + (s16)0x0000));
+	// ** Store v[11] -> (T5 + 0)**
+	StoreData(11, (t5 + (s16)0x0000));
+	// 0x13E8 - Verified....
+	v[2] = -v[2];
+	// ** Store v[2] -> (T2 + 0)**
+	StoreData(2, (t2 + (s16)0x0000));
+	v[3]  = (((v[18] - v[19]) * 0x16A09) >> 0x10) + v[2];
+	// ** Store v[3] -> (T0 + 0)**
+	StoreData(3, (t0 + (s16)0x0000));
+	// 0x1400 - Verified
+	v[4] = -v[20] -v[21];
+	v[6] = v[22] + v[23];
+	v[5] = ((v[20] - v[21]) * 0x16A09) >> 0x10;
+	// ** Store v[4] -> (T3 + 0xFF80)
+	StoreData(4, (t3 + (s16)0xFF80));
+	v[7] = ((v[22] - v[23]) * 0x2D413) >> 0x10;
+	v[5] = v[5] - v[4];
+	v[7] = v[7] - v[5];
+	v[6] = v[6] + v[6];
+	v[5] = v[5] - v[6];
+	v[4] = -v[4] - v[6];
+	// *** Store v[7] -> (T1 + 0xFF80)
+	StoreData(7, (t1 + (s16)0xFF80));
+	// *** Store v[4] -> (T2 + 0xFF80)
+	StoreData(4, (t2 + (s16)0xFF80));
+	// *** Store v[5] -> (T0 + 0xFF80)
+	StoreData(5, (t0 + (s16)0xFF80));
+	v[8] = v[24] + v[25];
 
-				v[9] = ((v[24] - v[25]) * 0x16A09) >> 0x10;
-				v[2] = v[8] + v[9];
-				v[11] = ((v[26] - v[27]) * 0x2D413) >> 0x10;
-				v[13] = ((v[28] - v[29]) * 0x2D413) >> 0x10;
+	v[9] = ((v[24] - v[25]) * 0x16A09) >> 0x10;
+	v[2] = v[8] + v[9];
+	v[11] = ((v[26] - v[27]) * 0x2D413) >> 0x10;
+	v[13] = ((v[28] - v[29]) * 0x2D413) >> 0x10;
 
-				v[10] = v[26] + v[27]; v[10] = v[10] + v[10];
-				v[12] = v[28] + v[29]; v[12] = v[12] + v[12];
-				v[14] = v[30] + v[31];
-				v[3] = v[8] + v[10];
-				v[14] = v[14] + v[14];
-				v[13] = (v[13] - v[2]) + v[12];
-				v[15] = (((v[30] - v[31]) * 0x5A827) >> 0x10) - (v[11] + v[2]);
-				v[14] = -(v[14] + v[14]) + v[3];
-				v[17] = v[13] - v[10];
-				v[9] = v[9] + v[14];
-				// ** Store v[9] -> (T6 + 0x40)
-				StoreData(9, (t6 + (s16)0x0040));
-				v[11] = v[11] - v[13];
-				// ** Store v[17] -> (T0 + 0xFFC0)
-				StoreData(17, (t0 + (s16)0xFFC0));
-				v[12] = v[8] - v[12];
-				// ** Store v[11] -> (T0 + 0x40)
-				StoreData(11, (t0 + (s16)0x0040));
-				v[8] = -v[8];
-				// ** Store v[15] -> (T1 + 0xFFC0)
-				StoreData(15, (t1 + (s16)0xFFC0));
-				v[10] = -v[10] -v[12];
-				// ** Store v[12] -> (T2 + 0x40)
-				StoreData(12, (t2 + (s16)0x0040));
-				// ** Store v[8] -> (T3 + 0xFFC0)
-				StoreData(8, (t3 + (s16)0xFFC0));
-				// ** Store v[14] -> (T5 + 0x40)
-				StoreData(14, (t5 + (s16)0x0040));
-				// ** Store v[10] -> (T2 + 0xFFC0)
-				StoreData(10, (t2 + (s16)0xFFC0));
-				// 0x14FC - Verified...
+	v[10] = v[26] + v[27]; v[10] = v[10] + v[10];
+	v[12] = v[28] + v[29]; v[12] = v[12] + v[12];
+	v[14] = v[30] + v[31];
+	v[3] = v[8] + v[10];
+	v[14] = v[14] + v[14];
+	v[13] = (v[13] - v[2]) + v[12];
+	v[15] = (((v[30] - v[31]) * 0x5A827) >> 0x10) - (v[11] + v[2]);
+	v[14] = -(v[14] + v[14]) + v[3];
+	v[17] = v[13] - v[10];
+	v[9] = v[9] + v[14];
+	// ** Store v[9] -> (T6 + 0x40)
+	StoreData(9, (t6 + (s16)0x0040));
+	v[11] = v[11] - v[13];
+	// ** Store v[17] -> (T0 + 0xFFC0)
+	StoreData(17, (t0 + (s16)0xFFC0));
+	v[12] = v[8] - v[12];
+	// ** Store v[11] -> (T0 + 0x40)
+	StoreData(11, (t0 + (s16)0x0040));
+	v[8] = -v[8];
+	// ** Store v[15] -> (T1 + 0xFFC0)
+	StoreData(15, (t1 + (s16)0xFFC0));
+	v[10] = -v[10] -v[12];
+	// ** Store v[12] -> (T2 + 0x40)
+	StoreData(12, (t2 + (s16)0x0040));
+	// ** Store v[8] -> (T3 + 0xFFC0)
+	StoreData(8, (t3 + (s16)0xFFC0));
+	// ** Store v[14] -> (T5 + 0x40)
+	StoreData(14, (t5 + (s16)0x0040));
+	// ** Store v[10] -> (T2 + 0xFFC0)
+	StoreData(10, (t2 + (s16)0xFFC0));
+	// 0x14FC - Verified...
 
-				// Part 6 - 100% Accurate
+	// Part 6 - 100% Accurate
 
-				v[0] = GetData(0x00); v[31] = GetData(0x3E); v[0] -= v[31];
-				v[1] = GetData(0x02); v[30] = GetData(0x3C); v[1] -= v[30];
-				v[2] = GetData(0x06); v[28] = GetData(0x38); v[2] -= v[28];
-				v[3] = GetData(0x04); v[29] = GetData(0x3A); v[3] -= v[29];
+	v[0] = GetData(0x00); v[31] = GetData(0x3E); v[0] -= v[31];
+	v[1] = GetData(0x02); v[30] = GetData(0x3C); v[1] -= v[30];
+	v[2] = GetData(0x06); v[28] = GetData(0x38); v[2] -= v[28];
+	v[3] = GetData(0x04); v[29] = GetData(0x3A); v[3] -= v[29];
 
-				v[4] = GetData(0x0E); v[24] = GetData(0x30); v[4] -= v[24];
-				v[5] = GetData(0x0C); v[25] = GetData(0x32); v[5] -= v[25];
-				v[6] = GetData(0x08); v[27] = GetData(0x36); v[6] -= v[27];
-				v[7] = GetData(0x0A); v[26] = GetData(0x34); v[7] -= v[26];
+	v[4] = GetData(0x0E); v[24] = GetData(0x30); v[4] -= v[24];
+	v[5] = GetData(0x0C); v[25] = GetData(0x32); v[5] -= v[25];
+	v[6] = GetData(0x08); v[27] = GetData(0x36); v[6] -= v[27];
+	v[7] = GetData(0x0A); v[26] = GetData(0x34); v[7] -= v[26];
 
-				v[8] = GetData(0x1E); v[16] = GetData(0x20); v[8] -= v[16];
-				v[9] = GetData(0x1C); v[17] = GetData(0x22); v[9] -= v[17];
-				v[10]= GetData(0x18); v[19] = GetData(0x26); v[10]-= v[19];
-				v[11]= GetData(0x1A); v[18] = GetData(0x24); v[11]-= v[18];
+	v[8] = GetData(0x1E); v[16] = GetData(0x20); v[8] -= v[16];
+	v[9] = GetData(0x1C); v[17] = GetData(0x22); v[9] -= v[17];
+	v[10]= GetData(0x18); v[19] = GetData(0x26); v[10]-= v[19];
+	v[11]= GetData(0x1A); v[18] = GetData(0x24); v[11]-= v[18];
 
-				v[12]= GetData(0x10); v[23] = GetData(0x2E); v[12]-= v[23];
-				v[13]= GetData(0x12); v[22] = GetData(0x2C); v[13]-= v[22];
-				v[14]= GetData(0x16); v[20] = GetData(0x28); v[14]-= v[20];
-				v[15]= GetData(0x14); v[21] = GetData(0x2A); v[15]-= v[21];
+	v[12]= GetData(0x10); v[23] = GetData(0x2E); v[12]-= v[23];
+	v[13]= GetData(0x12); v[22] = GetData(0x2C); v[13]-= v[22];
+	v[14]= GetData(0x16); v[20] = GetData(0x28); v[14]-= v[20];
+	v[15]= GetData(0x14); v[21] = GetData(0x2A); v[15]-= v[21];
 
-				//0, 1, 3, 2, 7, 6, 4, 5, 7, 6, 4, 5, 0, 1, 3, 2
-				const u16 LUT6[16] = { 0xFFB2, 0xFD3A, 0xF10A, 0xF854,
-									   0xBDAE, 0xCDA0, 0xE76C, 0xDB94,
-									   0x1920, 0x4B20, 0xAC7C, 0x7C68,
-									   0xABEC, 0x9880, 0xDAE8, 0x839C };
-				for (i = 0; i < 16; i++) {
-					v[0+i] = (v[0+i] * LUT6[i]) >> 0x10;
-				}
-				v[0] = v[0] + v[0];	v[1] = v[1] + v[1];
-				v[2] = v[2] + v[2]; v[3] = v[3] + v[3];	v[4] = v[4] + v[4];
-				v[5] = v[5] + v[5]; v[6] = v[6] + v[6]; v[7] = v[7] + v[7];
-				v[12] = v[12] + v[12]; v[13] = v[13] + v[13]; v[15] = v[15] + v[15];
-				
-				MP3AB0 ();
+	//0, 1, 3, 2, 7, 6, 4, 5, 7, 6, 4, 5, 0, 1, 3, 2
+	const u16 LUT6[16] = { 0xFFB2, 0xFD3A, 0xF10A, 0xF854,
+						   0xBDAE, 0xCDA0, 0xE76C, 0xDB94,
+						   0x1920, 0x4B20, 0xAC7C, 0x7C68,
+						   0xABEC, 0x9880, 0xDAE8, 0x839C };
+	for (i = 0; i < 16; i++) {
+		v[0+i] = (v[0+i] * LUT6[i]) >> 0x10;
+	}
+	v[0] = v[0] + v[0];	v[1] = v[1] + v[1];
+	v[2] = v[2] + v[2]; v[3] = v[3] + v[3];	v[4] = v[4] + v[4];
+	v[5] = v[5] + v[5]; v[6] = v[6] + v[6]; v[7] = v[7] + v[7];
+	v[12] = v[12] + v[12]; v[13] = v[13] + v[13]; v[15] = v[15] + v[15];
 
-				// Part 7: - 100% Accurate + SSV - Unoptimized
+	MP3AB0 ();
 
-				v[0] = ( v[17] + v[16] ) >> 1;
-				v[1] = ((v[17] * (int)((s16)0xA57E * 2)) + (v[16] * 0xB504)) >> 0x10;
-				v[2] = -v[18] -v[19];
-				v[3] = ((v[18] - v[19]) * 0x16A09) >> 0x10;
-				v[4] = v[20] + v[21] + v[0];
-				v[5] = (((v[20] - v[21]) * 0x16A09) >> 0x10) + v[1];
-				v[6] = (((v[22] + v[23]) << 1) + v[0]) - v[2];
-				v[7] = (((v[22] - v[23]) * 0x2D413) >> 0x10) + v[0] + v[1] + v[3];
-				// 0x16A8
-				// Save v[0] -> (T3 + 0xFFE0)
-				*(s16 *)(mp3data+((t3 + (s16)0xFFE0))) = (s16)-v[0];
-				v[8] = v[24] + v[25];
-				v[9] = ((v[24] - v[25]) * 0x16A09) >> 0x10;
-				v[10] = ((v[26] + v[27]) << 1) + v[8];
-				v[11] = (((v[26] - v[27]) * 0x2D413) >> 0x10) + v[8] + v[9];
-				v[12] = v[4] - ((v[28] + v[29]) << 1);
-				// ** Store v12 -> (T2 + 0x20)
-				StoreData(12, (t2 + (s16)0x0020));
-				v[13] = (((v[28] - v[29]) * 0x2D413) >> 0x10) - v[12] - v[5];
-				v[14] = v[30] + v[31];
-				v[14] = v[14] + v[14];
-				v[14] = v[14] + v[14];
-				v[14] = v[6] - v[14];
-				v[15] = (((v[30] - v[31]) * 0x5A827) >> 0x10) - v[7];
-				// Store v14 -> (T5 + 0x20)
-				StoreData(14, (t5 + (s16)0x0020));
-				v[14] = v[14] + v[1];
-				// Store v[14] -> (T6 + 0x20)
-				StoreData(14, (t6 + (s16)0x0020));
-				// Store v[15] -> (T1 + 0xFFE0)
-				StoreData(15, (t1 + (s16)0xFFE0));
-				v[9] = v[9] + v[10];
-				v[1] = v[1] + v[6];
-				v[6] = v[10] - v[6];
-				v[1] = v[9] - v[1];
-				// Store v[6] -> (T5 + 0x60)
-				StoreData(6, (t5 + (s16)0x0060));
-				v[10] = v[10] + v[2];
-				v[10] = v[4] - v[10];
-				// Store v[10] -> (T2 + 0xFFA0)
-				StoreData(10, (t2 + (s16)0xFFA0));
-				v[12] = v[2] - v[12];
-				// Store v[12] -> (T2 + 0xFFE0)
-				StoreData(12, (t2 + (s16)0xFFE0));
-				v[5] = v[4] + v[5];
-				v[4] = v[8] - v[4];
-				// Store v[4] -> (T2 + 0x60)
-				StoreData(4, (t2 + (s16)0x0060));
-				v[0] = v[0] - v[8];
-				// Store v[0] -> (T3 + 0xFFA0)
-				StoreData(0, (t3 + (s16)0xFFA0));
-				v[7] = v[7] - v[11];
-				// Store v[7] -> (T1 + 0xFFA0)
-				StoreData(7, (t1 + (s16)0xFFA0));
-				v[11] = v[11] - v[3];
-				// Store v[1] -> (T6 + 0x60)
-				StoreData(1, (t6 + (s16)0x0060));
-				v[11] = v[11] - v[5];
-				// Store v[11] -> (T0 + 0x60)
-				StoreData(11, (t0 + (s16)0x0060));
-				v[3] = v[3] - v[13];
-				// Store v[3] -> (T0 + 0x20)
-				StoreData(3, (t0 + (s16)0x0020));
-				v[13] = v[13] + v[2];
-				// Store v[13] -> (T0 + 0xFFE0)
-				StoreData(13, (t0 + (s16)0xFFE0));
-				//v[2] = ;
-				v[2] = (v[5] - v[2]) - v[9];
-				// Store v[2] -> (T0 + 0xFFA0)
-				StoreData(2, (t0 + (s16)0xFFA0));
-				// 0x7A8 - Verified...
+	// Part 7: - 100% Accurate + SSV - Unoptimized
+	v[0] = ( v[17] + v[16] ) >> 1;
+	v[1] = ((v[17] * (int)((s16)0xA57E * 2)) + (v[16] * 0xB504)) >> 0x10;
+	v[2] = -v[18] -v[19];
+	v[3] = ((v[18] - v[19]) * 0x16A09) >> 0x10;
+	v[4] = v[20] + v[21] + v[0];
+	v[5] = (((v[20] - v[21]) * 0x16A09) >> 0x10) + v[1];
+	v[6] = (((v[22] + v[23]) << 1) + v[0]) - v[2];
+	v[7] = (((v[22] - v[23]) * 0x2D413) >> 0x10) + v[0] + v[1] + v[3];
+	// 0x16A8
+	// Save v[0] -> (T3 + 0xFFE0)
+	*(s16 *)(mp3data+((t3 + (s16)0xFFE0))) = (s16)-v[0];
+	v[8] = v[24] + v[25];
+	v[9] = ((v[24] - v[25]) * 0x16A09) >> 0x10;
+	v[10] = ((v[26] + v[27]) << 1) + v[8];
+	v[11] = (((v[26] - v[27]) * 0x2D413) >> 0x10) + v[8] + v[9];
+	v[12] = v[4] - ((v[28] + v[29]) << 1);
+	// ** Store v12 -> (T2 + 0x20)
+	StoreData(12, (t2 + (s16)0x0020));
+	v[13] = (((v[28] - v[29]) * 0x2D413) >> 0x10) - v[12] - v[5];
+	v[14] = v[30] + v[31];
+	v[14] = v[14] + v[14];
+	v[14] = v[14] + v[14];
+	v[14] = v[6] - v[14];
+	v[15] = (((v[30] - v[31]) * 0x5A827) >> 0x10) - v[7];
+	// Store v14 -> (T5 + 0x20)
+	StoreData(14, (t5 + (s16)0x0020));
+	v[14] = v[14] + v[1];
+	// Store v[14] -> (T6 + 0x20)
+	StoreData(14, (t6 + (s16)0x0020));
+	// Store v[15] -> (T1 + 0xFFE0)
+	StoreData(15, (t1 + (s16)0xFFE0));
+	v[9] = v[9] + v[10];
+	v[1] = v[1] + v[6];
+	v[6] = v[10] - v[6];
+	v[1] = v[9] - v[1];
+	// Store v[6] -> (T5 + 0x60)
+	StoreData(6, (t5 + (s16)0x0060));
+	v[10] = v[10] + v[2];
+	v[10] = v[4] - v[10];
+	// Store v[10] -> (T2 + 0xFFA0)
+	StoreData(10, (t2 + (s16)0xFFA0));
+	v[12] = v[2] - v[12];
+	// Store v[12] -> (T2 + 0xFFE0)
+	StoreData(12, (t2 + (s16)0xFFE0));
+	v[5] = v[4] + v[5];
+	v[4] = v[8] - v[4];
+	// Store v[4] -> (T2 + 0x60)
+	StoreData(4, (t2 + (s16)0x0060));
+	v[0] = v[0] - v[8];
+	// Store v[0] -> (T3 + 0xFFA0)
+	StoreData(0, (t3 + (s16)0xFFA0));
+	v[7] = v[7] - v[11];
+	// Store v[7] -> (T1 + 0xFFA0)
+	StoreData(7, (t1 + (s16)0xFFA0));
+	v[11] = v[11] - v[3];
+	// Store v[1] -> (T6 + 0x60)
+	StoreData(1, (t6 + (s16)0x0060));
+	v[11] = v[11] - v[5];
+	// Store v[11] -> (T0 + 0x60)
+	StoreData(11, (t0 + (s16)0x0060));
+	v[3] = v[3] - v[13];
+	// Store v[3] -> (T0 + 0x20)
+	StoreData(3, (t0 + (s16)0x0020));
+	v[13] = v[13] + v[2];
+	// Store v[13] -> (T0 + 0xFFE0)
+	StoreData(13, (t0 + (s16)0xFFE0));
+	//v[2] = ;
+	v[2] = (v[5] - v[2]) - v[9];
+	// Store v[2] -> (T0 + 0xFFA0)
+	StoreData(2, (t0 + (s16)0xFFA0));
+	// 0x7A8 - Verified...
 
-				// Step 8 - Dewindowing
-	
-				//u64 *DW = (u64 *)&DeWindowLUT[0x10-(t4>>1)];
-				u32 offset = 0x10 - (t4 >> 1);
+	// Step 8 - Dewindowing
 
-				u32 addptr = t6 & 0xFFE0;
-				offset = 0x10 - (t4 >> 1);
+	//u64 *DW = (u64 *)&DeWindowLUT[0x10-(t4>>1)];
+	u32 offset = 0x10 - (t4 >> 1);
 
-				s32 v2 = 0, v4 = 0, v6 = 0, v8 = 0;
-				s32 z2 = 0, z4 = 0, z6 = 0, z8 = 0;
+	u32 addptr = t6 & 0xFFE0;
+	offset = 0x10 - (t4 >> 1);
 
-				offset = 0x10 - (t4 >> 1);// + x*0x40;
-				for (int x = 0; x < 8; x++) {
-					v2 = v4 = v6 = v8 = 0;
+	s32 v2 = 0, v4 = 0, v6 = 0, v8 = 0;
+	s32 z2 = 0, z4 = 0, z6 = 0, z8 = 0;
 
-					//addptr = t1;
+	offset = 0x10 - (t4 >> 1);// + x*0x40;
+	for (int x = 0; x < 8; x++) {
+		v2 = v4 = v6 = v8 = 0;
 
-					for (int i = 7; i >= 0; i--) {
-						v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
-						v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
-						v6 += CalcDeWindow(addptr, 0x20, offset, 0x20);
-						v8 += CalcDeWindow(addptr, 0x30, offset, 0x28);
-						addptr += 2; offset++;
-					}
-					s32 v0 = v2 + v4;
-					s32 v18 = v6 + v8;
-					//Clamp(v0);
-					//Clamp(v18);
-					// clamp???
-					*(s16 *)(mp3data + HES(outPtr + 0)) = (s16)v0;
-					*(s16 *)(mp3data + HES(outPtr + 2)) = (s16)v18;
-					outPtr += 4;
-					addptr += 0x30;
-					offset += 0x38;
-				}
+		//addptr = t1;
 
-				offset = 0x10 - (t4 >> 1) + 8 * 0x40;
-				v2 = v4 = 0;
-				for (int i = 0; i < 4; i++) {
-					v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
-					v2 += CalcDeWindow(addptr, 0x10, offset, 0x08);
-					addptr += 2; offset++;
-					v4 += CalcDeWindow(addptr, 0x00, offset, 0x00);
-					v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
-					addptr += 2; offset++;
-				}
-				s32 mult6 = *(s32 *)(mp3data + 0xCE8);
-				s32 mult4 = *(s32 *)(mp3data + 0xCEC);
-				if (t4 & 0x2) {
-					v2 = (v2 * *(u32 *)(mp3data + 0xCE8)) >> 0x10;
-					*(s16 *)(mp3data + HES(outPtr)) = (s16)v2;
-				}
-				else {
-					v4 = (v4 * *(u32 *)(mp3data + 0xCE8)) >> 0x10;
-					*(s16 *)(mp3data + HES(outPtr)) = (s16)v4;
-					mult4 = *(u32 *)(mp3data + 0xCE8);
-				}
-				addptr -= 0x50;
+		for (int i = 7; i >= 0; i--) {
+			v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
+			v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
+			v6 += CalcDeWindow(addptr, 0x20, offset, 0x20);
+			v8 += CalcDeWindow(addptr, 0x30, offset, 0x28);
+			addptr += 2; offset++;
+		}
+		s32 v0 = v2 + v4;
+		s32 v18 = v6 + v8;
+		//Clamp(v0);
+		//Clamp(v18);
+		// clamp???
+		*(s16 *)(mp3data + HES(outPtr + 0)) = (s16)v0;
+		*(s16 *)(mp3data + HES(outPtr + 2)) = (s16)v18;
+		outPtr += 4;
+		addptr += 0x30;
+		offset += 0x38;
+	}
 
-				for (int x = 0; x < 8; x++) {
-					v2 = v4 = v6 = v8 = 0;
+	offset = 0x10 - (t4 >> 1) + 8 * 0x40;
+	v2 = v4 = 0;
+	for (int i = 0; i < 4; i++) {
+		v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
+		v2 += CalcDeWindow(addptr, 0x10, offset, 0x08);
+		addptr += 2; offset++;
+		v4 += CalcDeWindow(addptr, 0x00, offset, 0x00);
+		v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
+		addptr += 2; offset++;
+	}
+	s32 mult6 = *(s32 *)(mp3data + 0xCE8);
+	s32 mult4 = *(s32 *)(mp3data + 0xCEC);
+	if (t4 & 0x2) {
+		v2 = (v2 * *(u32 *)(mp3data + 0xCE8)) >> 0x10;
+		*(s16 *)(mp3data + HES(outPtr)) = (s16)v2;
+	}
+	else {
+		v4 = (v4 * *(u32 *)(mp3data + 0xCE8)) >> 0x10;
+		*(s16 *)(mp3data + HES(outPtr)) = (s16)v4;
+		mult4 = *(u32 *)(mp3data + 0xCE8);
+	}
+	addptr -= 0x50;
 
-					offset = (0x22F - (t4 >> 1) + x * 0x40);
+	for (int x = 0; x < 8; x++) {
+		v2 = v4 = v6 = v8 = 0;
 
-					for (int i = 0; i < 4; i++) {
-						v2 += CalcDeWindow(addptr + 0, 0x20, offset, 0x00);
-						v2 -= CalcDeWindow(addptr + 2, 0x20, offset, 0x01);
-						v4 += CalcDeWindow(addptr + 0, 0x30, offset, 0x08);
-						v4 -= CalcDeWindow(addptr + 2, 0x30, offset, 0x09);
-						v6 += CalcDeWindow(addptr + 0, 0x00, offset, 0x20);
-						v6 -= CalcDeWindow(addptr + 2, 0x00, offset, 0x21);
-						v8 += CalcDeWindow(addptr + 0, 0x10, offset, 0x28);
-						v8 -= CalcDeWindow(addptr + 2, 0x10, offset, 0x29);
-						addptr += 4; offset += 2;
-					}
-					s32 v0 = v2 + v4;
-					s32 v18 = v6 + v8;
-					//Clamp(v0);
-					//Clamp(v18);
-					// clamp???
-					*(s16 *)(mp3data + HES(outPtr + 2)) = (s16)v0;
-					*(s16 *)(mp3data + HES(outPtr + 4)) = (s16)v18;
-					outPtr += 4;
-					addptr -= 0x50;
-				}
+		offset = (0x22F - (t4 >> 1) + x * 0x40);
 
-				int tmp = outPtr;
-				s32 hi0 = mult6;
-				s32 hi1 = mult4;
-				s32 v;
-				/*
-				assert((hi0 & 0xffff) == 0);
-				assert((hi1 & 0xffff) == 0);
-				*/
-				hi0 = (int)hi0 >> 0x10;
-				hi1 = (int)hi1 >> 0x10;
-				for (int i = 0; i < 8; i++) {
-					// v0
-					v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x40)) * hi0);
-					*(s16 *)((u8 *)mp3data + HES(tmp - 0x40)) = (s16)v;
-					// v17
-					v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x30)) * hi0);
-					*(s16 *)((u8 *)mp3data + HES(tmp - 0x30)) = (s16)v;
-					// v2
-					v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x1E)) * hi1);
-					*(s16 *)((u8 *)mp3data + HES(tmp - 0x1E)) = (s16)v;
-					// v4
-					v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x0E)) * hi1);
-					*(s16 *)((u8 *)mp3data + HES(tmp - 0x0E)) = (s16)v;
-					tmp += 2;
-				}
+		for (int i = 0; i < 4; i++) {
+			v2 += CalcDeWindow(addptr + 0, 0x20, offset, 0x00);
+			v2 -= CalcDeWindow(addptr + 2, 0x20, offset, 0x01);
+			v4 += CalcDeWindow(addptr + 0, 0x30, offset, 0x08);
+			v4 -= CalcDeWindow(addptr + 2, 0x30, offset, 0x09);
+			v6 += CalcDeWindow(addptr + 0, 0x00, offset, 0x20);
+			v6 -= CalcDeWindow(addptr + 2, 0x00, offset, 0x21);
+			v8 += CalcDeWindow(addptr + 0, 0x10, offset, 0x28);
+			v8 -= CalcDeWindow(addptr + 2, 0x10, offset, 0x29);
+			addptr += 4; offset += 2;
+		}
+		s32 v0 = v2 + v4;
+		s32 v18 = v6 + v8;
+		//Clamp(v0);
+		//Clamp(v18);
+		// clamp???
+		*(s16 *)(mp3data + HES(outPtr + 2)) = (s16)v0;
+		*(s16 *)(mp3data + HES(outPtr + 4)) = (s16)v18;
+		outPtr += 4;
+		addptr -= 0x50;
+	}
+
+	int tmp = outPtr;
+	s32 hi0 = mult6;
+	s32 hi1 = mult4;
+	s32 v;
+	/*
+	assert((hi0 & 0xffff) == 0);
+	assert((hi1 & 0xffff) == 0);
+	*/
+	hi0 = (int)hi0 >> 0x10;
+	hi1 = (int)hi1 >> 0x10;
+	for (int i = 0; i < 8; i++) {
+		// v0
+		v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x40)) * hi0);
+		*(s16 *)((u8 *)mp3data + HES(tmp - 0x40)) = (s16)v;
+		// v17
+		v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x30)) * hi0);
+		*(s16 *)((u8 *)mp3data + HES(tmp - 0x30)) = (s16)v;
+		// v2
+		v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x1E)) * hi1);
+		*(s16 *)((u8 *)mp3data + HES(tmp - 0x1E)) = (s16)v;
+		// v4
+		v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x0E)) * hi1);
+		*(s16 *)((u8 *)mp3data + HES(tmp - 0x0E)) = (s16)v;
+		tmp += 2;
+	}
 }
