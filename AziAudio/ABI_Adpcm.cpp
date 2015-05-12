@@ -13,7 +13,7 @@
 
 u16 adpcmtable[0x88];
 
-void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, BYTE code, u8 srange, int vscale)
+void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, u8 code, u8 srange, int vscale)
 {
 	inp[index] = (s16)((icode & mask) << shifter);
 	if (code < srange)	
@@ -45,7 +45,6 @@ void ADPCM() { // Work in progress! :)
 	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
 	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
 	s16 count = (s16)AudioCount;
-	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
@@ -81,7 +80,7 @@ void ADPCM() { // Work in progress! :)
 		// area of memory in the case of A_LOOP or just
 		// the values we calculated the last time
 
-		code = BufferSpace[BES(AudioInBuffer + inPtr)];
+		u8 code = BufferSpace[BES(AudioInBuffer + inPtr)];
 		index = code & 0xf;
 		index <<= 4;									// index into the adpcm code table
 		book1 = (s16 *)&adpcmtable[index];
@@ -158,7 +157,6 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
 	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
 	s16 count = (s16)AudioCount;
-	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
@@ -215,7 +213,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	s32 inp2[8];
 	out += 16;
 	while (count>0) {
-		code = BufferSpace[BES(AudioInBuffer + inPtr)];
+		u8 code = BufferSpace[BES(AudioInBuffer + inPtr)];
 		index = code & 0xf;
 		index <<= 4;
 		book1 = (s16 *)&adpcmtable[index];
@@ -304,7 +302,6 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	s16 *out = (s16 *)(BufferSpace + (t9 & 0xfff) + 0x4f0);
 	BYTE *in = (BYTE *)(BufferSpace + ((t9 >> 12) & 0xf) + 0x4f0);
 	s16 count = (s16)((t9 >> 16) & 0xfff);
-	BYTE code;
 	int vscale;
 	WORD index;
 	WORD j;
@@ -346,7 +343,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		// area of memory in the case of A_LOOP or just
 		// the values we calculated the last time
 
-		code = BufferSpace[BES(0x4f0 + inPtr)];
+		u8 code = BufferSpace[BES(0x4f0 + inPtr)];
 		index = code & 0xf;
 		index <<= 4;									// index into the adpcm code table
 		book1 = (s16 *)&adpcmtable[index];
