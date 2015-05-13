@@ -25,7 +25,7 @@ this software.  Use at your own risk.  If you do not agree with these
 terms, please delete this application and use something else.  The software
 has been tested to the best of my ability.  There is no warranty expressed
 or implied.  Commercial use of this product will constitute a criminal act.
-blah blah blah... if you can think of an illegitamite use for this product,
+blah blah blah... if you can think of an illegitimate use for this product,
 please do not use it.  I am not responsible for stupidity. Now that is over
 with...
 
@@ -113,7 +113,7 @@ You should now be good to load an image as defined in the Project64 user help fi
         emulated processor power to the point where it can not perform at a constant 60/50FPS if even
         for a moment.  This neglect will cause the constant stream of audio to the plugin to be halted
         for that brief popping period.  It is not a problem with the Audio plugin and nothing can be
-        done to accomodate.  You can try setting the emulator to High priority to eliminate the turn
+        done to accommodate.  You can try setting the emulator to High priority to eliminate the turn
         around time for the emulator to preempt any process during its waitstate.  It seems to have
         helped me.  Another problem is that PJ64 1.5's speed limiter isn't the best.  If it's a compatible
         game, you could attempt to use the old speed sync.  A better speed fix is underway to go by samples
@@ -145,7 +145,7 @@ www.emutalk.net
 
 6. Greetings and Closing Comments
 
-I would like to thank the following for all thier help.
+I would like to thank the following for all their help.
 RCP     - For giving me a booster for HLE Audio.
 F|RES   - Thanks for allowing me to join TR64 years ago and getting a start on Audio HLE from this.
 icepir8 - If you ever continue TR64, feel free to include my Audio plugin.  It will always be a TR64 plugin.
