@@ -218,7 +218,7 @@ EXPORT BOOL CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	//CloseDLL ();
 	DSoundCnt = 0;
 	SelectedDSound = 0;
-//	if ( (DirectSoundEnumerate(DSEnumProc, NULL)) != DS_OK ) { printf("Unabled to enumerate DirectSound devices\n"); }
+//	if ( (DirectSoundEnumerate(DSEnumProc, NULL)) != DS_OK ) { printf("Unable to enumerate DirectSound devices\n"); }
 
 	snd.configAIEmulation = true;
 	snd.configSyncAudio   = true;

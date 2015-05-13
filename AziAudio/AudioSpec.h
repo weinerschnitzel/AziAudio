@@ -7,7 +7,7 @@ http://www.egroups.com/group/Plugin64-Dev
 Notes:
 ------
 
-Setting the approprate bits in the MI_INTR_REG and calling CheckInterrupts which 
+Setting the appropriate bits in the MI_INTR_REG and calling CheckInterrupts which 
 are both passed to the DLL in InitiateAudio will generate an Interrupt from with in 
 the plugin.
 
@@ -43,7 +43,7 @@ typedef struct {
 	   if it does not support it */
 	BOOL NormalMemory;   /* a normal BYTE array */ 
 	BOOL MemoryBswaped;  /* a normal BYTE array where the memory has been pre
-	                          bswap on a dword (32 bits) boundry */
+	                          bswap on a dword (32 bits) boundary */
 } PLUGIN_INFO;
 
 
@@ -52,7 +52,7 @@ typedef struct {
 	HINSTANCE hinst;
 
 	BOOL MemoryBswaped;    // If this is set to TRUE, then the memory has been pre
-	                       //   bswap on a dword (32 bits) boundry 
+	                       //   bswap on a dword (32 bits) boundary 
 						   //	eg. the first 8 bytes are stored like this:
 	                       //        4 3 2 1   8 7 6 5
 	BYTE * HEADER;	// This is the rom header (first 40h bytes of the rom
@@ -107,12 +107,12 @@ EXPORT DWORD CALL AiReadLength(void);
   Function: AiUpdate
   Purpose:  This function is called to allow the dll to update
             things on a regular basis (check how long to sound to
-			go, copy more stuff to the buffer, anyhting you like).
+			go, copy more stuff to the buffer, anything you like).
 			The function is designed to go in to the message loop
 			of the main window ... but can be placed anywhere you 
 			like.
   input:    if Wait is set to true, then this function should wait
-            till there is a messgae in the its message queue.
+            till there is a message in the its message queue.
   output:   none
 *******************************************************************/ 
 EXPORT void CALL AiUpdate(BOOL Wait);
@@ -157,7 +157,7 @@ EXPORT void CALL DllTest(HWND hParent);
   Function: GetDllInfo
   Purpose:  This function allows the emulator to gather information
             about the dll by filling in the PluginInfo structure.
-  input:    a pointer to a PLUGIN_INFO stucture that needs to be
+  input:    a pointer to a PLUGIN_INFO structure that needs to be
             filled by the function. (see def above)
   output:   none
 *******************************************************************/ 
