@@ -195,6 +195,15 @@ extern INLINE void vsatu64 (u16* vd, s32* vs);
 #endif
 
 /*
+ * There are two basic ways to copy an RSP vector to another RSP vector in
+ * emulated memory:  with alignment and without alignment.  Forcing 128-bit
+ * alignment requirements is a cycle or two faster on older CPUs, but on
+ * modern hardware there is no reason to force memory alignment constrictions
+ * or to use MOVDQA/MOVAPS and risk unaligned memory access seg. faults.
+ */
+extern void copy_vector(void * vd, const void * vs);
+
+/*
  * Unfortunately, as much of the RSP analysis had to work around some early
  * byte order tricks in zilmar's RSP interpreter, several cases of audio HLE
  * will have extra endianness adjustments to them, sometimes redundantly.

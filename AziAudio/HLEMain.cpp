@@ -410,6 +410,23 @@ INLINE void vsatu64 (u16* vd, s32* vs)
 }
 #endif
 
+void copy_vector(void * vd, const void * vs)
+{
+#if defined(SSE2_SUPPORT)
+ /* MOVDQU  XMMWORD PTR[vd], XMMWORD PTR[vs] */
+    _mm_storeu_si128((__m128i *)vd, _mm_loadu_si128((__m128i *)vs));
+#elif defined(SSE1_SUPPORT)
+ /* MOVUPS  XMMWORD PTR[vd], XMMWORD PTR[vs] */
+    _mm_storeu_ps((float *)vd, _mm_loadu_ps((float *)vs));
+#elif 0
+ /* MOVDQA  XMMWORD PTR[vd], XMMWORD PTR[vs] */
+ /* MOVAPS  XMMWORD PTR[vd], XMMWORD PTR[vs] */
+    *(__m128 *)vd = *(__m128 *)vs; /* Crash if vd or vs not 128-bit aligned! */
+#else
+    memcpy(vd, vs, 8 * sizeof(i16));
+#endif
+}
+
 void swap_elements(i16 * RSP_vector)
 {
 #ifdef SSE2_SUPPORT
