@@ -409,3 +409,23 @@ INLINE void vsatu64 (u16* vd, s32* vs)
         vd[i] = pack_unsigned(vs[i]);
 }
 #endif
+
+void swap_elements(i16 * RSP_vector)
+{
+#ifdef SSE2_SUPPORT
+    __m128i RSP_as_XMM;
+
+    RSP_as_XMM = _mm_loadu_si128((__m128i *)RSP_vector);
+    RSP_as_XMM = _mm_shufflehi_epi16(RSP_as_XMM, _MM_SHUFFLE(2, 3, 0, 1));
+    RSP_as_XMM = _mm_shufflelo_epi16(RSP_as_XMM, _MM_SHUFFLE(2, 3, 0, 1));
+    _mm_storeu_si128((__m128i *)RSP_vector, RSP_as_XMM);
+#else
+    i16 temp_vector[8];
+    register size_t i;
+
+    for (i = 0; i < 8; i++)
+        temp_vector[i] = RSP_vector[i ^ 1];
+    for (i = 0; i < 8; i++)
+        RSP_vector[i] = temp_vector[i];
+#endif
+}

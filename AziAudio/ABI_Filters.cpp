@@ -15,14 +15,27 @@
  * Some combination of RSP LWC2 pack-type operations and vector multiply-
  * accumulate going on here, doing some fancy matrix math from data memory.
  */
-static void packed_multiply_accumulate(pi32 acc, pi16 vs, pi16 vt, int offset)
+static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
 {
+	i32 pre_buffer[8];
 	i32 result;
+#ifdef SSE2_SUPPORT
+	__m128i xmm_source, xmm_target;
+
+	xmm_source = _mm_loadu_si128((__m128i *)vs);
+	xmm_target = _mm_loadu_si128((__m128i *)vt);
+	xmm_source = _mm_madd_epi16(xmm_source, xmm_target);
+	_mm_storeu_si128((__m128i *)pre_buffer, xmm_source);
+	result = pre_buffer[0] + pre_buffer[1] + pre_buffer[2] + pre_buffer[3];
+#else
 	register int i;
 
+	for (i = 0; i < 8; i++)
+		pre_buffer[i] = (s32)vs[i] * (s32)vt[i];
 	result = 0;
 	for (i = 0; i < 8; i++)
-		result += (s32)vs[MES(i + offset)] * (s32)vt[MES(i + 0)];
+		result += pre_buffer[i];
+#endif
 	*(acc) = result;
 	return;
 }
@@ -73,18 +86,20 @@ void FILTER2() {
  */
 	for (i = 0; i < 8; i++)
 		inputs_matrix[15 - (i + 0)] = inp1[i];
+	swap_elements(&inputs_matrix[8]);
 	for (i = 0; i < 8; i++)
 		inputs_matrix[15 - (i + 8)] = inp2[i];
+	swap_elements(&inputs_matrix[0]);
 
 	for (x = 0; x < cnt; x += 0x10) {
-		packed_multiply_accumulate(&out1[0], &inputs_matrix[0], &lutt6[0], 6);
-		packed_multiply_accumulate(&out1[1], &inputs_matrix[0], &lutt6[0], 7);
-		packed_multiply_accumulate(&out1[2], &inputs_matrix[0], &lutt6[0], 4);
-		packed_multiply_accumulate(&out1[3], &inputs_matrix[0], &lutt6[0], 5);
-		packed_multiply_accumulate(&out1[4], &inputs_matrix[0], &lutt6[0], 2);
-		packed_multiply_accumulate(&out1[5], &inputs_matrix[0], &lutt6[0], 3);
-		packed_multiply_accumulate(&out1[6], &inputs_matrix[0], &lutt6[0], 0);
-		packed_multiply_accumulate(&out1[7], &inputs_matrix[0], &lutt6[0], 1);
+		packed_multiply_accumulate(&out1[0], &inputs_matrix[6], &lutt6[0]);
+		packed_multiply_accumulate(&out1[1], &inputs_matrix[7], &lutt6[0]);
+		packed_multiply_accumulate(&out1[2], &inputs_matrix[4], &lutt6[0]);
+		packed_multiply_accumulate(&out1[3], &inputs_matrix[5], &lutt6[0]);
+		packed_multiply_accumulate(&out1[4], &inputs_matrix[2], &lutt6[0]);
+		packed_multiply_accumulate(&out1[5], &inputs_matrix[3], &lutt6[0]);
+		packed_multiply_accumulate(&out1[6], &inputs_matrix[0], &lutt6[0]);
+		packed_multiply_accumulate(&out1[7], &inputs_matrix[1], &lutt6[0]);
 
 		for (i = 0; i < 8; i++)
 			outp[i] = (out1[i] + 0x4000) >> 15; /* fractional round and shift */
@@ -106,6 +121,8 @@ void FILTER2() {
 
 		for (i = 0; i < 16; i++)
 			inputs_matrix[15 - i] = inp1[i];
+		swap_elements(&inputs_matrix[0]);
+		swap_elements(&inputs_matrix[8]);
 	}
 	//			memcpy (rdram+(t9&0xFFFFFF), dmem+0xFB0, 0x20);
 	memcpy(save, inp2 - 8, 0x10);

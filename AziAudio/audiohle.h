@@ -193,3 +193,13 @@ extern INLINE void vsatu64 (u16* vd, s32* vs);
 #define TWOS_COMPLEMENT_NEGATION
 #endif
 #endif
+
+/*
+ * Unfortunately, as most of the low-level details of RSP hardware came from
+ * the ultra-little-endian design from zilmar's RSP interpreter, much of RSP
+ * vector simulation in this HLE revolved around backwards element order.
+ *
+ * A quick fix to this is to have a function to switch the positions of
+ * adjacent 16-bit RSP vector elements with each other.
+ */
+extern void swap_elements(i16 * RSP_vector);
