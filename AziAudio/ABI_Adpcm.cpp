@@ -423,17 +423,17 @@ void LOADADPCM() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	//	assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram + v0);
 	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[8*x + 0x1] = table[8*x + 0];
-		adpcmtable[8*x + 0x0] = table[8*x + 1];
+		adpcmtable[8*x + (0 ^ 1)] = table[8*x + 0];
+		adpcmtable[8*x + (1 ^ 1)] = table[8*x + 1];
 
-		adpcmtable[8*x + 0x3] = table[8*x + 2];
-		adpcmtable[8*x + 0x2] = table[8*x + 3];
+		adpcmtable[8*x + (2 ^ 1)] = table[8*x + 2];
+		adpcmtable[8*x + (3 ^ 1)] = table[8*x + 3];
 
-		adpcmtable[8*x + 0x5] = table[8*x + 4];
-		adpcmtable[8*x + 0x4] = table[8*x + 5];
+		adpcmtable[8*x + (4 ^ 1)] = table[8*x + 4];
+		adpcmtable[8*x + (5 ^ 1)] = table[8*x + 5];
 
-		adpcmtable[8*x + 0x7] = table[8*x + 6];
-		adpcmtable[8*x + 0x6] = table[8*x + 7];
+		adpcmtable[8*x + (6 ^ 1)] = table[8*x + 6];
+		adpcmtable[8*x + (7 ^ 1)] = table[8*x + 7];
 	}
 }
 
@@ -443,17 +443,17 @@ void LOADADPCM2() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u16 *table = (u16 *)(rdram + v0); // Zelda2 Specific...
 
 	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[8*x + 0x1] = table[8*x + 0];
-		adpcmtable[8*x + 0x0] = table[8*x + 1];
+		adpcmtable[8*x + (0 ^ 1)] = table[8*x + 0];
+		adpcmtable[8*x + (1 ^ 1)] = table[8*x + 1];
 
-		adpcmtable[8*x + 0x3] = table[8*x + 2];
-		adpcmtable[8*x + 0x2] = table[8*x + 3];
+		adpcmtable[8*x + (2 ^ 1)] = table[8*x + 2];
+		adpcmtable[8*x + (3 ^ 1)] = table[8*x + 3];
 
-		adpcmtable[8*x + 0x5] = table[8*x + 4];
-		adpcmtable[8*x + 0x4] = table[8*x + 5];
+		adpcmtable[8*x + (4 ^ 1)] = table[8*x + 4];
+		adpcmtable[8*x + (5 ^ 1)] = table[8*x + 5];
 
-		adpcmtable[8*x + 0x7] = table[8*x + 6];
-		adpcmtable[8*x + 0x6] = table[8*x + 7];
+		adpcmtable[8*x + (6 ^ 1)] = table[8*x + 6];
+		adpcmtable[8*x + (7 ^ 1)] = table[8*x + 7];
 	}
 }
 
@@ -464,16 +464,16 @@ void LOADADPCM3() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	//assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram + v0);
 	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[8*x + 0x1] = table[8*x + 0];
-		adpcmtable[8*x + 0x0] = table[8*x + 1];
+		adpcmtable[8*x + (0 ^ 1)] = table[8*x + 0];
+		adpcmtable[8*x + (1 ^ 1)] = table[8*x + 1];
 
-		adpcmtable[8*x + 0x3] = table[8*x + 2];
-		adpcmtable[8*x + 0x2] = table[8*x + 3];
+		adpcmtable[8*x + (2 ^ 1)] = table[8*x + 2];
+		adpcmtable[8*x + (3 ^ 1)] = table[8*x + 3];
 
-		adpcmtable[8*x + 0x5] = table[8*x + 4];
-		adpcmtable[8*x + 0x4] = table[8*x + 5];
+		adpcmtable[8*x + (4 ^ 1)] = table[8*x + 4];
+		adpcmtable[8*x + (5 ^ 1)] = table[8*x + 5];
 
-		adpcmtable[8*x + 0x7] = table[8*x + 6];
-		adpcmtable[8*x + 0x6] = table[8*x + 7];
+		adpcmtable[8*x + (6 ^ 1)] = table[8*x + 6];
+		adpcmtable[8*x + (7 ^ 1)] = table[8*x + 7];
 	}
 }
