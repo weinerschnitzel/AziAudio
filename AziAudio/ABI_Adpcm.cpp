@@ -423,17 +423,17 @@ void LOADADPCM() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	//	assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram + v0);
 	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[0x1 + (x << 3)] = table[0];
-		adpcmtable[0x0 + (x << 3)] = table[1];
+		adpcmtable[8*x + 0x1] = table[0];
+		adpcmtable[8*x + 0x0] = table[1];
 
-		adpcmtable[0x3 + (x << 3)] = table[2];
-		adpcmtable[0x2 + (x << 3)] = table[3];
+		adpcmtable[8*x + 0x3] = table[2];
+		adpcmtable[8*x + 0x2] = table[3];
 
-		adpcmtable[0x5 + (x << 3)] = table[4];
-		adpcmtable[0x4 + (x << 3)] = table[5];
+		adpcmtable[8*x + 0x5] = table[4];
+		adpcmtable[8*x + 0x4] = table[5];
 
-		adpcmtable[0x7 + (x << 3)] = table[6];
-		adpcmtable[0x6 + (x << 3)] = table[7];
+		adpcmtable[8*x + 0x7] = table[6];
+		adpcmtable[8*x + 0x6] = table[7];
 		table += 8;
 	}
 }
@@ -444,17 +444,17 @@ void LOADADPCM2() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u16 *table = (u16 *)(rdram + v0); // Zelda2 Specific...
 
 	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[0x1 + (x << 3)] = table[0];
-		adpcmtable[0x0 + (x << 3)] = table[1];
+		adpcmtable[8*x + 0x1] = table[0];
+		adpcmtable[8*x + 0x0] = table[1];
 
-		adpcmtable[0x3 + (x << 3)] = table[2];
-		adpcmtable[0x2 + (x << 3)] = table[3];
+		adpcmtable[8*x + 0x3] = table[2];
+		adpcmtable[8*x + 0x2] = table[3];
 
-		adpcmtable[0x5 + (x << 3)] = table[4];
-		adpcmtable[0x4 + (x << 3)] = table[5];
+		adpcmtable[8*x + 0x5] = table[4];
+		adpcmtable[8*x + 0x4] = table[5];
 
-		adpcmtable[0x7 + (x << 3)] = table[6];
-		adpcmtable[0x6 + (x << 3)] = table[7];
+		adpcmtable[8*x + 0x7] = table[6];
+		adpcmtable[8*x + 0x6] = table[7];
 		table += 8;
 	}
 }
@@ -466,17 +466,17 @@ void LOADADPCM3() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	//assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram + v0);
 	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[0x1 + (x << 3)] = table[0];
-		adpcmtable[0x0 + (x << 3)] = table[1];
+		adpcmtable[8*x + 0x1] = table[0];
+		adpcmtable[8*x + 0x0] = table[1];
 
-		adpcmtable[0x3 + (x << 3)] = table[2];
-		adpcmtable[0x2 + (x << 3)] = table[3];
+		adpcmtable[8*x + 0x3] = table[2];
+		adpcmtable[8*x + 0x2] = table[3];
 
-		adpcmtable[0x5 + (x << 3)] = table[4];
-		adpcmtable[0x4 + (x << 3)] = table[5];
+		adpcmtable[8*x + 0x5] = table[4];
+		adpcmtable[8*x + 0x4] = table[5];
 
-		adpcmtable[0x7 + (x << 3)] = table[6];
-		adpcmtable[0x6 + (x << 3)] = table[7];
+		adpcmtable[8*x + 0x7] = table[6];
+		adpcmtable[8*x + 0x6] = table[7];
 		table += 8;
 	}
 }
