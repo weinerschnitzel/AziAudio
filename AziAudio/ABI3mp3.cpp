@@ -322,26 +322,20 @@ void InnerLoop () {
 
 	v[16] = -v[16] - v[17];
 	v[ 2] =  v[18] + v[19];
-	// ** Store v[11] -> (T6 + 0)**
 	rsp_SH(11, 0x0000, t6);
-
 	v[11] = -v[11];
-	// ** Store v[16] -> (T3 + 0)**
 	rsp_SH(16, 0x0000, t3);
-	// ** Store v[11] -> (T5 + 0)**
 	rsp_SH(11, 0x0000, t5);
+
 	// 0x13E8 - Verified....
 	v[2] = -v[2];
-	// ** Store v[2] -> (T2 + 0)**
 	rsp_SH( 2, 0x0000, t2);
 	v[3]  = (((v[18] - v[19]) * 0x16A09) >> 0x10) + v[2];
-	// ** Store v[3] -> (T0 + 0)**
 	rsp_SH( 3, 0x0000, t0);
 	// 0x1400 - Verified
 	v[4] = -v[20] - v[21];
 	v[6] =  v[22] + v[23];
 	v[5] = ((v[20] - v[21]) * 0x16A09) >> 0x10;
-	// ** Store v[4] -> (T3 + 0xFF80)
 	rsp_SH( 4, 0xFF80, t3);
 	v[7] = ((v[22] - v[23]) * 0x2D413) >> 0x10;
 	v[5] =  v[5] - v[4];
@@ -349,11 +343,8 @@ void InnerLoop () {
 	v[6] =  v[6] + v[6];
 	v[5] =  v[5] - v[6];
 	v[4] = -v[4] - v[6];
-	// *** Store v[7] -> (T1 + 0xFF80)
 	rsp_SH( 7, 0xFF80, t1);
-	// *** Store v[4] -> (T2 + 0xFF80)
 	rsp_SH( 4, 0xFF80, t2);
-	// *** Store v[5] -> (T0 + 0xFF80)
 	rsp_SH( 5, 0xFF80, t0);
 	v[ 8] = v[24] + v[25];
 
@@ -372,25 +363,17 @@ void InnerLoop () {
 	v[14] = -(v[14] + v[14]) + v[3];
 	v[17] = v[13] - v[10];
 	v[ 9] = v[9] + v[14];
-	// ** Store v[9] -> (T6 + 0x40)
 	rsp_SH( 9, 0x0040, t6);
 	v[11] = v[11] - v[13];
-	// ** Store v[17] -> (T0 + 0xFFC0)
 	rsp_SH(17, 0xFFC0, t0);
 	v[12] = v[8] - v[12];
-	// ** Store v[11] -> (T0 + 0x40)
 	rsp_SH(11, 0x0040, t0);
 	v[8] = -v[8];
-	// ** Store v[15] -> (T1 + 0xFFC0)
 	rsp_SH(15, 0xFFC0, t1);
 	v[10] = -v[10] -v[12];
-	// ** Store v[12] -> (T2 + 0x40)
 	rsp_SH(12, 0x0040, t2);
-	// ** Store v[8] -> (T3 + 0xFFC0)
 	rsp_SH( 8, 0xFFC0, t3);
-	// ** Store v[14] -> (T5 + 0x40)
 	rsp_SH(14, 0x0040, t5);
-	// ** Store v[10] -> (T2 + 0xFFC0)
 	rsp_SH(10, 0xFFC0, t2);
 	// 0x14FC - Verified...
 
@@ -448,7 +431,6 @@ void InnerLoop () {
 	v[10] = ((v[26] + v[27]) << 1) + v[8];
 	v[11] = (((v[26] - v[27]) * 0x2D413) >> 0x10) + v[8] + v[9];
 	v[12] = v[4] - ((v[28] + v[29]) << 1);
-	// ** Store v12 -> (T2 + 0x20)
 	rsp_SH(12, 0x0020, t2);
 	v[13] = (((v[28] - v[29]) * 0x2D413) >> 0x10) - v[12] - v[5];
 	v[14] = v[30] + v[31];
@@ -456,51 +438,37 @@ void InnerLoop () {
 	v[14] = v[14] + v[14];
 	v[14] = v[ 6] - v[14];
 	v[15] = (((v[30] - v[31]) * 0x5A827) >> 0x10) - v[7];
-	// Store v14 -> (T5 + 0x20)
 	rsp_SH(14, 0x0020, t5);
 	v[14] = v[14] + v[1];
-	// Store v[14] -> (T6 + 0x20)
 	rsp_SH(14, 0x0020, t6);
-	// Store v[15] -> (T1 + 0xFFE0)
 	rsp_SH(15, 0xFFE0, t1);
 	v[9] = v[ 9] + v[10];
 	v[1] = v[ 1] + v[ 6];
 	v[6] = v[10] - v[ 6];
 	v[1] = v[ 9] - v[ 1];
-	// Store v[6] -> (T5 + 0x60)
 	rsp_SH( 6, 0x0060, t5);
 	v[10] = v[10] + v[ 2];
 	v[10] = v[ 4] - v[10];
-	// Store v[10] -> (T2 + 0xFFA0)
 	rsp_SH(10, 0xFFA0, t2);
 	v[12] = v[2] - v[12];
-	// Store v[12] -> (T2 + 0xFFE0)
 	rsp_SH(12, 0xFFE0, t2);
 	v[5] = v[4] + v[5];
 	v[4] = v[8] - v[4];
-	// Store v[4] -> (T2 + 0x60)
 	rsp_SH( 4, 0x0060, t2);
 	v[0] = v[0] - v[8];
-	// Store v[0] -> (T3 + 0xFFA0)
 	rsp_SH( 0, 0xFFA0, t3);
 	v[7] = v[7] - v[11];
-	// Store v[7] -> (T1 + 0xFFA0)
 	rsp_SH( 7, 0xFFA0, t1);
 	v[11] = v[11] - v[3];
-	// Store v[1] -> (T6 + 0x60)
 	rsp_SH( 1, 0x0060, t6);
 	v[11] = v[11] - v[5];
-	// Store v[11] -> (T0 + 0x60)
 	rsp_SH(11, 0x0060, t0);
 	v[3] = v[3] - v[13];
-	// Store v[3] -> (T0 + 0x20)
 	rsp_SH( 3, 0x0020, t0);
 	v[13] = v[13] + v[2];
-	// Store v[13] -> (T0 + 0xFFE0)
 	rsp_SH(13, 0xFFE0, t0);
 	//v[2] = ;
 	v[2] = (v[5] - v[2]) - v[9];
-	// Store v[2] -> (T0 + 0xFFA0)
 	rsp_SH( 2, 0xFFA0, t0);
 	// 0x7A8 - Verified...
 
