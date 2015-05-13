@@ -422,10 +422,8 @@ void LOADADPCM() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	//	memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
 	//	assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram + v0);
-	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		copy_vector(&adpcmtable[8*x], &table[8*x]);
-		swap_elements((i16 *)&adpcmtable[8*x]);
-	}
+	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++)
+		swap_elements(&adpcmtable[8*x], &table[8*x]);
 }
 
 void LOADADPCM2() { // Loads an ADPCM table - Works 100% Now 03-13-01
@@ -433,10 +431,8 @@ void LOADADPCM2() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	v0 = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	u16 *table = (u16 *)(rdram + v0); // Zelda2 Specific...
 
-	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		copy_vector(&adpcmtable[8*x], &table[8*x]);
-		swap_elements((i16 *)&adpcmtable[8*x]);
-	}
+	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++)
+		swap_elements(&adpcmtable[8*x], &table[8*x]);
 }
 
 void LOADADPCM3() { // Loads an ADPCM table - Works 100% Now 03-13-01
@@ -445,8 +441,6 @@ void LOADADPCM3() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	//memcpy (dmem+0x3f0, rdram+v0, k0&0xffff);
 	//assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram + v0);
-	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		copy_vector(&adpcmtable[8*x], &table[8*x]);
-		swap_elements((i16 *)&adpcmtable[8*x]);
-	}
+	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++)
+		swap_elements(&adpcmtable[8*x], &table[8*x]);
 }

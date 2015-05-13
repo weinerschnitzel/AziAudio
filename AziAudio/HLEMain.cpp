@@ -427,22 +427,22 @@ void copy_vector(void * vd, const void * vs)
 #endif
 }
 
-void swap_elements(i16 * RSP_vector)
+void swap_elements(void * vd, const void * vs)
 {
 #ifdef SSE2_SUPPORT
     __m128i RSP_as_XMM;
 
-    RSP_as_XMM = _mm_loadu_si128((__m128i *)RSP_vector);
+    RSP_as_XMM = _mm_loadu_si128((__m128i *)vs);
     RSP_as_XMM = _mm_shufflehi_epi16(RSP_as_XMM, _MM_SHUFFLE(2, 3, 0, 1));
     RSP_as_XMM = _mm_shufflelo_epi16(RSP_as_XMM, _MM_SHUFFLE(2, 3, 0, 1));
-    _mm_storeu_si128((__m128i *)RSP_vector, RSP_as_XMM);
+    _mm_storeu_si128((__m128i *)vd, RSP_as_XMM);
 #else
     i16 temp_vector[8];
     register size_t i;
 
     for (i = 0; i < 8; i++)
-        temp_vector[i] = RSP_vector[i ^ 1];
+        temp_vector[i] = vs[i ^ 1];
     for (i = 0; i < 8; i++)
-        RSP_vector[i] = temp_vector[i];
+        vd[i] = temp_vector[i];
 #endif
 }

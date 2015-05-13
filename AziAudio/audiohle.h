@@ -215,4 +215,4 @@ extern void copy_vector(void * vd, const void * vs);
  * of that scenario until the memory layout is improved more permanently in
  * later changes.
  */
-extern void swap_elements(i16 * RSP_vector);
+extern void swap_elements(void * vd, const void * vs);
