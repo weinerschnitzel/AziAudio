@@ -108,6 +108,13 @@ void SaveMixer32(int offset, s32 value)
 	*(s32 *)(hleMixerWorkArea + offset) = value;
 }
 
+void buffValueIncr(int x, s16 vec, s16 *buff)
+{
+	int temp = buff[MES(x)] + vec;
+	temp = pack_signed(temp);
+	buff[MES(x)] = temp;
+}
+
 void ENVMIXER() {
 	//static int envmixcnt = 0;
 	u8 flags = (u8)((k0 >> 16) & 0xff);
@@ -366,33 +373,20 @@ void ENVMIXER2() {
 	}
 
 	while (count > 0) {
-		int temp;
 		for (x = 0; x < 0x8; x++) {
 			vec9  = (s16)(((s32)buffs3[MES(x)] * (u32)env[0]) >> 0x10) ^ v2[0];
 			vec10 = (s16)(((s32)buffs3[MES(x)] * (u32)env[2]) >> 0x10) ^ v2[1];
-			temp = bufft6[MES(x)] + vec9;
-			temp = pack_signed(temp);
-			bufft6[MES(x)] = temp;
-			temp = bufft7[MES(x)] + vec10;
-			temp = pack_signed(temp);
-			bufft7[MES(x)] = temp;
+			buffValueIncr(x, vec9, bufft6);
+			buffValueIncr(x, vec10, bufft7);
 			vec9 = (s16)(((s32)vec9  * (u32)env[4]) >> 0x10) ^ v2[2];
 			vec10 = (s16)(((s32)vec10 * (u32)env[4]) >> 0x10) ^ v2[3];
 			if (k0 & 0x10) {
-				temp = buffs0[MES(x)] + vec10;
-				temp = pack_signed(temp);
-				buffs0[MES(x)] = temp;
-				temp = buffs1[MES(x)] + vec9;
-				temp = pack_signed(temp);
-				buffs1[MES(x)] = temp;
+				buffValueIncr(x, vec10, buffs0);
+				buffValueIncr(x, vec9, buffs1);
 			}
 			else {
-				temp = buffs0[MES(x)] + vec9;
-				temp = pack_signed(temp);
-				buffs0[MES(x)] = temp;
-				temp = buffs1[MES(x)] + vec10;
-				temp = pack_signed(temp);
-				buffs1[MES(x)] = temp;
+				buffValueIncr(x, vec9, buffs0);
+				buffValueIncr(x, vec10, buffs1);
 			}
 		}
 
@@ -400,29 +394,17 @@ void ENVMIXER2() {
 		for (x = 0x8; x < 0x10; x++) {
 			vec9  = (s16)(((s32)buffs3[MES(x)] * (u32)env[1]) >> 0x10) ^ v2[0];
 			vec10 = (s16)(((s32)buffs3[MES(x)] * (u32)env[3]) >> 0x10) ^ v2[1];
-			temp = bufft6[MES(x)] + vec9;
-			temp = pack_signed(temp);
-			bufft6[MES(x)] = temp;
-			temp = bufft7[MES(x)] + vec10;
-			temp = pack_signed(temp);
-			bufft7[MES(x)] = temp;
+			buffValueIncr(x, vec9, bufft6);
+			buffValueIncr(x, vec10, bufft7);
 			vec9  = (s16)(((s32)vec9  * (u32)env[5]) >> 0x10) ^ v2[2];
 			vec10 = (s16)(((s32)vec10 * (u32)env[5]) >> 0x10) ^ v2[3];
 			if (k0 & 0x10) {
-				temp = buffs0[MES(x)] + vec10;
-				temp = pack_signed(temp);
-				buffs0[MES(x)] = temp;
-				temp = buffs1[MES(x)] + vec9;
-				temp = pack_signed(temp);
-				buffs1[MES(x)] = temp;
+				buffValueIncr(x, vec10, buffs0);
+				buffValueIncr(x, vec9, buffs1);
 			}
 			else {
-				temp = buffs0[MES(x)] + vec9;
-				temp = pack_signed(temp);
-				buffs0[MES(x)] = temp;
-				temp = buffs1[MES(x)] + vec10;
-				temp = pack_signed(temp);
-				buffs1[MES(x)] = temp;
+				buffValueIncr(x, vec9, buffs0);
+				buffValueIncr(x, vec10, buffs1);
 			}
 		}
 		bufft6 += adder; bufft7 += adder;
