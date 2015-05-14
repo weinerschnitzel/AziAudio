@@ -441,8 +441,7 @@ void swap_elements(void * vd, const void * vs)
     register size_t i;
 
     for (i = 0; i < 8; i++)
-        temp_vector[i] = vs[i ^ 1];
-    for (i = 0; i < 8; i++)
-        vd[i] = temp_vector[i];
+        temp_vector[i] = ((i16 *)vs)[i ^ 1];
+    copy_vector(vd, temp_vector);
 #endif
 }
