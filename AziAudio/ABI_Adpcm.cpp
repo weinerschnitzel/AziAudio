@@ -16,10 +16,16 @@ u16 adpcmtable[0x88];
 void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, u8 code, u8 srange, int vscale)
 {
 	inp[index] = (s16)((icode & mask) << shifter);
-	if (code < srange)	
-		inp[index] = (inp[index] * vscale) >> 16;
-	else 
-		int catchme = 1;
+
+/*
+ * vscale = 0x8000u >> ((srange - code) - 1);
+ * ... therefore:
+ * Unless (srange > code), vscale in this call was shifted by a negative.
+ */
+#if 0
+	assert(srange > code);
+#endif
+	inp[index] = (inp[index] * vscale) >> 16;
 }
 
 void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s32 l1, s32 l2, s32 *inp)
@@ -86,12 +92,12 @@ void ADPCM() { // Work in progress! :)
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
-		vscale = (0x8000u >> ((12 - code) - 1));		// very strange. 0x8000 would be .5 in 16:16 format
+		vscale = 0x8000u >> ((12 - code) - 1);		// very strange. 0x8000 would be .5 in 16:16 format
 		// so this appears to be a fractional scale based
 		// on the 12 based inverse of the scale value.  note
 		// that this could be negative, in which case we do
 		// not use the calculated vscale value... see the 
-		// if(code>12) check below
+		// if(code>srange) assertion in the InitInput function
 
 		inPtr++;									// coded adpcm data lies next
 		j = 0;
@@ -219,7 +225,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;
-		vscale = (0x8000u >> ((srange - code) - 1));
+		vscale = 0x8000u >> ((srange - code) - 1);
 
 		inPtr++;
 		j = 0;
@@ -349,12 +355,12 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
-		vscale = (0x8000u >> ((12 - code) - 1));		// very strange. 0x8000 would be .5 in 16:16 format
+		vscale = 0x8000u >> ((12 - code) - 1);		// very strange. 0x8000 would be .5 in 16:16 format
 		// so this appears to be a fractional scale based
 		// on the 12 based inverse of the scale value.  note
 		// that this could be negative, in which case we do
 		// not use the calculated vscale value... see the 
-		// if(code>12) check below
+		// if(code>srange) assertion in the InitInput function
 
 		inPtr++;									// coded adpcm data lies next
 		j = 0;
