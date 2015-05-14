@@ -5,7 +5,6 @@
 	Name="AziAudio"
 	ProjectGUID="{835979AC-BC6A-45B7-A513-8EEE79B443DE}"
 	RootNamespace="AziAudio"
-	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
