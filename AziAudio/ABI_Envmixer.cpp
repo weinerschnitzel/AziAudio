@@ -108,6 +108,11 @@ void SaveMixer32(int offset, s32 value)
 	*(s32 *)(hleMixerWorkArea + offset) = value;
 }
 
+s16 GetVec(s16 vec, u16 envValue, s16 v2Value)
+{
+	return (s16)(((s32)vec  * (u32)envValue) >> 0x10) ^ v2Value;
+}
+
 void buffValueIncr(int x, s16 vec, s16 *buff)
 {
 	int temp = buff[MES(x)] + vec;
@@ -374,12 +379,12 @@ void ENVMIXER2() {
 
 	while (count > 0) {
 		for (x = 0; x < 0x8; x++) {
-			vec9  = (s16)(((s32)buffs3[MES(x)] * (u32)env[0]) >> 0x10) ^ v2[0];
-			vec10 = (s16)(((s32)buffs3[MES(x)] * (u32)env[2]) >> 0x10) ^ v2[1];
+			vec9 = GetVec(buffs3[MES(x)], env[0], v2[0]);
+			vec10 = GetVec(buffs3[MES(x)], env[2], v2[1]);
 			buffValueIncr(x, vec9, bufft6);
 			buffValueIncr(x, vec10, bufft7);
-			vec9 = (s16)(((s32)vec9  * (u32)env[4]) >> 0x10) ^ v2[2];
-			vec10 = (s16)(((s32)vec10 * (u32)env[4]) >> 0x10) ^ v2[3];
+			vec9 = GetVec(vec9, env[4], v2[2]);
+			vec10 = GetVec(vec10, env[4], v2[3]);
 			if (k0 & 0x10) {
 				buffValueIncr(x, vec10, buffs0);
 				buffValueIncr(x, vec9, buffs1);
@@ -392,12 +397,12 @@ void ENVMIXER2() {
 
 		if (!isMKABI)
 		for (x = 0x8; x < 0x10; x++) {
-			vec9  = (s16)(((s32)buffs3[MES(x)] * (u32)env[1]) >> 0x10) ^ v2[0];
-			vec10 = (s16)(((s32)buffs3[MES(x)] * (u32)env[3]) >> 0x10) ^ v2[1];
+			vec9 = GetVec(buffs3[MES(x)], env[1], v2[0]);
+			vec10 = GetVec(buffs3[MES(x)], env[3], v2[1]);
 			buffValueIncr(x, vec9, bufft6);
 			buffValueIncr(x, vec10, bufft7);
-			vec9  = (s16)(((s32)vec9  * (u32)env[5]) >> 0x10) ^ v2[2];
-			vec10 = (s16)(((s32)vec10 * (u32)env[5]) >> 0x10) ^ v2[3];
+			vec9 = GetVec(vec9, env[5], v2[2]);
+			vec10 = GetVec(vec10, env[5], v2[3]);
 			if (k0 & 0x10) {
 				buffValueIncr(x, vec10, buffs0);
 				buffValueIncr(x, vec9, buffs1);
