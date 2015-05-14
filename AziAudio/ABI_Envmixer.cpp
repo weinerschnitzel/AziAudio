@@ -113,7 +113,7 @@ s16 GetVec(s16 vec, u16 envValue, s16 v2Value)
 	return (s16)(((s32)vec  * (u32)envValue) >> 0x10) ^ v2Value;
 }
 
-void buffValueIncr(int x, s16 vec, s16 *buff)
+void BuffValueIncr(int x, s16 vec, s16 *buff)
 {
 	int temp = buff[MES(x)] + vec;
 	temp = pack_signed(temp);
@@ -381,17 +381,17 @@ void ENVMIXER2() {
 		for (x = 0; x < 0x8; x++) {
 			vec9 = GetVec(buffs3[MES(x)], env[0], v2[0]);
 			vec10 = GetVec(buffs3[MES(x)], env[2], v2[1]);
-			buffValueIncr(x, vec9, bufft6);
-			buffValueIncr(x, vec10, bufft7);
+			BuffValueIncr(x, vec9, bufft6);
+			BuffValueIncr(x, vec10, bufft7);
 			vec9 = GetVec(vec9, env[4], v2[2]);
 			vec10 = GetVec(vec10, env[4], v2[3]);
 			if (k0 & 0x10) {
-				buffValueIncr(x, vec10, buffs0);
-				buffValueIncr(x, vec9, buffs1);
+				BuffValueIncr(x, vec10, buffs0);
+				BuffValueIncr(x, vec9, buffs1);
 			}
 			else {
-				buffValueIncr(x, vec9, buffs0);
-				buffValueIncr(x, vec10, buffs1);
+				BuffValueIncr(x, vec9, buffs0);
+				BuffValueIncr(x, vec10, buffs1);
 			}
 		}
 
@@ -399,17 +399,17 @@ void ENVMIXER2() {
 		for (x = 0x8; x < 0x10; x++) {
 			vec9 = GetVec(buffs3[MES(x)], env[1], v2[0]);
 			vec10 = GetVec(buffs3[MES(x)], env[3], v2[1]);
-			buffValueIncr(x, vec9, bufft6);
-			buffValueIncr(x, vec10, bufft7);
+			BuffValueIncr(x, vec9, bufft6);
+			BuffValueIncr(x, vec10, bufft7);
 			vec9 = GetVec(vec9, env[5], v2[2]);
 			vec10 = GetVec(vec10, env[5], v2[3]);
 			if (k0 & 0x10) {
-				buffValueIncr(x, vec10, buffs0);
-				buffValueIncr(x, vec9, buffs1);
+				BuffValueIncr(x, vec10, buffs0);
+				BuffValueIncr(x, vec9, buffs1);
 			}
 			else {
-				buffValueIncr(x, vec9, buffs0);
-				buffValueIncr(x, vec10, buffs1);
+				BuffValueIncr(x, vec9, buffs0);
+				BuffValueIncr(x, vec10, buffs1);
 			}
 		}
 		bufft6 += adder; bufft7 += adder;
