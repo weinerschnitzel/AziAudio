@@ -86,10 +86,10 @@ void FILTER2() {
  */
 	for (i = 0; i < 8; i++)
 		inputs_matrix[15 - (i + 0)] = inp1[i];
-	swap_elements(&inputs_matrix[8]);
+	swap_elements(&inputs_matrix[8], &inputs_matrix[8]);
 	for (i = 0; i < 8; i++)
 		inputs_matrix[15 - (i + 8)] = inp2[i];
-	swap_elements(&inputs_matrix[0]);
+	swap_elements(&inputs_matrix[0], &inputs_matrix[0]);
 
 	for (x = 0; x < cnt; x += 0x10) {
 		packed_multiply_accumulate(&out1[0], &inputs_matrix[6], &lutt6[0]);
@@ -121,8 +121,8 @@ void FILTER2() {
 
 		for (i = 0; i < 16; i++)
 			inputs_matrix[15 - i] = inp1[i];
-		swap_elements(&inputs_matrix[0]);
-		swap_elements(&inputs_matrix[8]);
+		swap_elements(&inputs_matrix[0], &inputs_matrix[0]);
+		swap_elements(&inputs_matrix[8], &inputs_matrix[8]);
 	}
 	//			memcpy (rdram+(t9&0xFFFFFF), dmem+0xFB0, 0x20);
 	memcpy(save, inp2 - 8, 0x10);

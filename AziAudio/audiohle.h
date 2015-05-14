@@ -195,11 +195,24 @@ extern INLINE void vsatu64 (u16* vd, s32* vs);
 #endif
 
 /*
- * Unfortunately, as most of the low-level details of RSP hardware came from
- * the ultra-little-endian design from zilmar's RSP interpreter, much of RSP
- * vector simulation in this HLE revolved around backwards element order.
- *
- * A quick fix to this is to have a function to switch the positions of
- * adjacent 16-bit RSP vector elements with each other.
+ * There are two basic ways to copy an RSP vector to another RSP vector in
+ * emulated memory:  with alignment and without alignment.  Forcing 128-bit
+ * alignment requirements is a cycle or two faster on older CPUs, but on
+ * modern hardware there is no reason to force memory alignment constrictions
+ * or to use MOVDQA/MOVAPS and risk unaligned memory access seg. faults.
  */
-extern void swap_elements(i16 * RSP_vector);
+extern void copy_vector(void * vd, const void * vs);
+
+/*
+ * Unfortunately, as much of the RSP analysis had to work around some early
+ * byte order tricks in zilmar's RSP interpreter, several cases of audio HLE
+ * will have extra endianness adjustments to them, sometimes redundantly.
+ *
+ * For example, reads and writes might frequently XOR each 16-bit address
+ * when moving to and from a location, to maintain little-endian vectors.
+ *
+ * This function will act as a temporary solution for optimizing away most
+ * of that scenario until the memory layout is improved more permanently in
+ * later changes.
+ */
+extern void swap_elements(void * vd, const void * vs);

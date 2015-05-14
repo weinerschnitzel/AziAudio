@@ -422,67 +422,42 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 void LOADADPCM() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u32 v0;
+	size_t i, limit;
+
 	v0 = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	//	if (v0 > (1024*1024*8))
 	//		v0 = (t9 & 0xffffff);
 	//	memcpy (dmem+0x4c0, rdram+v0, k0&0xffff); // Could prolly get away with not putting this in dmem
 	//	assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram + v0);
-	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[0x1 + (x << 3)] = table[0];
-		adpcmtable[0x0 + (x << 3)] = table[1];
 
-		adpcmtable[0x3 + (x << 3)] = table[2];
-		adpcmtable[0x2 + (x << 3)] = table[3];
-
-		adpcmtable[0x5 + (x << 3)] = table[4];
-		adpcmtable[0x4 + (x << 3)] = table[5];
-
-		adpcmtable[0x7 + (x << 3)] = table[6];
-		adpcmtable[0x6 + (x << 3)] = table[7];
-		table += 8;
-	}
+	limit = (k0 & 0x0000FFFF) >> 4;
+	for (i = 0; i < limit; i++)
+		swap_elements(&adpcmtable[8*i], &table[8*i]);
 }
 
 void LOADADPCM2() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u32 v0;
+	size_t i, limit;
+
 	v0 = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	u16 *table = (u16 *)(rdram + v0); // Zelda2 Specific...
 
-	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[0x1 + (x << 3)] = table[0];
-		adpcmtable[0x0 + (x << 3)] = table[1];
-
-		adpcmtable[0x3 + (x << 3)] = table[2];
-		adpcmtable[0x2 + (x << 3)] = table[3];
-
-		adpcmtable[0x5 + (x << 3)] = table[4];
-		adpcmtable[0x4 + (x << 3)] = table[5];
-
-		adpcmtable[0x7 + (x << 3)] = table[6];
-		adpcmtable[0x6 + (x << 3)] = table[7];
-		table += 8;
-	}
+	limit = (k0 & 0x0000FFFF) >> 4;
+	for (i = 0; i < limit; i++)
+		swap_elements(&adpcmtable[8*i], &table[8*i]);
 }
 
 void LOADADPCM3() { // Loads an ADPCM table - Works 100% Now 03-13-01
 	u32 v0;
+	size_t i, limit;
+
 	v0 = (t9 & 0xffffff);
 	//memcpy (dmem+0x3f0, rdram+v0, k0&0xffff);
 	//assert ((k0&0xffff) <= 0x80);
 	u16 *table = (u16 *)(rdram + v0);
-	for (u32 x = 0; x < ((k0 & 0xffff) >> 0x4); x++) {
-		adpcmtable[0x1 + (x << 3)] = table[0];
-		adpcmtable[0x0 + (x << 3)] = table[1];
 
-		adpcmtable[0x3 + (x << 3)] = table[2];
-		adpcmtable[0x2 + (x << 3)] = table[3];
-
-		adpcmtable[0x5 + (x << 3)] = table[4];
-		adpcmtable[0x4 + (x << 3)] = table[5];
-
-		adpcmtable[0x7 + (x << 3)] = table[6];
-		adpcmtable[0x6 + (x << 3)] = table[7];
-		table += 8;
-	}
+	limit = (k0 & 0x0000FFFF) >> 4;
+	for (i = 0; i < limit; i++)
+		swap_elements(&adpcmtable[8*i], &table[8*i]);
 }
