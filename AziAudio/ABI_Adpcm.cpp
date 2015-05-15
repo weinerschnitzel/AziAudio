@@ -13,18 +13,9 @@
 
 u16 adpcmtable[0x88];
 
-void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, u8 code, u8 srange, int vscale)
+void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
 {
 	inp[index] = (s16)((icode & mask) << shifter);
-
-/*
- * vscale = 0x8000u >> ((srange - code) - 1);
- * ... therefore:
- * Unless (srange > code), vscale in this call was shifted by a negative.
- */
-#if 0
-	assert(srange > code);
-#endif
 	inp[index] = (inp[index] * vscale) >> 16;
 }
 
@@ -92,12 +83,14 @@ void ADPCM() { // Work in progress! :)
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
+#if 0
+		assert((12 - code) - 1 >= 0);
+#endif
 		vscale = 0x8000u >> ((12 - code) - 1);		// very strange. 0x8000 would be .5 in 16:16 format
 		// so this appears to be a fractional scale based
 		// on the 12 based inverse of the scale value.  note
 		// that this could be negative, in which case we do
-		// not use the calculated vscale value... see the 
-		// if(code>srange) assertion in the InitInput function
+		// not use the calculated vscale value...
 
 		inPtr++;									// coded adpcm data lies next
 		j = 0;
@@ -107,10 +100,10 @@ void ADPCM() { // Work in progress! :)
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
+			InitInput(inp1, j, icode, 0xf0, 8, vscale); // this will in effect be signed
 			j++;
 
-			InitInput(inp1, j, icode, 0xf, 12, code, 12, vscale);
+			InitInput(inp1, j, icode, 0xf, 12, vscale);
 			j++;
 		}
 		j = 0;
@@ -119,10 +112,10 @@ void ADPCM() { // Work in progress! :)
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
+			InitInput(inp2, j, icode, 0xf0, 8, vscale); // this will in effect be signed
 			j++;
 
-			InitInput(inp2, j, icode, 0xf, 12, code, 12, vscale);
+			InitInput(inp2, j, icode, 0xf, 12, vscale);
 			j++;
 		}
 
@@ -225,6 +218,9 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;
+#if 0
+		assert((srange - code) - 1 >= 0);
+#endif
 		vscale = 0x8000u >> ((srange - code) - 1);
 
 		inPtr++;
@@ -234,17 +230,17 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, j, icode, mask1, 8, code, srange, vscale); // this will in effect be signed
+			InitInput(inp1, j, icode, mask1, 8, vscale); // this will in effect be signed
 			j++;
 
-			InitInput(inp1, j, icode, mask2, shifter, code, srange, vscale);
+			InitInput(inp1, j, icode, mask2, shifter, vscale);
 			j++;
 
 			if (Flags & 4) {
-				InitInput(inp1, j, icode, 0xC, 12, code, 0xE, vscale); // this will in effect be signed
+				InitInput(inp1, j, icode, 0xC, 12, vscale); // this will in effect be signed
 				j++;
 
-				InitInput(inp1, j, icode, 0x3, 14, code, 0xE, vscale);
+				InitInput(inp1, j, icode, 0x3, 14, vscale);
 				j++;
 			} // end flags
 		} // end while
@@ -256,17 +252,17 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, j, icode, mask1, 8, code, srange, vscale);
+			InitInput(inp2, j, icode, mask1, 8, vscale);
 			j++;
 
-			InitInput(inp2, j, icode, mask2, shifter, code, srange, vscale);
+			InitInput(inp2, j, icode, mask2, shifter, vscale);
 			j++;
 
 			if (Flags & 4) {
-				InitInput(inp2, j, icode, 0xC, 12, code, 0xE, vscale);
+				InitInput(inp2, j, icode, 0xC, 12, vscale);
 				j++;
 
-				InitInput(inp2, j, icode, 0x3, 14, code, 0xE, vscale);
+				InitInput(inp2, j, icode, 0x3, 14, vscale);
 				j++;
 			} // end flags
 		}
@@ -355,12 +351,14 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
+#if 0
+		assert((12 - code) - 1 >= 0);
+#endif
 		vscale = 0x8000u >> ((12 - code) - 1);		// very strange. 0x8000 would be .5 in 16:16 format
 		// so this appears to be a fractional scale based
 		// on the 12 based inverse of the scale value.  note
 		// that this could be negative, in which case we do
-		// not use the calculated vscale value... see the 
-		// if(code>srange) assertion in the InitInput function
+		// not use the calculated vscale value...
 
 		inPtr++;									// coded adpcm data lies next
 		j = 0;
@@ -370,10 +368,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
+			InitInput(inp1, j, icode, 0xf0, 8, vscale); // this will in effect be signed
 			j++;
 
-			InitInput(inp1, j, icode, 0xf, 12, code, 12, vscale);
+			InitInput(inp1, j, icode, 0xf, 12, vscale);
 			j++;
 		}
 		j = 0;
@@ -382,10 +380,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, j, icode, 0xf0, 8, code, 12, vscale); // this will in effect be signed
+			InitInput(inp2, j, icode, 0xf0, 8, vscale); // this will in effect be signed
 			j++;
 
-			InitInput(inp2, j, icode, 0xf, 12, code, 12, vscale);
+			InitInput(inp2, j, icode, 0xf, 12, vscale);
 			j++;
 		}
 
