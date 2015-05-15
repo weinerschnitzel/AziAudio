@@ -187,24 +187,10 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	}
 
 	if (!(Flags & 0x1))
-	{
 		if (Flags & 0x2)
-		{/*
-		 for(int i=0;i<16;i++)
-		 {
-		 out[i]=*(s16 *)&rdram[HES(loopval + i*2)];
-		 }*/
 			memcpy(out, &rdram[loopval], 32);
-		}
 		else
-		{/*
-		 for(int i=0;i<16;i++)
-		 {
-		 out[i]=*(s16 *)&rdram[HES(Address + i*2)];
-		 }*/
 			memcpy(out, &rdram[Address], 32);
-		}
-	}
 
 	s32 l1 = out[15];
 	s32 l2 = out[14];
@@ -314,24 +300,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	memset(out, 0, 32);
 
 	if (!(Flags & 0x1))
-	{
 		if (Flags & 0x2)
-		{/*
-		 for(int i=0;i<16;i++)
-		 {
-		 out[i]=*(s16 *)&rdram[HES(loopval + i*2)];
-		 }*/
 			memcpy(out, &rdram[loopval], 32);
-		}
 		else
-		{/*
-		 for(int i=0;i<16;i++)
-		 {
-		 out[i]=*(s16 *)&rdram[HES(Address + i*2)];
-		 }*/
 			memcpy(out, &rdram[Address], 32);
-		}
-	}
 
 	s32 l1 = out[15];
 	s32 l2 = out[14];
