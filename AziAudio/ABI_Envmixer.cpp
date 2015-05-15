@@ -115,9 +115,7 @@ s16 GetVec(s16 vec, u16 envValue, s16 v2Value)
 
 void BuffValueIncr(int x, s16 vec, s16 *buff)
 {
-	int temp = buff[MES(x)] + vec;
-	temp = pack_signed(temp);
-	buff[MES(x)] = temp;
+	buff[MES(x)] = pack_signed(buff[MES(x)] + vec);
 }
 
 void ENVMIXER() {
