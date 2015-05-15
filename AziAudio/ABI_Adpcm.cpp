@@ -58,7 +58,7 @@ void ADPCM() { // Work in progress! :)
 	if (!(Flags & 0x1))
 	{
 		if (Flags & 0x2) {
-			memcpy(out, &rdram[loopval & 0x7fffff], 32);
+			memcpy(out, &rdram[loopval], 32);
 		}
 		else {
 			memcpy(out, &rdram[Address], 32);
