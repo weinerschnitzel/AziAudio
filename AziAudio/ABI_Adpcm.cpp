@@ -34,7 +34,7 @@ void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s32 l1, s32 l2, s32 *inp)
 }
 
 void ADPCM() { // Work in progress! :)
-	BYTE Flags = (u8)(k0 >> 16) & 0xff;
+	BYTE Flags = (u8)((k0 >> 16) & 0xff);
 	WORD Gain = (u16)(k0 & 0xffff);
 	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = 0;
@@ -148,7 +148,7 @@ void ADPCM() { // Work in progress! :)
 }
 
 void ADPCM2() { // Verified to be 100% Accurate...
-	BYTE Flags = (u8)(k0 >> 16) & 0xff;
+	BYTE Flags = (u8)((k0 >> 16) & 0xff);
 	WORD Gain = (u16)(k0 & 0xffff);
 	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = 0;
@@ -281,7 +281,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 }
 
 void ADPCM3() { // Verified to be 100% Accurate...
-	BYTE Flags = (u8)(t9 >> 0x1c) & 0xff;
+	BYTE Flags = (u8)((t9 >> 0x1c) & 0xff);
 	//WORD Gain=(u16)(k0&0xffff);
 	DWORD Address = (k0 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = (t9 >> 12) & 0xf;

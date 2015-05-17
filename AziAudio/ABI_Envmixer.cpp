@@ -47,24 +47,24 @@ static inline s32 mixer_macc(s32* Acc, s32* AdderStart, s32* AdderEnd, s32 Ramp)
 }
 
 static u16 env[8];
-static u32 t3, s5, s6;
+static s16 t3, s5, s6;
 
 void ENVSETUP1() {
-	u32 tmp;
+	u16 tmp;
 
 	//fprintf (dfile, "ENVSETUP1: k0 = %08X, t9 = %08X\n", k0, t9);
-	t3 = k0 & 0xFFFF;
-	tmp = (k0 >> 0x8) & 0xFF00;
+	t3 = (s16)(k0 & 0xFFFF);
+	tmp = ((k0 >> 0x8) & 0xFF00);
 	env[4] = (u16)tmp;
 	tmp += t3;
 	env[5] = (u16)tmp;
-	s5 = t9 >> 0x10;
-	s6 = t9 & 0xFFFF;
+	s5 = (s16)(t9 >> 0x10);
+	s6 = (s16)(t9 & 0xFFFF);
 	//fprintf (dfile, "	t3 = %X / s5 = %X / s6 = %X / env[4] = %X / env[5] = %X\n", t3, s5, s6, env[4], env[5]);
 }
 
 void ENVSETUP2() {
-	u32 tmp;
+	u16 tmp;
 
 	//fprintf (dfile, "ENVSETUP2: k0 = %08X, t9 = %08X\n", k0, t9);
 	tmp = (t9 >> 0x10);
@@ -413,9 +413,9 @@ void ENVMIXER2() {
 		bufft6 += adder; bufft7 += adder;
 		buffs0 += adder; buffs1 += adder;
 		buffs3 += adder; count -= adder;
-		env[0] += (u16)s5; env[1] += (u16)s5;
-		env[2] += (u16)s6; env[3] += (u16)s6;
-		env[4] += (u16)t3; env[5] += (u16)t3;
+		env[0] += s5; env[1] += s5;
+		env[2] += s6; env[3] += s6;
+		env[4] += t3; env[5] += t3;
 	}
 }
 
@@ -620,7 +620,7 @@ void SETVOL() {
 }
 
 void SETVOL3() {
-	u8 Flags = (u8)(k0 >> 0x10);
+	u8 Flags = (u8)((k0 >> 0x10) & 0xFF);
 	if (Flags & 0x4) { // 288
 		if (Flags & 0x2) { // 290
 			Vol_Left = *(s16*)&k0; // 0x50
