@@ -322,7 +322,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		book1 = (s16 *)&adpcmtable[index];
 		book2 = book1 + 8;
 		code >>= 4;									// upper nibble is scale
-#if 0
+#if 1
 		assert((12 - code) - 1 >= 0);
 #endif
 		vscale = 0x8000u >> ((12 - code) - 1);		// very strange. 0x8000 would be .5 in 16:16 format
