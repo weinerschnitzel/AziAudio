@@ -91,7 +91,8 @@ void ADPCM() { // Work in progress! :)
 		// on the 12 based inverse of the scale value.  note
 		// that this could be negative, in which case we do
 		// not use the calculated vscale value...
-
+		if ((12 - code) - 1 < 0)
+			vscale = 0x10000; /* null operation:  << 16 then >> 16 */
 		inPtr++;									// coded adpcm data lies next
 		j = 0;
 		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
@@ -207,7 +208,8 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		assert((srange - code) - 1 >= 0);
 #endif
 		vscale = 0x8000u >> ((srange - code) - 1);
-
+		if ((srange - code) - 1 < 0)
+			vscale = 0x10000; /* null operation:  << 16 then >> 16 */
 		inPtr++;
 		j = 0;
 
