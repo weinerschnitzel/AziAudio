@@ -17,10 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="0"
+			InheritedPropertySheets="$(SolutionDir)PropertySheets/Win32.Debug.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -39,15 +37,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(Root)3rd Party\directx\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;AZIAUDIO_EXPORTS"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)3rd Party\directx\include&quot;"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,10 +52,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dsound.lib"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				TargetMachine="1"
+				OutputFile="$(OutDir)\$(ProjectName)_d.dll"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)3rd Party\directx\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -90,11 +79,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="0"
-			WholeProgramOptimization="1"
+			InheritedPropertySheets="$(SolutionDir)PropertySheets/Win32.Release.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -113,16 +99,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(Root)3rd Party\directx\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;AZIAUDIO_EXPORTS"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				EnableEnhancedInstructionSet="2"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)3rd Party\directx\include&quot;"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -136,12 +114,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dsound.lib"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)3rd Party\directx\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -304,6 +277,50 @@
 				RelativePath=".\XAudio2SoundDriver.h"
 				>
 			</File>
+			<Filter
+				Name="Mupen64plusHLE headers"
+				>
+				<File
+					RelativePath=".\Mupen64plusHLE\alist.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\arithmetics.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\audio.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\common.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\hle.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\hle_external.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\hle_internal.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\memory.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\types.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\ucodes.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
