@@ -432,7 +432,7 @@ void ENVMIXER3() {
 	s32 MainL;
 	s32 AuxR;
 	s32 AuxL;
-	s32 i1, o1, a1, a2, a3;
+	s32 i1;
 	WORD AuxIncRate = 1;
 	s16 zero[8];
 	memset(zero, 0, sizeof(s16) * 8);
