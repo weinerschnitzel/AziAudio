@@ -11,6 +11,7 @@
 
 #include "common.h"
 #ifndef USE_XAUDIO2
+#include <mmreg.h>
 #include <dsound.h>
 #include <stdio.h>
 #include "DirectSoundDriver.h"

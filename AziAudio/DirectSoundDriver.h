@@ -12,6 +12,7 @@
 #pragma once
 
 #include "common.h"
+#include <mmreg.h>
 #include <dsound.h>
 #include "SoundDriver.h"
 
