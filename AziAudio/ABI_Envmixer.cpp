@@ -519,35 +519,18 @@ void ENVMIXER3() {
 		// ****************************************************************
 		MainL = MixVol(Dry, LVol);
 		MainR = MixVol(Dry, RVol);
-
 		i1 = inp[MES(y)];
 
-		o1 = out[MES(y)] + MixVol(i1, MainL);
-		a1 = aux1[MES(y)] + MixVol(i1, MainR);
-
-		// ****************************************************************
-
-		o1 = pack_signed(o1);
-		a1 = pack_signed(a1);
-
-		// ****************************************************************
-
-		out[MES(y)] = o1;
-		aux1[MES(y)] = a1;
+		out[MES(y)] = pack_signed(out[MES(y)] + MixVol(i1, MainL));
+		aux1[MES(y)] = pack_signed(aux1[MES(y)] + MixVol(i1, MainR));
 
 		// ****************************************************************
 		//if (!(flags&A_AUX)) {
 		AuxL = MixVol(Wet, LVol);
 		AuxR = MixVol(Wet, RVol);
 
-		a2 = aux2[MES(y)] + MixVol(i1, AuxL);
-		a3 = aux3[MES(y)] + MixVol(i1, AuxR);
-
-		a2 = pack_signed(a2);
-		a3 = pack_signed(a3);
-
-		aux2[MES(y)] = a2;
-		aux3[MES(y)] = a3;
+		aux2[MES(y)] = pack_signed(aux2[MES(y)] + MixVol(i1, AuxL));
+		aux3[MES(y)] = pack_signed(aux3[MES(y)] + MixVol(i1, AuxR));
 	}
 	//}
 
