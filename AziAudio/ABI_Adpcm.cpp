@@ -35,12 +35,12 @@ void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s32 l1, s32 l2, s32 *inp)
 
 void ADPCM() { // Work in progress! :)
 	BYTE Flags = (u8)((k0 >> 16) & 0xff);
-	WORD Gain = (u16)(k0 & 0xffff);
+	//WORD Gain = (u16)(k0 & 0xffff);
 	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = 0;
 	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
 	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
-	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
+	//u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
 	s16 count = (s16)AudioCount;
 	int vscale;
 	WORD index;
@@ -125,7 +125,7 @@ void ADPCM() { // Work in progress! :)
 		{
 			a[MES(j)] >>= 11;
 			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = a[MES(j)];
+			*(out++) = (s16)a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -136,7 +136,7 @@ void ADPCM() { // Work in progress! :)
 		{
 			a[MES(j)] >>= 11;
 			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = a[MES(j)];
+			*(out++) = (s16)a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -149,12 +149,12 @@ void ADPCM() { // Work in progress! :)
 
 void ADPCM2() { // Verified to be 100% Accurate...
 	BYTE Flags = (u8)((k0 >> 16) & 0xff);
-	WORD Gain = (u16)(k0 & 0xffff);
+//	WORD Gain = (u16)(k0 & 0xffff);
 	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	WORD inPtr = 0;
 	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
 	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
-	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
+//	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
 	s16 count = (s16)AudioCount;
 	int vscale;
 	WORD index;
@@ -258,7 +258,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		{
 			a[MES(j)] >>= 11;
 			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = a[MES(j)];
+			*(out++) = (s16)a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -269,7 +269,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		{
 			a[MES(j)] >>= 11;
 			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = a[MES(j)];
+			*(out++) = (s16)a[MES(j)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -287,7 +287,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	WORD inPtr = (t9 >> 12) & 0xf;
 	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
 	s16 *out = (s16 *)(BufferSpace + (t9 & 0xfff) + 0x4f0);
-	BYTE *in = (BYTE *)(BufferSpace + ((t9 >> 12) & 0xf) + 0x4f0);
+//	BYTE *in = (BYTE *)(BufferSpace + ((t9 >> 12) & 0xf) + 0x4f0);
 	s16 count = (s16)((t9 >> 16) & 0xfff);
 	int vscale;
 	WORD index;
@@ -364,7 +364,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		{
 			a[MES(j)] >>= 11;
 			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = a[MES(j)];
+			*(out++) = (s16)a[MES(j)];
 			//*(out+j)=a[MES(j)];
 		}
 		//out += 0x10;
@@ -377,7 +377,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		{
 			a[MES(j)] >>= 11;
 			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = a[MES(j)];
+			*(out++) = (s16)a[MES(j)];
 			//*(out+j+0x1f8)=a[MES(j)];
 		}
 		l1 = a[6];

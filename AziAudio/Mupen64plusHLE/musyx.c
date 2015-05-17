@@ -725,7 +725,7 @@ static void mix_voice_samples(struct hle_t* hle, musyx_t *musyx,
         pitch_accu += pitch_step;
 
         /* handle end/restart points */
-        dist = sample - sample_end;
+        dist = (int)(sample - sample_end);
         if (dist >= 0)
             sample = sample_restart + dist;
 
@@ -845,7 +845,7 @@ static void sfx_stage(struct hle_t* hle, mix_sfx_with_main_subframes_t mix_sfx_w
     mix_fir4(musyx->e50, buffer + 1, fir4_hgain, fir4_hcoeffs);
     dram_store_u16(hle, (uint16_t *)musyx->e50, cbuffer_ptr + pos * 2, SUBFRAME_SIZE);
 }
-
+#pragma warning(disable : 4100)
 static void mix_sfx_with_main_subframes_v1(musyx_t *musyx, const int16_t *subframe,
                                            const uint16_t* UNUSED(gains))
 {
@@ -857,7 +857,7 @@ static void mix_sfx_with_main_subframes_v1(musyx_t *musyx, const int16_t *subfra
         musyx->right[i] = clamp_s16(musyx->right[i] + v);
     }
 }
-
+#pragma warning(default : 4100)
 static void mix_sfx_with_main_subframes_v2(musyx_t *musyx, const int16_t *subframe,
                                            const uint16_t* gains)
 {

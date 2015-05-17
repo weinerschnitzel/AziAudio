@@ -137,7 +137,7 @@ void ENVMIXER() {
 	s32 MainL;
 	s32 AuxR;
 	s32 AuxL;
-	s32 i1, o1, a1, a2, a3;
+	s32 i1, o1, a1, a2=0, a3=0;
 	WORD AuxIncRate = 1;
 	s16 zero[8];
 	memset(zero, 0, sizeof(s16) * 8);
@@ -291,8 +291,8 @@ void ENVMIXER() {
 			AuxR  = (Wet * RTrg + 0x8000)  >> 16;
 			AuxL  = (Wet * LTrg + 0x8000)  >> 16;*/
 
-			o1 += MixVol(/*(o1*0x7fff)+*/ i1, MainR);
-			a1 += MixVol(/*(a1*0x7fff)+*/ i1, MainL);
+			o1 += MixVol(/*(o1*0x7fff)+*/ (s16)i1, (s16)MainR);
+			a1 += MixVol(/*(a1*0x7fff)+*/ (s16)i1, (s16)MainL);
 
 			/*		o1=((s64)(((s64)o1*0xfffe)+((s64)i1*MainR*2)+0x8000)>>16);
 
@@ -301,20 +301,20 @@ void ENVMIXER() {
 			o1 = pack_signed(o1);
 			a1 = pack_signed(a1);
 
-			out[MES(ptr)] = o1;
-			aux1[MES(ptr)] = a1;
+			out[MES(ptr)] = (s16)o1;
+			aux1[MES(ptr)] = (s16)a1;
 			if (AuxIncRate) {
 				//a2=((s64)(((s64)a2*0xfffe)+((s64)i1*AuxR*2)+0x8000)>>16);
 
 				//a3=((s64)(((s64)a3*0xfffe)+((s64)i1*AuxL*2)+0x8000)>>16);
-				a2 += MixVol(/*(a2*0x7fff)+*/i1, AuxR);
-				a3 += MixVol(/*(a3*0x7fff)+*/i1, AuxL);
+				a2 += MixVol(/*(a2*0x7fff)+*/(s16)i1, (s16)AuxR);
+				a3 += MixVol(/*(a3*0x7fff)+*/(s16)i1, (s16)AuxL);
 
 				a2 = pack_signed(a2);
 				a3 = pack_signed(a3);
 
-				aux2[MES(ptr)] = a2;
-				aux3[MES(ptr)] = a3;
+				aux2[MES(ptr)] = (s16)a2;
+				aux3[MES(ptr)] = (s16)a3;
 			}
 			ptr++;
 		}
@@ -433,7 +433,7 @@ void ENVMIXER3() {
 	s32 AuxR;
 	s32 AuxL;
 	s32 i1, o1, a1, a2, a3;
-	WORD AuxIncRate = 1;
+	//WORD AuxIncRate = 1;
 	s16 zero[8];
 	memset(zero, 0, sizeof(s16) * 8);
 
@@ -517,15 +517,15 @@ void ENVMIXER3() {
 			}
 		}
 		// ****************************************************************
-		MainL = MixVol(Dry, LVol);
-		MainR = MixVol(Dry, RVol);
+		MainL = MixVol(Dry, (s16)LVol);
+		MainR = MixVol(Dry, (s16)RVol);
 
 		o1 = out[MES(y)];
 		a1 = aux1[MES(y)];
 		i1 = inp[MES(y)];
 
-		o1 += MixVol(i1, MainL);
-		a1 += MixVol(i1, MainR);
+		o1 += MixVol((s16)i1, (s16)MainL);
+		a1 += MixVol((s16)i1, (s16)MainR);
 
 		// ****************************************************************
 
@@ -534,25 +534,25 @@ void ENVMIXER3() {
 
 		// ****************************************************************
 
-		out[MES(y)] = o1;
-		aux1[MES(y)] = a1;
+		out[MES(y)] = (s16)o1;
+		aux1[MES(y)] = (s16)a1;
 
 		// ****************************************************************
 		//if (!(flags&A_AUX)) {
 		a2 = aux2[MES(y)];
 		a3 = aux3[MES(y)];
 
-		AuxL = MixVol(Wet, LVol);
-		AuxR = MixVol(Wet, RVol);
+		AuxL = MixVol(Wet, (s16)LVol);
+		AuxR = MixVol(Wet, (s16)RVol);
 
-		a2 += MixVol(i1, AuxL);
-		a3 += MixVol(i1, AuxR);
+		a2 += MixVol((s16)i1, (s16)AuxL);
+		a3 += MixVol((s16)i1, (s16)AuxR);
 
 		a2 = pack_signed(a2);
 		a3 = pack_signed(a3);
 
-		aux2[MES(y)] = a2;
-		aux3[MES(y)] = a3;
+		aux2[MES(y)] = (s16)a2;
+		aux3[MES(y)] = (s16)a3;
 	}
 	//}
 
@@ -576,7 +576,7 @@ void SETVOL() {
 	// Might be better to unpack these depending on the flags...
 	u8 flags = (u8)((k0 >> 16) & 0xff);
 	u16 vol = (s16)(k0 & 0xffff);
-	u16 voltarg = (u16)((t9 >> 16) & 0xffff);
+	//u16 voltarg = (u16)((t9 >> 16) & 0xffff);
 	u16 volrate = (u16)((t9 & 0xffff));
 
 	if (flags & A_AUX) {

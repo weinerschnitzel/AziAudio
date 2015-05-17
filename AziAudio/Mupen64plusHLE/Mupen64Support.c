@@ -6,7 +6,7 @@
 #include "hle_external.h"
 #include "hle_internal.h"
 #include "../AudioSpec.h"
-
+#pragma warning(disable : 4100)
 void HleWarnMessage(void* UNUSED(user_defined), const char *message, ...)
 {
 	va_list args;
@@ -23,7 +23,7 @@ void HleVerboseMessage(void* UNUSED(user_defined), const char *message, ...)
 	//DebugMessage(M64MSG_VERBOSE, message, args);
 	va_end(args);
 }
-
+#pragma warning(default : 4100)
 
 static struct hle_t _hle;
 

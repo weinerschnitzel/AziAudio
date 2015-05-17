@@ -54,6 +54,7 @@ static HANDLE hMutex;
 
 BOOL XAudio2SoundDriver::Initialize(HWND hwnd)
 {
+	UNREFERENCED_PARAMETER(hwnd);
 	if (g_source != NULL)
 	{
 		g_source->Start();
@@ -268,6 +269,8 @@ DWORD XAudio2SoundDriver::GetReadStatus()
 
 	if (canPlay)
 		g_source->GetState(&xvs);
+	else
+		return 0;
 
 //	printf("%i - %i - %i\n", xvs.SamplesPlayed, bufferLength[0], bufferLength[1]);
 
@@ -279,7 +282,7 @@ DWORD XAudio2SoundDriver::GetReadStatus()
 		retVal = (lastLength - xvs.SamplesPlayed * 4) & ~0x7;// bufferBytes % lastLength;// *(int *)xvs.pCurrentBufferContext - (int)xvs.SamplesPlayed;
 
 	if (retVal < 0) return 0; else return retVal % lastLength;
-	return 0;
+//	return 0;
 }
 
 // 100 - Mute to 0 - Full Volume
@@ -318,6 +321,7 @@ void __stdcall VoiceCallback::OnBufferEnd(void * pBufferContext)
 
 void __stdcall VoiceCallback::OnVoiceProcessingPassStart(UINT32 SamplesRequired) 
 {
+	UNREFERENCED_PARAMETER(SamplesRequired);
 	//if (SamplesRequired > 0)
 	//	printf("SR: %i FB: %i BB: %i  CS:%i\n", SamplesRequired, filledBuffers, bufferBytes, cacheSize);
 }

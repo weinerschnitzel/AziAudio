@@ -241,7 +241,7 @@ void MP3 () {
 	// Initialization Code
 	u32 readPtr; // s5
 	u32 writePtr; // s6
-	u32 Count = 0x0480; // s4
+//	u32 Count = 0x0480; // s4
 	u32 tmp;
 	//u32 inPtr, outPtr;
 
@@ -423,7 +423,8 @@ void InnerLoop () {
 
 	// Part 7: - 100% Accurate + SSV - Unoptimized
 	v[0] = ( v[17] + v[16] ) >> 1;
-	v[1] = ((v[17] * (int)((s16)0xA57E * 2)) + (v[16] * 0xB504)) >> 0x10;
+	//v[1] = ((v[17] * (int)((s16)0xA57E * 2)) + (v[16] * 0xB504)) >> 0x10; -- Azimer : Made 0xA57E negative to remove truncate warning
+	v[1] = ((v[17] * (int)((s16)-0x5A82 * 2)) + (v[16] * 0xB504)) >> 0x10; // Should B504 also be s16 like the above?
 	v[2] = -v[18] -v[19];
 	v[3] = ((v[18] - v[19]) * 0x16A09) >> 0x10;
 	v[4] = v[20] + v[21] + v[0];
@@ -432,7 +433,8 @@ void InnerLoop () {
 	v[7] = (((v[22] - v[23]) * 0x2D413) >> 0x10) + v[0] + v[1] + v[3];
 	// 0x16A8
 	// Save v[0] -> (T3 + 0xFFE0)
-	*(s16 *)(mp3data+((t3 + (s16)0xFFE0))) = (s16)-v[0];
+	//*(s16 *)(mp3data + ((t3 + (s16)0xFFE0))) = (s16)-v[0]; -- Azimer : Made 0xA57E negative to remove truncate warning
+	*(s16 *)(mp3data + ((t3 + (s16)-0x0020))) = (s16)-v[0];
 	v[ 8] = v[24] + v[25];
 	v[ 9] = ((v[24] - v[25]) * 0x16A09) >> 0x10;
 	v[10] = ((v[26] + v[27]) << 1) + v[8];
@@ -488,7 +490,7 @@ void InnerLoop () {
 	offset = 0x10 - (t4 >> 1);
 
 	s32 v2 = 0, v4 = 0, v6 = 0, v8 = 0;
-	s32 z2 = 0, z4 = 0, z6 = 0, z8 = 0;
+//	s32 z2 = 0, z4 = 0, z6 = 0, z8 = 0;
 
 	offset = 0x10 - (t4 >> 1);// + x*0x40;
 	for (int x = 0; x < 8; x++) {

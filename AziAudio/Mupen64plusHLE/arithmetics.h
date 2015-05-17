@@ -48,7 +48,7 @@ static inline int16_t clamp_s16(int32_t x)
     x = (x < INT16_MIN) ? INT16_MIN: x;
     x = (x > INT16_MAX) ? INT16_MAX: x;
 
-    return x;
+    return (int16_t)x;
 }
 
 #endif

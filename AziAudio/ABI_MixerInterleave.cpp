@@ -158,7 +158,7 @@ void INTERLEAVE3() { // Needs accuracy verification...
 void MIXER() {
 	u32 dmemin = (u16)(t9 >> 0x10);
 	u32 dmemout = (u16)(t9 & 0xFFFF);
-	u8  flags = (u8)((k0 >> 16) & 0xff);
+	//u8  flags = (u8)((k0 >> 16) & 0xff);
 	s32 gain = (s16)(k0 & 0xFFFF);
 	s32 temp;
 
@@ -194,7 +194,7 @@ void MIXER2() { // Needs accuracy verification...
 void MIXER3() { // Needs accuracy verification...
 	u16 dmemin = (u16)(t9 >> 0x10) + 0x4f0;
 	u16 dmemout = (u16)(t9 & 0xFFFF) + 0x4f0;
-	u8  flags = (u8)((k0 >> 16) & 0xff);
+	//u8  flags = (u8)((k0 >> 16) & 0xff);
 	s32 gain = (s16)(k0 & 0xFFFF) * 2;
 	s32 temp;
 

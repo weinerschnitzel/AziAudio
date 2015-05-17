@@ -23,7 +23,7 @@
 #include <stddef.h>
 
 #include "arithmetics.h"
-
+#pragma warning(disable : 4310) // Disable truncation warnings on RESAMPLE_LUT
 const int16_t RESAMPLE_LUT[64 * 4] = {
     (int16_t)0x0c39, (int16_t)0x66ad, (int16_t)0x0d46, (int16_t)0xffdf,
     (int16_t)0x0b39, (int16_t)0x6696, (int16_t)0x0e5f, (int16_t)0xffd8,
@@ -90,7 +90,7 @@ const int16_t RESAMPLE_LUT[64 * 4] = {
     (int16_t)0xffd8, (int16_t)0x0e5f, (int16_t)0x6696, (int16_t)0x0b39,
     (int16_t)0xffdf, (int16_t)0x0d46, (int16_t)0x66ad, (int16_t)0x0c39
 };
-
+#pragma warning(default : 4310)
 int32_t rdot(size_t n, const int16_t *x, const int16_t *y)
 {
     int32_t accu = 0;
