@@ -137,7 +137,7 @@ void ENVMIXER() {
 	s32 MainL;
 	s32 AuxR;
 	s32 AuxL;
-	s32 i1, o1, a1, a2, a3;
+	s32 i1;
 	WORD AuxIncRate = 1;
 	s16 zero[8];
 	memset(zero, 0, sizeof(s16) * 8);
@@ -211,12 +211,6 @@ void ENVMIXER() {
 
 		for (int x = 0; x < 8; x++) {
 			i1 = inp[MES(ptr)];
-			o1 = out[MES(ptr)];
-			a1 = aux1[MES(ptr)];
-			if (AuxIncRate) {
-				a2 = aux2[MES(ptr)];
-				a3 = aux3[MES(ptr)];
-			}
 			// TODO: here...
 			//LAcc = LTrg;
 			//RAcc = RTrg;
@@ -291,30 +285,17 @@ void ENVMIXER() {
 			AuxR  = (Wet * RTrg + 0x8000)  >> 16;
 			AuxL  = (Wet * LTrg + 0x8000)  >> 16;*/
 
-			o1 += MixVol(/*(o1*0x7fff)+*/ i1, MainR);
-			a1 += MixVol(/*(a1*0x7fff)+*/ i1, MainL);
-
 			/*		o1=((s64)(((s64)o1*0xfffe)+((s64)i1*MainR*2)+0x8000)>>16);
-
 			a1=((s64)(((s64)a1*0xfffe)+((s64)i1*MainL*2)+0x8000)>>16);*/
 
-			o1 = pack_signed(o1);
-			a1 = pack_signed(a1);
-
-			out[MES(ptr)] = o1;
-			aux1[MES(ptr)] = a1;
+			out[MES(ptr)] = pack_signed(out[MES(ptr)] + MixVol(/*(o1*0x7fff)+*/ i1, MainR));
+			aux1[MES(ptr)] = pack_signed(aux1[MES(ptr)] + MixVol(/*(a1*0x7fff)+*/ i1, MainL));
 			if (AuxIncRate) {
 				//a2=((s64)(((s64)a2*0xfffe)+((s64)i1*AuxR*2)+0x8000)>>16);
-
 				//a3=((s64)(((s64)a3*0xfffe)+((s64)i1*AuxL*2)+0x8000)>>16);
-				a2 += MixVol(/*(a2*0x7fff)+*/i1, AuxR);
-				a3 += MixVol(/*(a3*0x7fff)+*/i1, AuxL);
 
-				a2 = pack_signed(a2);
-				a3 = pack_signed(a3);
-
-				aux2[MES(ptr)] = a2;
-				aux3[MES(ptr)] = a3;
+				aux2[MES(ptr)] = pack_signed(aux2[MES(ptr)] + MixVol(/*(a2*0x7fff)+*/i1, AuxR));
+				aux3[MES(ptr)] = pack_signed(aux3[MES(ptr)] + MixVol(/*(a3*0x7fff)+*/i1, AuxL));
 			}
 			ptr++;
 		}
