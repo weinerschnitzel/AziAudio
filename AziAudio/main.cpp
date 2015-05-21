@@ -287,7 +287,7 @@ EXPORT void CALL ProcessAList(void) {
 	}
 }
 
-EXPORT void CALL RomOpened(void) {
+EXPORT void CALL RomOpen(void) {
 	ChangeABI(0);
 	snd.DeInitialize();
 	Dacrate = 0;
