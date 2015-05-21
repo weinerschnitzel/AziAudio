@@ -197,7 +197,7 @@ EXPORT void CALL ProcessAList(void);
   output:   none
 *******************************************************************/ 
 EXPORT void CALL RomClosed(void);
-EXPORT void CALL RomOpened(void);
+EXPORT void CALL RomOpen(void);
 EXPORT void CALL PluginLoaded(void);
 
 EXPORT void CALL AiCallBack(void);
