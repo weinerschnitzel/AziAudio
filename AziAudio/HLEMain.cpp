@@ -343,7 +343,7 @@ s16 pack_signed(s32 slice)
 
     xmm = _mm_cvtsi32_si128(slice);
     xmm = _mm_packs_epi32(xmm, xmm);
-    return _mm_cvtsi128_si32(xmm); /* or:  return _mm_extract_epi16(xmm, 0); */
+    return (s16)_mm_cvtsi128_si32(xmm); /* or:  return _mm_extract_epi16(xmm, 0); */
 #else
     s32 result;
 
