@@ -44,7 +44,6 @@ void ADPCM() { // Work in progress! :)
 	s16 count = (s16)AudioCount;
 	int vscale;
 	WORD index;
-	WORD j;
 	s32 a[8];
 	s16* book1;
 	s16* book2;
@@ -94,50 +93,40 @@ void ADPCM() { // Work in progress! :)
 		if ((12 - code) - 1 < 0)
 			vscale = 0x10000; /* null operation:  << 16 then >> 16 */
 		inPtr++;									// coded adpcm data lies next
-		j = 0;
-		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
+		for (int i = 0; i < 8; i += 2)				// loop of 8, for 8 coded nibbles from 4 bytes
 			// which yields 8 short pcm values
 		{
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, j, icode, 0xf0, 8, vscale); // this will in effect be signed
-			j++;
-
-			InitInput(inp1, j, icode, 0xf, 12, vscale);
-			j++;
+			InitInput(inp1, i, icode, 0xf0, 8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 1, icode, 0xf, 12, vscale);
 		}
-		j = 0;
-		while (j<8)
+		for (int i = 0; i < 8; i += 2)
 		{
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, j, icode, 0xf0, 8, vscale); // this will in effect be signed
-			j++;
-
-			InitInput(inp2, j, icode, 0xf, 12, vscale);
-			j++;
+			InitInput(inp2, i, icode, 0xf0, 8, vscale); // this will in effect be signed
+			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
 		}
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
 
-		for (j = 0; j<8; j++)
+		for (int i = 0; i < 8; i++)
 		{
-			a[MES(j)] >>= 11;
-			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = (s16)a[MES(j)];
+			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			*(out++) = (s16)a[MES(i)];
 		}
 		l1 = a[6];
 		l2 = a[7];
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 
-		for (j = 0; j<8; j++)
+		for (int i = 0; i < 8; i++)
 		{
-			a[MES(j)] >>= 11;
-			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = (s16)a[MES(j)];
+			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			*(out++) = (s16)a[MES(i)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -159,7 +148,6 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	s16 count = (s16)AudioCount;
 	int vscale;
 	WORD index;
-	WORD j;
 	s32 a[8];
 	s16* book1;
 	s16* book2;
@@ -211,67 +199,53 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		if ((srange - code) - 1 < 0)
 			vscale = 0x10000; /* null operation:  << 16 then >> 16 */
 		inPtr++;
-		j = 0;
 
-		while (j<8) {
+		for (int i = 0; i < 8; ) {
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, j, icode, mask1, 8, vscale); // this will in effect be signed
-			j++;
-
-			InitInput(inp1, j, icode, mask2, shifter, vscale);
-			j++;
+			InitInput(inp1, i, icode, mask1, 8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 1, icode, mask2, shifter, vscale);
+			i += 2;
 
 			if (Flags & 4) {
-				InitInput(inp1, j, icode, 0xC, 12, vscale); // this will in effect be signed
-				j++;
-
-				InitInput(inp1, j, icode, 0x3, 14, vscale);
-				j++;
+				InitInput(inp1, i, icode, 0xC, 12, vscale); // this will in effect be signed
+				InitInput(inp1, i + 1, icode, 0x3, 14, vscale);
+				i += 2;
 			} // end flags
 		} // end while
 
-
-
-		j = 0;
-		while (j<8) {
+		for (int i = 0; i < 8;) {
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, j, icode, mask1, 8, vscale);
-			j++;
-
-			InitInput(inp2, j, icode, mask2, shifter, vscale);
-			j++;
+			InitInput(inp2, i, icode, mask1, 8, vscale);
+			InitInput(inp2, i + 1, icode, mask2, shifter, vscale);
+			i += 2;
 
 			if (Flags & 4) {
-				InitInput(inp2, j, icode, 0xC, 12, vscale);
-				j++;
-
-				InitInput(inp2, j, icode, 0x3, 14, vscale);
-				j++;
+				InitInput(inp2, i, icode, 0xC, 12, vscale);
+				InitInput(inp2, i + 1, icode, 0x3, 14, vscale);
+				i += 2;
 			} // end flags
 		}
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
 
-		for (j = 0; j<8; j++)
+		for (int i = 0; i < 8; i++)
 		{
-			a[MES(j)] >>= 11;
-			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = (s16)a[MES(j)];
+			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			*(out++) = (s16)a[MES(i)];
 		}
 		l1 = a[6];
 		l2 = a[7];
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 
-		for (j = 0; j<8; j++)
+		for (int i = 0; i < 8; i++)
 		{
-			a[MES(j)] >>= 11;
-			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = (s16)a[MES(j)];
+			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			*(out++) = (s16)a[MES(i)];
 		}
 		l1 = a[6];
 		l2 = a[7];
@@ -293,7 +267,6 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	s16 count = (s16)((t9 >> 16) & 0xfff);
 	int vscale;
 	WORD index;
-	WORD j;
 	s32 a[8];
 	s16* book1;
 	s16* book2;
@@ -334,39 +307,30 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			vscale = 0x10000; /* null operation:  << 16 then >> 16 */
 
 		inPtr++;									// coded adpcm data lies next
-		j = 0;
-		while (j<8)									// loop of 8, for 8 coded nibbles from 4 bytes
+		for (int i = 0; i < 8; i += 2)				// loop of 8, for 8 coded nibbles from 4 bytes
 			// which yields 8 short pcm values
 		{
 			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, j, icode, 0xf0, 8, vscale); // this will in effect be signed
-			j++;
-
-			InitInput(inp1, j, icode, 0xf, 12, vscale);
-			j++;
+			InitInput(inp1, i, icode, 0xf0, 8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 1, icode, 0xf, 12, vscale);
 		}
-		j = 0;
-		while (j<8)
+		for (int i = 0; i < 8; i += 2)
 		{
 			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, j, icode, 0xf0, 8, vscale); // this will in effect be signed
-			j++;
-
-			InitInput(inp2, j, icode, 0xf, 12, vscale);
-			j++;
+			InitInput(inp2, i, icode, 0xf0, 8, vscale); // this will in effect be signed
+			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
 		}
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
 
-		for (j = 0; j<8; j++)
+		for (int i = 0; i < 8; i++)
 		{
-			a[MES(j)] >>= 11;
-			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = (s16)a[MES(j)];
+			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			*(out++) = (s16)a[MES(i)];
 			//*(out+j)=a[MES(j)];
 		}
 		//out += 0x10;
@@ -375,12 +339,11 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 
-		for (j = 0; j<8; j++)
+		for (int i = 0; i < 8; i++)
 		{
-			a[MES(j)] >>= 11;
-			a[MES(j)] = pack_signed(a[MES(j)]);
-			*(out++) = (s16)a[MES(j)];
-			//*(out+j+0x1f8)=a[MES(j)];
+			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			*(out++) = (s16)a[MES(i)];
+			//*(out+i+0x1f8)=a[MES(i)];
 		}
 		l1 = a[6];
 		l2 = a[7];
