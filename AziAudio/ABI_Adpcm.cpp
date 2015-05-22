@@ -19,7 +19,7 @@ void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
 	inp[index] = (inp[index] * vscale) >> 16;
 }
 
-void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s32 l1, s32 l2, s32 *inp)
+void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s32 *inp)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -65,8 +65,8 @@ void ADPCM() { // Work in progress! :)
 		}
 	}
 
-	s32 l1 = out[15];
-	s32 l2 = out[14];
+	s16 l1 = out[15];
+	s16 l2 = out[14];
 	s32 inp1[8];
 	s32 inp2[8];
 	out += 16;
@@ -182,8 +182,8 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		shifter = 12;
 	}
 
-	s32 l1 = out[15];
-	s32 l2 = out[14];
+	s16 l1 = out[15];
+	s16 l2 = out[14];
 	s32 inp1[8];
 	s32 inp2[8];
 	out += 16;
@@ -282,8 +282,8 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		else
 			memcpy(out, &rdram[Address], 32);
 
-	s32 l1 = out[15];
-	s32 l2 = out[14];
+	s16 l1 = out[15];
+	s16 l2 = out[14];
 	s32 inp1[8];
 	s32 inp2[8];
 	out += 16;
