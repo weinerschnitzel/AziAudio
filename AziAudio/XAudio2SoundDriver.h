@@ -30,9 +30,9 @@ public:
 	void __stdcall OnVoiceProcessingPassEnd() { }
 	void __stdcall OnVoiceProcessingPassStart(UINT32 SamplesRequired);// {}
 	void __stdcall OnBufferEnd(void * pBufferContext);//    {}
-	void __stdcall OnBufferStart(void * pBufferContext) {    }
-	void __stdcall OnLoopEnd(void * pBufferContext) {    }
-	void __stdcall OnVoiceError(void * pBufferContext, HRESULT Error) { }
+	void __stdcall OnBufferStart(void * pBufferContext) { UNREFERENCED_PARAMETER(pBufferContext); }
+	void __stdcall OnLoopEnd(void * pBufferContext) { UNREFERENCED_PARAMETER(pBufferContext); }
+	void __stdcall OnVoiceError(void * pBufferContext, HRESULT Error) { UNREFERENCED_PARAMETER(pBufferContext); UNREFERENCED_PARAMETER(Error); }
 	
 	/*
 	STDMETHOD_(void, OnVoiceProcessingPassStart) (THIS_ UINT32 BytesRequired);

@@ -64,6 +64,7 @@ BOOL WINAPI DllMain(
   DWORD fdwReason,     // reason for calling function
   LPVOID lpvReserved   // reserved
   ) {
+	UNREFERENCED_PARAMETER(lpvReserved);
 	hInstance = hinstDLL;
 	if (fdwReason == DLL_PROCESS_DETACH)
 	{ 
@@ -76,7 +77,9 @@ BOOL WINAPI DllMain(
 
 BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, LPVOID lpContext )
 {
-	HWND hDlg = (HWND)lpContext;
+	UNREFERENCED_PARAMETER(lpszDrvName);
+	UNREFERENCED_PARAMETER(lpContext);
+	//HWND hDlg = (HWND)lpContext;
 	safe_strcpy(DSoundDeviceName[DSoundCnt], 99, lpszDesc);
 	DSoundGUID[DSoundCnt] = lpGUID;
 	if (strcmp(lpszDesc, snd.configDevice) == 0)
@@ -100,8 +103,8 @@ INT_PTR CALLBACK ConfigProc(
   WPARAM wParam, // first message parameter
   LPARAM lParam  // second message parameter
   ) {
-
-	int x, temp=-1;
+	UNREFERENCED_PARAMETER(lParam);
+	int x;
 	switch (uMsg) {
 		case WM_INITDIALOG:
 			SendMessage(GetDlgItem(hDlg,IDC_DEVICE  ),CB_RESETCONTENT, 0, 0);
@@ -400,9 +403,9 @@ EXPORT void CALL AiUpdate(BOOL Wait) {
 	// 1: Check to see if timer has elapsed
 	// 2: If timer has elapsed, flag buffer as empty and generate AI interrupt
 	// 3: Sleep(1) timer
-	DWORD ticks;
+	//DWORD ticks;
 
-	ticks = GetTickCount();	
+	//ticks = GetTickCount();	
 }
 
 static const WORD MAX_CONSOLE_LINES = 500;

@@ -58,13 +58,27 @@ extern rSettings RegSettings;
 unsigned long GenerateCRC (unsigned char *data, int size);
 
 #ifdef USE_XAUDIO2
-#define PLUGIN_NAME     "Azimer's XA2 Audio"
+#define PLUGIN_NAME     "XA2 Audio"
 #else
-#define PLUGIN_NAME     "Azimer's DS8 Audio"
+#define PLUGIN_NAME     "DS8 Audio"
 #endif
+
+#ifdef _DEBUG
+#define PLUGIN_DEBUG " (Debug)"
+#else
+#define PLUGIN_DEBUG ""
+#endif
+
+#define PLUGIN_RELEASE " v0.70 "
+#define PLUGIN_BUILD "WIP 5" \
+	PLUGIN_DEBUG
+
 #define PLUGIN_VERSION \
+"Azimer's " \
 PLUGIN_NAME \
-" v0.70 WIP 5"
+PLUGIN_RELEASE \
+PLUGIN_BUILD
+
 
 #ifdef ENABLEPROFILING
 

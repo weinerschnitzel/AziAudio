@@ -164,21 +164,21 @@ void SEGMENT2() {
 
 void SETBUFF() { // Should work ;-)
 	if ((k0 >> 0x10) & 0x8) { // A_AUX - Auxillary Sound Buffer Settings
-		AudioAuxA = (u16)(k0);
+		AudioAuxA = (u16)(k0 & 0xFFFF);
 		AudioAuxC = (u16)((t9 >> 0x10));
-		AudioAuxE = (u16)(t9);
+		AudioAuxE = (u16)(t9 & 0xFFFF);
 	}
 	else {		// A_MAIN - Main Sound Buffer Settings
-		AudioInBuffer = (u16)(k0);           // 0x00
+		AudioInBuffer = (u16)(k0 & 0xFFFF);           // 0x00
 		AudioOutBuffer = (u16)((t9 >> 0x10)); // 0x02
-		AudioCount = (u16)(t9);           // 0x04
+		AudioCount = (u16)(t9 & 0xFFFF);           // 0x04
 	}
 }
 
 void SETBUFF2() {
-	AudioInBuffer = (u16)(k0);           // 0x00
+	AudioInBuffer = (u16)(k0 & 0xFFFF);           // 0x00
 	AudioOutBuffer = (u16)(t9 >> 0x10);   // 0x02
-	AudioCount = (u16)(t9);           // 0x04
+	AudioCount = (u16)(t9 & 0xFFFF);           // 0x04
 }
 
 void SETLOOP() {

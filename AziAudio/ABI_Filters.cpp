@@ -102,7 +102,7 @@ void FILTER2() {
 		packed_multiply_accumulate(&out1[7], &inputs_matrix[1], &lutt6[0]);
 
 		for (i = 0; i < 8; i++)
-			outp[i] = (out1[i] + 0x4000) >> 15; /* fractional round and shift */
+			outp[i] = (s16)((out1[i] + 0x4000) >> 15); /* fractional round and shift */
 #if 0
 /*
  * Clamp the result to fit within the legal range of 16-bit short elements.
