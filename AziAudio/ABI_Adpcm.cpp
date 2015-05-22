@@ -21,19 +21,16 @@ void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
 
 void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s32 *inp)
 {
-	register int i;
+	register int i, j;
 
 	for (i = 0; i < 8; i++)
 		a[i] = ((s32)book1[i] * (s32)l1) + ((s32)book2[i] * (s32)l2);
 	for (i = 0; i < 8; i++)
-	{
-		for (int i2 = 0; i2 < i; i2++)
-		{
-			a[i] += (s32)book2[(i - 1) - i2] * inp[i2];
-		}
-	}
-	for (i = 0; i < 8; i++)
 		a[i] += 2048 * inp[i];
+
+	for (i = 0; i < 8; i++)
+		for (j = 0; j < i; j++)
+			a[i] += (s32)book2[(i - 1) - j] * inp[j];
 }
 
 void ADPCM() { // Work in progress! :)
