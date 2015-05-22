@@ -45,6 +45,7 @@ void ADPCM() { // Work in progress! :)
 	int vscale;
 	WORD index;
 	s32 a[8];
+	s16 b[8];
 	s16* book1;
 	s16* book2;
 
@@ -112,24 +113,24 @@ void ADPCM() { // Work in progress! :)
 		}
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
-
 		for (int i = 0; i < 8; i++)
-		{
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
-			*(out++) = (s16)a[MES(i)];
-		}
-		l1 = a[6];
-		l2 = a[7];
+			a[i] = a[i] >> 11;
+		vsats128(&b[0], &a[0]);
+		swap_elements(out, &b[0]);
+		out += 8;
+
+		l1 = b[6];
+		l2 = b[7];
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
-
 		for (int i = 0; i < 8; i++)
-		{
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
-			*(out++) = (s16)a[MES(i)];
-		}
-		l1 = a[6];
-		l2 = a[7];
+			a[i] = a[i] >> 11;
+		vsats128(&b[0], &a[0]);
+		swap_elements(out, &b[0]);
+		out += 8;
+
+		l1 = b[6];
+		l2 = b[7];
 
 		count -= 32;
 	}
@@ -149,6 +150,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	int vscale;
 	WORD index;
 	s32 a[8];
+	s16 b[8];
 	s16* book1;
 	s16* book2;
 
@@ -231,24 +233,24 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		}
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
-
 		for (int i = 0; i < 8; i++)
-		{
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
-			*(out++) = (s16)a[MES(i)];
-		}
-		l1 = a[6];
-		l2 = a[7];
+			a[i] = a[i] >> 11;
+		vsats128(&b[0], &a[0]);
+		swap_elements(out, &b[0]);
+		out += 8;
+
+		l1 = b[6];
+		l2 = b[7];
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
-
 		for (int i = 0; i < 8; i++)
-		{
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
-			*(out++) = (s16)a[MES(i)];
-		}
-		l1 = a[6];
-		l2 = a[7];
+			a[i] = a[i] >> 11;
+		vsats128(&b[0], &a[0]);
+		swap_elements(out, &b[0]);
+		out += 8;
+
+		l1 = b[6];
+		l2 = b[7];
 
 		count -= 32;
 	}
@@ -268,6 +270,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	int vscale;
 	WORD index;
 	s32 a[8];
+	s16 b[8];
 	s16* book1;
 	s16* book2;
 
@@ -326,27 +329,24 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		}
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
-
 		for (int i = 0; i < 8; i++)
-		{
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
-			*(out++) = (s16)a[MES(i)];
-			//*(out+j)=a[MES(j)];
-		}
-		//out += 0x10;
-		l1 = a[6];
-		l2 = a[7];
+			a[i] = a[i] >> 11;
+		vsats128(&b[0], &a[0]);
+		swap_elements(out, &b[0]);
+		out += 8;
+
+		l1 = b[6];
+		l2 = b[7];
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
-
 		for (int i = 0; i < 8; i++)
-		{
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
-			*(out++) = (s16)a[MES(i)];
-			//*(out+i+0x1f8)=a[MES(i)];
-		}
-		l1 = a[6];
-		l2 = a[7];
+			a[i] = a[i] >> 11;
+		vsats128(&b[0], &a[0]);
+		swap_elements(out, &b[0]); // *(out + i + 0x1F8) = b[i ^ 1];
+		out += 8;
+
+		l1 = b[6];
+		l2 = b[7];
 
 		count -= 32;
 	}
