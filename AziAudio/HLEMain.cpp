@@ -366,15 +366,16 @@ u16 pack_unsigned(s32 slice)
 INLINE void vsats128(s16* vd, s32* vs)
 {
 #ifdef SSE2_SUPPORT
-    __m128i xmm;
+    __m128i result, xmm_hi, xmm_lo;
 
-    xmm = _mm_loadu_si128((__m128i *)vs);
-    xmm = _mm_packs_epi32(xmm, xmm);
-    *(__m64 *)vd = _mm_movepi64_pi64(xmm);
+    xmm_hi = _mm_loadu_si128((__m128i *)&vs[0]);
+    xmm_lo = _mm_loadu_si128((__m128i *)&vs[4]);
+    result = _mm_packs_epi32(xmm_hi, xmm_lo);
+    _mm_storeu_si128((__m128i *)vd, result);
 #else
     register size_t i;
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 8; i++)
         vd[i] = pack_signed(vs[i]);
 #endif
 }
@@ -382,22 +383,29 @@ INLINE void vsatu128(u16* vd, s32* vs)
 {
     register size_t i;
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 8; i++)
         vd[i] = pack_unsigned(vs[i]);
 }
 INLINE void vsats64 (s16* vd, s32* vs)
 {
-#ifdef SSE2_SUPPORT
-    __m64 mmx;
+#if defined (_M_X64)
+    __m128i xmm;
 
-    mmx = *(__m64 *)vs;
-    mmx = _mm_packs_pi32(mmx, mmx);
-    *(s32 *)vd = _mm_cvtsi64_si32(mmx);
+    xmm = _mm_loadu_si128((__m128i *)vs);
+    xmm = _mm_packs_pi32(xmm, xmm);
+    *(i64 *)vd = _mm_cvtsi128_si64(xmm);
+#elif defined(SSE1_SUPPORT) || defined(SSE2_SUPPORT)
+    __m64 result, mmx_hi, mmx_lo;
+
+    mmx_hi = *(__m64 *)&vs[0];
+    mmx_lo = *(__m64 *)&vs[2];
+    result = _mm_packs_pi32(mmx_hi, mmx_lo);
+    *(__m64 *)vd = result;
     _mm_empty();
 #else
     register size_t i;
 
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < 4; i++)
         vd[i] = pack_signed(vs[i]);
 #endif
 }
@@ -405,7 +413,7 @@ INLINE void vsatu64 (u16* vd, s32* vs)
 {
     register size_t i;
 
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < 4; i++)
         vd[i] = pack_unsigned(vs[i]);
 }
 #endif
