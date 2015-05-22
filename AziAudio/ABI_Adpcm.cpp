@@ -45,6 +45,7 @@ void ADPCM() { // Work in progress! :)
 	int vscale;
 	WORD index;
 	s32 a[8];
+	s16 b[8];
 	s16* book1;
 	s16* book2;
 
@@ -115,23 +116,23 @@ void ADPCM() { // Work in progress! :)
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
-			a[i] = pack_signed(a[i]);
+			b[i] = pack_signed(a[i]);
 		for (int i = 0; i < 8; i++)
-			*(out++) = (s16)a[MES(i)];
+			*(out++) = b[MES(i)];
 
-		l1 = a[6];
-		l2 = a[7];
+		l1 = b[6];
+		l2 = b[7];
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
-			a[i] = pack_signed(a[i]);
+			b[i] = pack_signed(a[i]);
 		for (int i = 0; i < 8; i++)
-			*(out++) = (s16)a[MES(i)];
+			*(out++) = b[MES(i)];
 
-		l1 = a[6];
-		l2 = a[7];
+		l1 = b[6];
+		l2 = b[7];
 
 		count -= 32;
 	}
@@ -151,6 +152,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	int vscale;
 	WORD index;
 	s32 a[8];
+	s16 b[8];
 	s16* book1;
 	s16* book2;
 
@@ -236,23 +238,23 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
-			a[i] = pack_signed(a[i]);
+			b[i] = pack_signed(a[i]);
 		for (int i = 0; i < 8; i++)
-			*(out++) = (s16)a[MES(i)];
+			*(out++) = b[MES(i)];
 
-		l1 = a[6];
-		l2 = a[7];
+		l1 = b[6];
+		l2 = b[7];
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
-			a[i] = pack_signed(a[i]);
+			b[i] = pack_signed(a[i]);
 		for (int i = 0; i < 8; i++)
-			*(out++) = (s16)a[MES(i)];
+			*(out++) = b[MES(i)];
 
-		l1 = a[6];
-		l2 = a[7];
+		l1 = b[6];
+		l2 = b[7];
 
 		count -= 32;
 	}
@@ -272,6 +274,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 	int vscale;
 	WORD index;
 	s32 a[8];
+	s16 b[8];
 	s16* book1;
 	s16* book2;
 
@@ -333,24 +336,24 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
-			a[i] = pack_signed(a[i]);
+			b[i] = pack_signed(a[i]);
 		for (int i = 0; i < 8; i++)
-			*(out++) = (s16)a[MES(i)]; //*(out+i)=a[MES(i)];
+			*(out++) = b[MES(i)]; //*(out+i)=a[MES(i)];
 		//out += 0x10;
 
-		l1 = a[6];
-		l2 = a[7];
+		l1 = b[6];
+		l2 = b[7];
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
-			a[i] = pack_signed(a[i]);
+			b[i] = pack_signed(a[i]);
 		for (int i = 0; i < 8; i++)
-			*(out++) = (s16)a[MES(i)]; //*(out+i+0x1f8)=a[MES(i)];
+			*(out++) = b[MES(i)]; //*(out+i+0x1f8)=a[MES(i)];
 
-		l1 = a[6];
-		l2 = a[7];
+		l1 = b[6];
+		l2 = b[7];
 
 		count -= 32;
 	}
