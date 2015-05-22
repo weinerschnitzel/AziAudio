@@ -113,7 +113,7 @@ void ADPCM() { // Work in progress! :)
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			a[i] = pack_signed(a[i] >> 11);
 		for (int i = 0; i < 8; i++)
 			*(out++) = (s16)a[MES(i)];
 
@@ -122,7 +122,7 @@ void ADPCM() { // Work in progress! :)
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			a[i] = pack_signed(a[i] >> 11);
 		for (int i = 0; i < 8; i++)
 			*(out++) = (s16)a[MES(i)];
 
@@ -230,7 +230,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			a[i] = pack_signed(a[i] >> 11);
 		for (int i = 0; i < 8; i++)
 			*(out++) = (s16)a[MES(i)];
 
@@ -239,7 +239,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			a[i] = pack_signed(a[i] >> 11);
 		for (int i = 0; i < 8; i++)
 			*(out++) = (s16)a[MES(i)];
 
@@ -323,7 +323,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			a[i] = pack_signed(a[i] >> 11);
 		for (int i = 0; i < 8; i++)
 			*(out++) = (s16)a[MES(i)]; //*(out+i)=a[MES(i)];
 		//out += 0x10;
@@ -333,7 +333,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
-			a[MES(i)] = pack_signed(a[MES(i)] >> 11);
+			a[i] = pack_signed(a[i] >> 11);
 		for (int i = 0; i < 8; i++)
 			*(out++) = (s16)a[MES(i)]; //*(out+i+0x1f8)=a[MES(i)];
 
