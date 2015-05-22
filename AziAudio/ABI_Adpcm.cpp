@@ -239,8 +239,8 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
 			b[i] = pack_signed(a[i]);
-		for (int i = 0; i < 8; i++)
-			*(out++) = b[MES(i)];
+		swap_elements(out, &b[0]);
+		out += 8;
 
 		l1 = b[6];
 		l2 = b[7];
@@ -250,8 +250,8 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
 			b[i] = pack_signed(a[i]);
-		for (int i = 0; i < 8; i++)
-			*(out++) = b[MES(i)];
+		swap_elements(out, &b[0]);
+		out += 8;
 
 		l1 = b[6];
 		l2 = b[7];
@@ -337,9 +337,8 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
 			b[i] = pack_signed(a[i]);
-		for (int i = 0; i < 8; i++)
-			*(out++) = b[MES(i)]; //*(out+i)=a[MES(i)];
-		//out += 0x10;
+		swap_elements(out, &b[0]);
+		out += 8;
 
 		l1 = b[6];
 		l2 = b[7];
@@ -349,8 +348,8 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			a[i] = a[i] >> 11;
 		for (int i = 0; i < 8; i++)
 			b[i] = pack_signed(a[i]);
-		for (int i = 0; i < 8; i++)
-			*(out++) = b[MES(i)]; //*(out+i+0x1f8)=a[MES(i)];
+		swap_elements(out, &b[0]); // *(out + i + 0x1F8) = b[i ^ 1];
+		out += 8;
 
 		l1 = b[6];
 		l2 = b[7];
