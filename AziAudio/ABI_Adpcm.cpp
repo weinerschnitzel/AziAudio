@@ -116,8 +116,8 @@ void ADPCM() { // Work in progress! :)
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
-		for (int i = 0; i < 8; i++)
-			*(out++) = b[MES(i)];
+		swap_elements(out, &b[0]);
+		out += 8;
 
 		l1 = b[6];
 		l2 = b[7];
@@ -126,8 +126,8 @@ void ADPCM() { // Work in progress! :)
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
-		for (int i = 0; i < 8; i++)
-			*(out++) = b[MES(i)];
+		swap_elements(out, &b[0]);
+		out += 8;
 
 		l1 = b[6];
 		l2 = b[7];
