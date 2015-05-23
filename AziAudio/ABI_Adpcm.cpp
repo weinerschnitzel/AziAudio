@@ -21,9 +21,40 @@ void InitInput(s16* inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
 
 void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 {
+#if defined(SSE2_SUPPORT)
+	__m128i xmm_source, xmm_target;
+	__m128i prod_m, prod_n; /* [0] 0xMMMMNNNN, [1] 0xMMMMNNNN, ... [7] */
+	__m128i prod_hi, prod_lo; /* (s32)[0, 1, 2, 3], (s32)[4, 5, 6, 7] */
+#else
 	s32 b[8];
+#endif
 	register int i;
 
+#if defined(SSE2_SUPPORT)
+	xmm_source = _mm_set1_epi16(l1);
+	xmm_target = _mm_loadu_si128((__m128i *)book1);
+	prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
+	prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+	prod_hi = _mm_unpacklo_epi16(prod_n, prod_m);
+	prod_lo = _mm_unpackhi_epi16(prod_n, prod_m);
+
+	xmm_source = _mm_set1_epi16(l2);
+	xmm_target = _mm_loadu_si128((__m128i *)book2);
+	prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
+	prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+	xmm_target = _mm_unpacklo_epi16(prod_n, prod_m);
+	xmm_source = _mm_unpackhi_epi16(prod_n, prod_m);
+
+/*
+ *  for (i = 0; i < 8; i++)
+ *      products[i]  = (l1[i] * book1[i]) + (l2[i] * book2[i]);
+ */
+	prod_hi = _mm_add_epi32(prod_hi, xmm_target);
+	prod_lo = _mm_add_epi32(prod_lo, xmm_source);
+
+	_mm_storeu_si128((__m128i *)&a[0], prod_hi);
+	_mm_storeu_si128((__m128i *)&a[4], prod_lo);
+#else
 	for (i = 0; i < 8; i++)
 		a[i]  = (s32)l1;
 	for (i = 0; i < 8; i++)
@@ -36,7 +67,7 @@ void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 
 	for (i = 0; i < 8; i++)
 		a[i] += b[i];
-
+#endif
 	for (i = 0; i < 8; i++)
 		a[i] += 2048 * inp[i];
 
