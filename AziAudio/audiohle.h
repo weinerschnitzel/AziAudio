@@ -91,6 +91,7 @@ void LOADBUFF(); void LOADBUFF2(); void LOADBUFF3();
 void MIXER(); void MIXER2(); void MIXER3();
 void MP3();
 void MP3ADDY();
+void POLEF();
 void RESAMPLE(); void RESAMPLE2(); void RESAMPLE3();
 void SAVEBUFF(); void SAVEBUFF2(); void SAVEBUFF3();
 void SEGMENT(); void SEGMENT2();

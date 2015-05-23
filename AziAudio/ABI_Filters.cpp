@@ -40,6 +40,21 @@ static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
 	return;
 }
 
+// rdot is borrowed from Mupen64Plus audio.c file.
+s32 rdot(size_t n, const s16 *x, const s16 *y)
+{
+	s32 accu = 0;
+
+	y += n;
+
+	while (n != 0) {
+		accu += *(x++) * *(--y);
+		--n;
+	}
+
+	return accu;
+}
+
 void FILTER2() {
 	int x, i;
 	static int cnt = 0;
@@ -128,3 +143,68 @@ void FILTER2() {
 	memcpy(save, inp2 - 8, 0x10);
 	memcpy(BufferSpace + (k0 & 0xffff), outbuff, cnt);
 }
+
+extern u16 adpcmtable[]; //size of 0x88 * 2
+
+// POLEF filter - Much of the code is borrowed from Mupen64Plus
+// We need to refactor for SSE2 and AziAudio customizations
+// as well and enable POLEF across the board
+void POLEF()
+{
+	BYTE Flags = (u8)((k0 >> 16) & 0xff);
+	WORD Gain = (u16)(k0 & 0xffff);
+	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
+
+	s16 *dst = (s16 *)(BufferSpace + AudioOutBuffer);
+
+	const s16* const h1 = (s16 *)adpcmtable;
+	s16* const h2 = (s16 *)adpcmtable + 8;
+
+	unsigned int i;
+	s16 l1, l2;
+	s16 h2_before[8];
+	if (AudioCount == 0) return;
+	int count = (AudioCount + 15) & ~15;
+
+	if (Flags & A_INIT) {
+		l1 = 0;
+		l2 = 0;
+	}
+	else {
+		memcpy((u8 *)hleMixerWorkArea, (rdram + Address), 8);
+		l1 = *(s16 *)(hleMixerWorkArea + 4);
+		l2 = *(s16 *)(hleMixerWorkArea + 6);
+	}
+
+	for (i = 0; i < 8; ++i) {
+		h2_before[i] = h2[i];
+		h2[i] = (((s32)h2[i] * Gain) >> 14);
+	}
+	s16 *inp = (s16 *)(BufferSpace + AudioInBuffer);
+
+	do
+	{
+		int16_t frame[8];
+
+		for (i = 0; i < 8; ++i)
+			frame[i] = inp[i];
+
+		for (i = 0; i < 8; ++i) {
+			s32 accu = frame[i] * Gain;
+			accu += h1[i] * l1 + h2_before[i] * l2 + rdot(i, h2, frame);
+			dst[i^1] = pack_signed(accu>>14);
+		}
+
+		l1 = dst[6 ^ 1];
+		l2 = dst[7 ^ 1];
+
+		dst += 8;
+		inp += 8;
+		count -= 16;
+	} while (count != 0);
+
+	*(s16 *)(hleMixerWorkArea + 4) = l1;
+	*(s16 *)(hleMixerWorkArea + 6) = l2;
+	memcpy((rdram + Address), (u8 *)hleMixerWorkArea, 8);
+}
+
