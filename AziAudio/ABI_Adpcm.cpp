@@ -13,13 +13,13 @@
 
 u16 adpcmtable[0x88];
 
-void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
+void InitInput(s16* inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
 {
 	inp[index] = (s16)((icode & mask) << shifter);
-	inp[index] = (inp[index] * vscale) >> 16;
+	inp[index] = (s16)((s32)(inp[index] * vscale) >> 16);
 }
 
-void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s32 *inp)
+void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 {
 	s32 b[8];
 	register int i;
@@ -95,8 +95,8 @@ void ADPCM() { // Work in progress! :)
 
 	s16 l1 = out[15];
 	s16 l2 = out[14];
-	s32 inp1[8];
-	s32 inp2[8];
+	s16 inp1[8];
+	s16 inp2[8];
 	out += 16;
 	while (count>0)
 	{
@@ -212,8 +212,8 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 	s16 l1 = out[15];
 	s16 l2 = out[14];
-	s32 inp1[8];
-	s32 inp2[8];
+	s16 inp1[8];
+	s16 inp2[8];
 	out += 16;
 	while (count>0) {
 		u8 code = BufferSpace[BES(AudioInBuffer + inPtr)];
@@ -312,8 +312,8 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 	s16 l1 = out[15];
 	s16 l2 = out[14];
-	s32 inp1[8];
-	s32 inp2[8];
+	s16 inp1[8];
+	s16 inp2[8];
 	out += 16;
 	while (count>0)
 	{
