@@ -111,8 +111,14 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 
 	for (i = 0; i < 4; i++)
 		b[i]  = book2[3 - i];
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)&b[0]);
+	xmm_target = _mm_madd_epi16(xmm_target, xmm_source);
+	_mm_storeu_si128((__m128i *)&accumulators[0], xmm_target);
+#else
 	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
 	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+#endif
 	a[4] += accumulators[0] + accumulators[1];
 
 	for (i = 0; i < 5; i++)
