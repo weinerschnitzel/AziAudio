@@ -19,7 +19,7 @@ void InitInput(s16* inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
 	inp[index] = (s16)((s32)(inp[index] * vscale) >> 16);
 }
 
-void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
+void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 {
 #if defined(SSE2_SUPPORT)
 	__m128i xmm_source, xmm_target;
@@ -171,7 +171,7 @@ void ADPCM() { // Work in progress! :)
 			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
 		}
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
+		ADPCM_madd(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -181,7 +181,7 @@ void ADPCM() { // Work in progress! :)
 		l1 = b[6];
 		l2 = b[7];
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
+		ADPCM_madd(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -291,7 +291,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			} // end flags
 		}
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
+		ADPCM_madd(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -301,7 +301,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		l1 = b[6];
 		l2 = b[7];
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
+		ADPCM_madd(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -387,7 +387,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
 		}
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
+		ADPCM_madd(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -397,7 +397,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		l1 = b[6];
 		l2 = b[7];
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
+		ADPCM_madd(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
