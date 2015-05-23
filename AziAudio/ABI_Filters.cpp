@@ -47,10 +47,11 @@ s32 rdot(size_t n, const s16 *x, const s16 *y)
 	s32 accu;
 
 	y += n;
+	--y;
 
 	accu = 0;
 	for (i = 0; i < n; i++)
-		accu += *(x++) * *(--y);
+		accu += x[i] * *(y - i);
 
 	return accu;
 }
