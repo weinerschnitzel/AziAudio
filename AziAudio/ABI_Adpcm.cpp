@@ -241,16 +241,16 @@ void ADPCM() { // Work in progress! :)
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, i, icode, 0xf0, 8, vscale); // this will in effect be signed
-			InitInput(inp1, i + 1, icode, 0xf, 12, vscale);
+			InitInput(inp1, i + 0, icode, 0xF0,  8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 1, icode, 0x0F, 12, vscale);
 		}
 		for (int i = 0; i < 8; i += 2)
 		{
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, i, icode, 0xf0, 8, vscale); // this will in effect be signed
-			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
+			InitInput(inp2, i + 0, icode, 0xF0,  8, vscale); // this will in effect be signed
+			InitInput(inp2, i + 1, icode, 0x0F, 12, vscale);
 		}
 
 		ADPCM_madd(a, book1, book2, l1, l2, inp1);
@@ -318,8 +318,8 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	else {
 		srange = 0xC;
 		inpinc = 0x9;
-		mask1 = 0xf0;
-		mask2 = 0x0f;
+		mask1 = 0xF0;
+		mask2 = 0x0F;
 		shifter = 12;
 	}
 
@@ -347,12 +347,12 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, i, icode, mask1, 8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 0, icode, mask1, 8, vscale); // this will in effect be signed
 			InitInput(inp1, i + 1, icode, mask2, shifter, vscale);
 			i += 2;
 
 			if (Flags & 4) {
-				InitInput(inp1, i, icode, 0xC, 12, vscale); // this will in effect be signed
+				InitInput(inp1, i + 0, icode, 0xC, 12, vscale); // this will in effect be signed
 				InitInput(inp1, i + 1, icode, 0x3, 14, vscale);
 				i += 2;
 			} // end flags
@@ -362,12 +362,12 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, i, icode, mask1, 8, vscale);
+			InitInput(inp2, i + 0, icode, mask1, 8, vscale);
 			InitInput(inp2, i + 1, icode, mask2, shifter, vscale);
 			i += 2;
 
 			if (Flags & 4) {
-				InitInput(inp2, i, icode, 0xC, 12, vscale);
+				InitInput(inp2, i + 0, icode, 0xC, 12, vscale);
 				InitInput(inp2, i + 1, icode, 0x3, 14, vscale);
 				i += 2;
 			} // end flags
@@ -457,16 +457,16 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, i, icode, 0xf0, 8, vscale); // this will in effect be signed
-			InitInput(inp1, i + 1, icode, 0xf, 12, vscale);
+			InitInput(inp1, i + 0, icode, 0xF0,  8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 1, icode, 0x0F, 12, vscale);
 		}
 		for (int i = 0; i < 8; i += 2)
 		{
-			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
+			u8 icode = BufferSpace[BES(0x4F0 + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, i, icode, 0xf0, 8, vscale); // this will in effect be signed
-			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
+			InitInput(inp2, i + 0, icode, 0xF0,  8, vscale); // this will in effect be signed
+			InitInput(inp2, i + 1, icode, 0x0F, 12, vscale);
 		}
 
 		ADPCM_madd(a, book1, book2, l1, l2, inp1);
