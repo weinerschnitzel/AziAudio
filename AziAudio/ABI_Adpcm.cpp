@@ -52,6 +52,20 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 	prod_hi = _mm_add_epi32(prod_hi, xmm_target);
 	prod_lo = _mm_add_epi32(prod_lo, xmm_source);
 
+/*
+ * for (i = 0; i < 8; i++)
+ *     a[i] += inp[i] << 11;
+ */
+	xmm_source = _mm_loadu_si128((__m128i *)inp);
+	prod_m = _mm_unpacklo_epi16(xmm_source, xmm_source); /* (xmm_source, any) */
+	prod_n = _mm_unpackhi_epi16(xmm_source, xmm_source); /* Ignore upper 16b. */
+	prod_m = _mm_slli_epi32(prod_m, 16); /* ready to sign-extend s16 to s32 */
+	prod_n = _mm_slli_epi32(prod_n, 16);
+	prod_m = _mm_srai_epi32(prod_m, 16 - 11); /* inp[i] << 11 = 2048 * inp[i] */
+	prod_n = _mm_srai_epi32(prod_n, 16 - 11);
+
+	prod_hi = _mm_add_epi32(prod_hi, prod_m);
+	prod_lo = _mm_add_epi32(prod_lo, prod_n);
 	_mm_storeu_si128((__m128i *)&a[0], prod_hi);
 	_mm_storeu_si128((__m128i *)&a[4], prod_lo);
 #else
@@ -67,9 +81,9 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 
 	for (i = 0; i < 8; i++)
 		a[i] += b[i];
-#endif
 	for (i = 0; i < 8; i++)
 		a[i] += 2048 * inp[i];
+#endif
 
 /*
  *	for (j = 0; j < 8; j++)
