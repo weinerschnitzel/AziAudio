@@ -151,9 +151,9 @@ extern u16 adpcmtable[]; //size of 0x88 * 2
 // as well and enable POLEF across the board
 void POLEF()
 {
-	BYTE Flags = (u8)((k0 >> 16) & 0xff);
-	WORD Gain = (u16)(k0 & 0xffff);
-	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
+	u8 Flags = (u8)((k0 >> 16) & 0xff);
+	s16 Gain = (u16)(k0 & 0xffff);
+	u32 Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 
 	s16 *dst = (s16 *)(BufferSpace + AudioOutBuffer);
 
