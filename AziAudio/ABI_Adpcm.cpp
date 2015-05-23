@@ -26,6 +26,7 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 	__m128i prod_m, prod_n; /* [0] 0xMMMMNNNN, [1] 0xMMMMNNNN, ... [7] */
 	__m128i prod_hi, prod_lo; /* (s32)[0, 1, 2, 3], (s32)[4, 5, 6, 7] */
 #endif
+	s32 accumulators[4];
 	s16 b[8];
 	register int i;
 
@@ -89,32 +90,47 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
  */
 	for (i = 0; i < 1; i++)
 		b[i]  = book2[0 - i];
-	for (i = 0; i < 1; i++)
-		a[1] += (s32)b[i] * (s32)inp[i];
+	accumulators[0] = (s32)b[0] * (s32)inp[0];
+	a[1] += accumulators[0];
+
 	for (i = 0; i < 2; i++)
 		b[i]  = book2[1 - i];
-	for (i = 0; i < 2; i++)
-		a[2] += (s32)b[i] * (s32)inp[i];
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	a[2] += accumulators[0];
+
 	for (i = 0; i < 3; i++)
 		b[i]  = book2[2 - i];
-	for (i = 0; i < 3; i++)
-		a[3] += (s32)b[i] * (s32)inp[i];
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2];
+	a[3] += accumulators[0] + accumulators[1];
+
 	for (i = 0; i < 4; i++)
 		b[i]  = book2[3 - i];
-	for (i = 0; i < 4; i++)
-		a[4] += (s32)b[i] * (s32)inp[i];
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+	a[4] += accumulators[0] + accumulators[1];
+
 	for (i = 0; i < 5; i++)
 		b[i]  = book2[4 - i];
-	for (i = 0; i < 5; i++)
-		a[5] += (s32)b[i] * (s32)inp[i];
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+	accumulators[2] = (s32)b[4] * (s32)inp[4];
+	a[5] += accumulators[0] + accumulators[1] + accumulators[2];
+
 	for (i = 0; i < 6; i++)
 		b[i]  = book2[5 - i];
-	for (i = 0; i < 6; i++)
-		a[6] += (s32)b[i] * (s32)inp[i];
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+	accumulators[2] = (s32)b[4] * (s32)inp[4] + (s32)b[5] * (s32)inp[5];
+	a[6] += accumulators[0] + accumulators[1] + accumulators[2];
+
 	for (i = 0; i < 7; i++)
 		b[i]  = book2[6 - i];
-	for (i = 0; i < 7; i++)
-		a[7] += (s32)b[i] * (s32)inp[i];
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+	accumulators[2] = (s32)b[4] * (s32)inp[4] + (s32)b[5] * (s32)inp[5];
+	accumulators[3] = (s32)b[6] * (s32)inp[6];
+	a[7] += accumulators[0] + accumulators[1] + accumulators[2] + accumulators[3];
 }
 
 void ADPCM() { // Work in progress! :)
