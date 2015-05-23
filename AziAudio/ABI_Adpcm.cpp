@@ -25,9 +25,8 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 	__m128i xmm_source, xmm_target;
 	__m128i prod_m, prod_n; /* [0] 0xMMMMNNNN, [1] 0xMMMMNNNN, ... [7] */
 	__m128i prod_hi, prod_lo; /* (s32)[0, 1, 2, 3], (s32)[4, 5, 6, 7] */
-#else
-	s32 b[8];
 #endif
+	s16 b[8];
 	register int i;
 
 #if defined(SSE2_SUPPORT)
@@ -75,12 +74,10 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 		a[i] *= (s32)book1[i];
 
 	for (i = 0; i < 8; i++)
-		b[i]  = (s32)l2;
+		b[i]  = l2;
 	for (i = 0; i < 8; i++)
-		b[i] *= (s32)book2[i];
+		a[i] += (s32)b[i] * (s32)book2[i];
 
-	for (i = 0; i < 8; i++)
-		a[i] += b[i];
 	for (i = 0; i < 8; i++)
 		a[i] += 2048 * inp[i];
 #endif
@@ -88,22 +85,36 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 /*
  *	for (j = 0; j < 8; j++)
  *		for (i = 0; i < j; i++)
- *			a[j] += (s32)book2[(j - 1) - i] * inp[i];
+ *			a[j] += (s32)book2[j - i - 1] * inp[i];
  */
 	for (i = 0; i < 1; i++)
-		a[1] += (s32)book2[1 - (i + 1)] * inp[i];
+		b[i]  = book2[0 - i];
+	for (i = 0; i < 1; i++)
+		a[1] += (s32)b[i] * (s32)inp[i];
 	for (i = 0; i < 2; i++)
-		a[2] += (s32)book2[2 - (i + 1)] * inp[i];
+		b[i]  = book2[1 - i];
+	for (i = 0; i < 2; i++)
+		a[2] += (s32)b[i] * (s32)inp[i];
 	for (i = 0; i < 3; i++)
-		a[3] += (s32)book2[3 - (i + 1)] * inp[i];
+		b[i]  = book2[2 - i];
+	for (i = 0; i < 3; i++)
+		a[3] += (s32)b[i] * (s32)inp[i];
 	for (i = 0; i < 4; i++)
-		a[4] += (s32)book2[4 - (i + 1)] * inp[i];
+		b[i]  = book2[3 - i];
+	for (i = 0; i < 4; i++)
+		a[4] += (s32)b[i] * (s32)inp[i];
 	for (i = 0; i < 5; i++)
-		a[5] += (s32)book2[5 - (i + 1)] * inp[i];
+		b[i]  = book2[4 - i];
+	for (i = 0; i < 5; i++)
+		a[5] += (s32)b[i] * (s32)inp[i];
 	for (i = 0; i < 6; i++)
-		a[6] += (s32)book2[6 - (i + 1)] * inp[i];
+		b[i]  = book2[5 - i];
+	for (i = 0; i < 6; i++)
+		a[6] += (s32)b[i] * (s32)inp[i];
 	for (i = 0; i < 7; i++)
-		a[7] += (s32)book2[7 - (i + 1)] * inp[i];
+		b[i]  = book2[6 - i];
+	for (i = 0; i < 7; i++)
+		a[7] += (s32)b[i] * (s32)inp[i];
 }
 
 void ADPCM() { // Work in progress! :)
