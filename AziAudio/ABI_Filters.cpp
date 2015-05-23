@@ -43,14 +43,14 @@ static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
 // rdot is borrowed from Mupen64Plus audio.c file.
 s32 rdot(size_t n, const s16 *x, const s16 *y)
 {
-	s32 accu = 0;
+	register size_t i;
+	s32 accu;
 
 	y += n;
 
-	while (n != 0) {
+	accu = 0;
+	for (i = 0; i < n; i++)
 		accu += *(x++) * *(--y);
-		--n;
-	}
 
 	return accu;
 }
