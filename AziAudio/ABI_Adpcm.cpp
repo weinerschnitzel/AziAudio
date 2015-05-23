@@ -13,24 +13,83 @@
 
 u16 adpcmtable[0x88];
 
-void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
+void InitInput(s16* inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
 {
 	inp[index] = (s16)((icode & mask) << shifter);
-	inp[index] = (inp[index] * vscale) >> 16;
+	inp[index] = (s16)((s32)(inp[index] * vscale) >> 16);
 }
 
-void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s32 l1, s32 l2, s32 *inp)
+void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 {
-	for (int i = 0; i < 8; i++)
-	{
-		a[i]  = (s32)book1[i] * (s32)l1;
-		a[i] += (s32)book2[i] * (s32)l2;
-		for (int i2 = 0; i2 < i; i2++)
-		{
-			a[i] += (s32)book2[(i - 1) - i2] * inp[i2];
-		}
+#if defined(SSE2_SUPPORT)
+	__m128i xmm_source, xmm_target;
+	__m128i prod_m, prod_n; /* [0] 0xMMMMNNNN, [1] 0xMMMMNNNN, ... [7] */
+	__m128i prod_hi, prod_lo; /* (s32)[0, 1, 2, 3], (s32)[4, 5, 6, 7] */
+#else
+	s32 b[8];
+#endif
+	register int i;
+
+#if defined(SSE2_SUPPORT)
+	xmm_source = _mm_set1_epi16(l1);
+	xmm_target = _mm_loadu_si128((__m128i *)book1);
+	prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
+	prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+	prod_hi = _mm_unpacklo_epi16(prod_n, prod_m);
+	prod_lo = _mm_unpackhi_epi16(prod_n, prod_m);
+
+	xmm_source = _mm_set1_epi16(l2);
+	xmm_target = _mm_loadu_si128((__m128i *)book2);
+	prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
+	prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+	xmm_target = _mm_unpacklo_epi16(prod_n, prod_m);
+	xmm_source = _mm_unpackhi_epi16(prod_n, prod_m);
+
+/*
+ *  for (i = 0; i < 8; i++)
+ *      products[i]  = (l1[i] * book1[i]) + (l2[i] * book2[i]);
+ */
+	prod_hi = _mm_add_epi32(prod_hi, xmm_target);
+	prod_lo = _mm_add_epi32(prod_lo, xmm_source);
+
+	_mm_storeu_si128((__m128i *)&a[0], prod_hi);
+	_mm_storeu_si128((__m128i *)&a[4], prod_lo);
+#else
+	for (i = 0; i < 8; i++)
+		a[i]  = (s32)l1;
+	for (i = 0; i < 8; i++)
+		a[i] *= (s32)book1[i];
+
+	for (i = 0; i < 8; i++)
+		b[i]  = (s32)l2;
+	for (i = 0; i < 8; i++)
+		b[i] *= (s32)book2[i];
+
+	for (i = 0; i < 8; i++)
+		a[i] += b[i];
+#endif
+	for (i = 0; i < 8; i++)
 		a[i] += 2048 * inp[i];
-	}
+
+/*
+ *	for (j = 0; j < 8; j++)
+ *		for (i = 0; i < j; i++)
+ *			a[j] += (s32)book2[(j - 1) - i] * inp[i];
+ */
+	for (i = 0; i < 1; i++)
+		a[1] += (s32)book2[1 - (i + 1)] * inp[i];
+	for (i = 0; i < 2; i++)
+		a[2] += (s32)book2[2 - (i + 1)] * inp[i];
+	for (i = 0; i < 3; i++)
+		a[3] += (s32)book2[3 - (i + 1)] * inp[i];
+	for (i = 0; i < 4; i++)
+		a[4] += (s32)book2[4 - (i + 1)] * inp[i];
+	for (i = 0; i < 5; i++)
+		a[5] += (s32)book2[5 - (i + 1)] * inp[i];
+	for (i = 0; i < 6; i++)
+		a[6] += (s32)book2[6 - (i + 1)] * inp[i];
+	for (i = 0; i < 7; i++)
+		a[7] += (s32)book2[7 - (i + 1)] * inp[i];
 }
 
 void ADPCM() { // Work in progress! :)
@@ -65,10 +124,10 @@ void ADPCM() { // Work in progress! :)
 		}
 	}
 
-	s32 l1 = out[15];
-	s32 l2 = out[14];
-	s32 inp1[8];
-	s32 inp2[8];
+	s16 l1 = out[15];
+	s16 l2 = out[14];
+	s16 inp1[8];
+	s16 inp2[8];
 	out += 16;
 	while (count>0)
 	{
@@ -112,7 +171,7 @@ void ADPCM() { // Work in progress! :)
 			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
 		}
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
+		ADPCM_madd(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -122,7 +181,7 @@ void ADPCM() { // Work in progress! :)
 		l1 = b[6];
 		l2 = b[7];
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
+		ADPCM_madd(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -182,10 +241,10 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		shifter = 12;
 	}
 
-	s32 l1 = out[15];
-	s32 l2 = out[14];
-	s32 inp1[8];
-	s32 inp2[8];
+	s16 l1 = out[15];
+	s16 l2 = out[14];
+	s16 inp1[8];
+	s16 inp2[8];
 	out += 16;
 	while (count>0) {
 		u8 code = BufferSpace[BES(AudioInBuffer + inPtr)];
@@ -232,7 +291,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			} // end flags
 		}
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
+		ADPCM_madd(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -242,7 +301,7 @@ void ADPCM2() { // Verified to be 100% Accurate...
 		l1 = b[6];
 		l2 = b[7];
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
+		ADPCM_madd(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -282,10 +341,10 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		else
 			memcpy(out, &rdram[Address], 32);
 
-	s32 l1 = out[15];
-	s32 l2 = out[14];
-	s32 inp1[8];
-	s32 inp2[8];
+	s16 l1 = out[15];
+	s16 l2 = out[14];
+	s16 inp1[8];
+	s16 inp2[8];
 	out += 16;
 	while (count>0)
 	{
@@ -328,7 +387,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
 		}
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp1);
+		ADPCM_madd(a, book1, book2, l1, l2, inp1);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
@@ -338,7 +397,7 @@ void ADPCM3() { // Verified to be 100% Accurate...
 		l1 = b[6];
 		l2 = b[7];
 
-		ADPCMFillArray(a, book1, book2, l1, l2, inp2);
+		ADPCM_madd(a, book1, book2, l1, l2, inp2);
 		for (int i = 0; i < 8; i++)
 			a[i] = a[i] >> 11;
 		vsats128(&b[0], &a[0]);
