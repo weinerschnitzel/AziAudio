@@ -200,11 +200,11 @@ void POLEF()
 			accumulators[i] += rdot(i, &h2[0], &frame[0]);
 		for (i = 0; i < 8; ++i)
 			accumulators[i] >>= 14;
-		for (i = 0; i < 8; ++i)
-			dst[i ^ 1] = pack_signed(accumulators[i]);
+		vsats128(&dst[0], &accumulators[0]);
 
-		l1 = dst[6 ^ 1];
-		l2 = dst[7 ^ 1];
+		swap_elements(&dst[0], &dst[0]);
+		l1 = dst[MES(6)];
+		l2 = dst[MES(7)];
 
 		dst += 8;
 		inp += 8;
