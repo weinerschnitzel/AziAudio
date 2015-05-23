@@ -199,7 +199,9 @@ void POLEF()
 		for (i = 0; i < 8; ++i)
 			accumulators[i] += rdot(i, &h2[0], &frame[0]);
 		for (i = 0; i < 8; ++i)
-			dst[i ^ 1] = pack_signed(accumulators[i] >> 14);
+			accumulators[i] >>= 14;
+		for (i = 0; i < 8; ++i)
+			dst[i ^ 1] = pack_signed(accumulators[i]);
 
 		l1 = dst[6 ^ 1];
 		l2 = dst[7 ^ 1];
