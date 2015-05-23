@@ -185,10 +185,9 @@ void POLEF()
 	do
 	{
 		s32 accumulators[8];
-		int16_t frame[8];
+		s16 frame[8];
 
-		for (i = 0; i < 8; ++i)
-			frame[i] = inp[i];
+		copy_vector(&frame[0], &inp[0]);
 
 		for (i = 0; i < 8; ++i)
 			accumulators[i]  = frame[i] * Gain;
