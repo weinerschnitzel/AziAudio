@@ -184,15 +184,16 @@ void POLEF()
 
 	do
 	{
+		s32 accumulators[8];
 		int16_t frame[8];
 
 		for (i = 0; i < 8; ++i)
 			frame[i] = inp[i];
 
 		for (i = 0; i < 8; ++i) {
-			s32 accu = frame[i] * Gain;
-			accu += h1[i] * l1 + h2_before[i] * l2 + rdot(i, h2, frame);
-			dst[i^1] = pack_signed(accu>>14);
+			accumulators[i]  = frame[i] * Gain;
+			accumulators[i] += h1[i]*l1 + h2_before[i]*l2 + rdot(i, h2, frame);
+			dst[i^1] = pack_signed(accumulators[i] >> 14);
 		}
 
 		l1 = dst[6 ^ 1];
