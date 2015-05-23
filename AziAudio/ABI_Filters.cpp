@@ -190,10 +190,12 @@ void POLEF()
 		for (i = 0; i < 8; ++i)
 			frame[i] = inp[i];
 
-		for (i = 0; i < 8; ++i) {
+		for (i = 0; i < 8; ++i)
 			accumulators[i]  = frame[i] * Gain;
-			accumulators[i] += h1[i]*l1 + h2_before[i]*l2;
-		}
+		for (i = 0; i < 8; ++i)
+			accumulators[i] += h1[i] * l1;
+		for (i = 0; i < 8; ++i)
+			accumulators[i] += h2_before[i] * l2;
 		for (i = 0; i < 8; ++i)
 			accumulators[i] += rdot(i, &h2[0], &frame[0]);
 		for (i = 0; i < 8; ++i)
