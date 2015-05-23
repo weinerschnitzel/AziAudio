@@ -22,7 +22,7 @@ void InitInput(s32 *inp, int index, u8 icode, u8 mask, u8 shifter, int vscale)
 void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s32 *inp)
 {
 	s32 b[8];
-	register int i, j;
+	register int i;
 
 	for (i = 0; i < 8; i++)
 		a[i]  = (s32)l1;
@@ -40,9 +40,25 @@ void ADPCMFillArray(s32 *a, s16* book1, s16* book2, s16 l1, s16 l2, s32 *inp)
 	for (i = 0; i < 8; i++)
 		a[i] += 2048 * inp[i];
 
-	for (i = 0; i < 8; i++)
-		for (j = 0; j < i; j++)
-			a[i] += (s32)book2[(i - 1) - j] * inp[j];
+/*
+ *	for (j = 0; j < 8; j++)
+ *		for (i = 0; i < j; i++)
+ *			a[j] += (s32)book2[(j - 1) - i] * inp[i];
+ */
+	for (i = 0; i < 1; i++)
+		a[1] += (s32)book2[1 - (i + 1)] * inp[i];
+	for (i = 0; i < 2; i++)
+		a[2] += (s32)book2[2 - (i + 1)] * inp[i];
+	for (i = 0; i < 3; i++)
+		a[3] += (s32)book2[3 - (i + 1)] * inp[i];
+	for (i = 0; i < 4; i++)
+		a[4] += (s32)book2[4 - (i + 1)] * inp[i];
+	for (i = 0; i < 5; i++)
+		a[5] += (s32)book2[5 - (i + 1)] * inp[i];
+	for (i = 0; i < 6; i++)
+		a[6] += (s32)book2[6 - (i + 1)] * inp[i];
+	for (i = 0; i < 7; i++)
+		a[7] += (s32)book2[7 - (i + 1)] * inp[i];
 }
 
 void ADPCM() { // Work in progress! :)
