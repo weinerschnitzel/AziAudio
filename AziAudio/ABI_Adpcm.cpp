@@ -25,9 +25,9 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 	__m128i xmm_source, xmm_target;
 	__m128i prod_m, prod_n; /* [0] 0xMMMMNNNN, [1] 0xMMMMNNNN, ... [7] */
 	__m128i prod_hi, prod_lo; /* (s32)[0, 1, 2, 3], (s32)[4, 5, 6, 7] */
-#else
-	s32 b[8];
 #endif
+	s32 accumulators[4];
+	s16 b[8];
 	register int i;
 
 #if defined(SSE2_SUPPORT)
@@ -52,6 +52,20 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 	prod_hi = _mm_add_epi32(prod_hi, xmm_target);
 	prod_lo = _mm_add_epi32(prod_lo, xmm_source);
 
+/*
+ * for (i = 0; i < 8; i++)
+ *     a[i] += inp[i] << 11;
+ */
+	xmm_source = _mm_loadu_si128((__m128i *)inp);
+	prod_m = _mm_unpacklo_epi16(xmm_source, xmm_source); /* (xmm_source, any) */
+	prod_n = _mm_unpackhi_epi16(xmm_source, xmm_source); /* Ignore upper 16b. */
+	prod_m = _mm_slli_epi32(prod_m, 16); /* ready to sign-extend s16 to s32 */
+	prod_n = _mm_slli_epi32(prod_n, 16);
+	prod_m = _mm_srai_epi32(prod_m, 16 - 11); /* inp[i] << 11 = 2048 * inp[i] */
+	prod_n = _mm_srai_epi32(prod_n, 16 - 11);
+
+	prod_hi = _mm_add_epi32(prod_hi, prod_m);
+	prod_lo = _mm_add_epi32(prod_lo, prod_n);
 	_mm_storeu_si128((__m128i *)&a[0], prod_hi);
 	_mm_storeu_si128((__m128i *)&a[4], prod_lo);
 #else
@@ -61,35 +75,103 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 		a[i] *= (s32)book1[i];
 
 	for (i = 0; i < 8; i++)
-		b[i]  = (s32)l2;
+		b[i]  = l2;
 	for (i = 0; i < 8; i++)
-		b[i] *= (s32)book2[i];
+		a[i] += (s32)b[i] * (s32)book2[i];
 
 	for (i = 0; i < 8; i++)
-		a[i] += b[i];
-#endif
-	for (i = 0; i < 8; i++)
 		a[i] += 2048 * inp[i];
+#endif
+
+#if defined(SSE2_SUPPORT)
+	_mm_storeu_si128((__m128i *)&b[0], _mm_setzero_si128());
+	xmm_source = _mm_loadu_si128((__m128i *)inp);
+#endif
 
 /*
  *	for (j = 0; j < 8; j++)
  *		for (i = 0; i < j; i++)
- *			a[j] += (s32)book2[(j - 1) - i] * inp[i];
+ *			a[j] += (s32)book2[j - i - 1] * inp[i];
  */
 	for (i = 0; i < 1; i++)
-		a[1] += (s32)book2[1 - (i + 1)] * inp[i];
+		b[i]  = book2[0 - i];
+	accumulators[0] = (s32)b[0] * (s32)inp[0];
+	a[1] += accumulators[0];
+
 	for (i = 0; i < 2; i++)
-		a[2] += (s32)book2[2 - (i + 1)] * inp[i];
+		b[i]  = book2[1 - i];
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)&b[0]);
+	xmm_target = _mm_madd_epi16(xmm_target, xmm_source);
+	_mm_storeu_si128((__m128i *)&accumulators[0], xmm_target);
+#else
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+#endif
+	a[2] += accumulators[0];
+
 	for (i = 0; i < 3; i++)
-		a[3] += (s32)book2[3 - (i + 1)] * inp[i];
+		b[i]  = book2[2 - i];
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)&b[0]);
+	xmm_target = _mm_madd_epi16(xmm_target, xmm_source);
+	_mm_storeu_si128((__m128i *)&accumulators[0], xmm_target);
+#else
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2];
+#endif
+	a[3] += accumulators[0] + accumulators[1];
+
 	for (i = 0; i < 4; i++)
-		a[4] += (s32)book2[4 - (i + 1)] * inp[i];
+		b[i]  = book2[3 - i];
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)&b[0]);
+	xmm_target = _mm_madd_epi16(xmm_target, xmm_source);
+	_mm_storeu_si128((__m128i *)&accumulators[0], xmm_target);
+#else
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+#endif
+	a[4] += accumulators[0] + accumulators[1];
+
 	for (i = 0; i < 5; i++)
-		a[5] += (s32)book2[5 - (i + 1)] * inp[i];
+		b[i]  = book2[4 - i];
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)&b[0]);
+	xmm_target = _mm_madd_epi16(xmm_target, xmm_source);
+	_mm_storeu_si128((__m128i *)&accumulators[0], xmm_target);
+#else
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+	accumulators[2] = (s32)b[4] * (s32)inp[4];
+#endif
+	a[5] += accumulators[0] + accumulators[1] + accumulators[2];
+
 	for (i = 0; i < 6; i++)
-		a[6] += (s32)book2[6 - (i + 1)] * inp[i];
+		b[i]  = book2[5 - i];
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)&b[0]);
+	xmm_target = _mm_madd_epi16(xmm_target, xmm_source);
+	_mm_storeu_si128((__m128i *)&accumulators[0], xmm_target);
+#else
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+	accumulators[2] = (s32)b[4] * (s32)inp[4] + (s32)b[5] * (s32)inp[5];
+#endif
+	a[6] += accumulators[0] + accumulators[1] + accumulators[2];
+
 	for (i = 0; i < 7; i++)
-		a[7] += (s32)book2[7 - (i + 1)] * inp[i];
+		b[i]  = book2[6 - i];
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)&b[0]);
+	xmm_target = _mm_madd_epi16(xmm_target, xmm_source);
+	_mm_storeu_si128((__m128i *)&accumulators[0], xmm_target);
+#else
+	accumulators[0] = (s32)b[0] * (s32)inp[0] + (s32)b[1] * (s32)inp[1];
+	accumulators[1] = (s32)b[2] * (s32)inp[2] + (s32)b[3] * (s32)inp[3];
+	accumulators[2] = (s32)b[4] * (s32)inp[4] + (s32)b[5] * (s32)inp[5];
+	accumulators[3] = (s32)b[6] * (s32)inp[6];
+#endif
+	a[7] += accumulators[0] + accumulators[1] + accumulators[2] + accumulators[3];
 }
 
 void ADPCM() { // Work in progress! :)
@@ -159,16 +241,16 @@ void ADPCM() { // Work in progress! :)
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, i, icode, 0xf0, 8, vscale); // this will in effect be signed
-			InitInput(inp1, i + 1, icode, 0xf, 12, vscale);
+			InitInput(inp1, i + 0, icode, 0xF0,  8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 1, icode, 0x0F, 12, vscale);
 		}
 		for (int i = 0; i < 8; i += 2)
 		{
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, i, icode, 0xf0, 8, vscale); // this will in effect be signed
-			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
+			InitInput(inp2, i + 0, icode, 0xF0,  8, vscale); // this will in effect be signed
+			InitInput(inp2, i + 1, icode, 0x0F, 12, vscale);
 		}
 
 		ADPCM_madd(a, book1, book2, l1, l2, inp1);
@@ -236,8 +318,8 @@ void ADPCM2() { // Verified to be 100% Accurate...
 	else {
 		srange = 0xC;
 		inpinc = 0x9;
-		mask1 = 0xf0;
-		mask2 = 0x0f;
+		mask1 = 0xF0;
+		mask2 = 0x0F;
 		shifter = 12;
 	}
 
@@ -265,12 +347,12 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, i, icode, mask1, 8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 0, icode, mask1, 8, vscale); // this will in effect be signed
 			InitInput(inp1, i + 1, icode, mask2, shifter, vscale);
 			i += 2;
 
 			if (Flags & 4) {
-				InitInput(inp1, i, icode, 0xC, 12, vscale); // this will in effect be signed
+				InitInput(inp1, i + 0, icode, 0xC, 12, vscale); // this will in effect be signed
 				InitInput(inp1, i + 1, icode, 0x3, 14, vscale);
 				i += 2;
 			} // end flags
@@ -280,12 +362,12 @@ void ADPCM2() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(AudioInBuffer + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, i, icode, mask1, 8, vscale);
+			InitInput(inp2, i + 0, icode, mask1, 8, vscale);
 			InitInput(inp2, i + 1, icode, mask2, shifter, vscale);
 			i += 2;
 
 			if (Flags & 4) {
-				InitInput(inp2, i, icode, 0xC, 12, vscale);
+				InitInput(inp2, i + 0, icode, 0xC, 12, vscale);
 				InitInput(inp2, i + 1, icode, 0x3, 14, vscale);
 				i += 2;
 			} // end flags
@@ -375,16 +457,16 @@ void ADPCM3() { // Verified to be 100% Accurate...
 			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
 			inPtr++;
 
-			InitInput(inp1, i, icode, 0xf0, 8, vscale); // this will in effect be signed
-			InitInput(inp1, i + 1, icode, 0xf, 12, vscale);
+			InitInput(inp1, i + 0, icode, 0xF0,  8, vscale); // this will in effect be signed
+			InitInput(inp1, i + 1, icode, 0x0F, 12, vscale);
 		}
 		for (int i = 0; i < 8; i += 2)
 		{
-			u8 icode = BufferSpace[BES(0x4f0 + inPtr)];
+			u8 icode = BufferSpace[BES(0x4F0 + inPtr)];
 			inPtr++;
 
-			InitInput(inp2, i, icode, 0xf0, 8, vscale); // this will in effect be signed
-			InitInput(inp2, i + 1, icode, 0xf, 12, vscale);
+			InitInput(inp2, i + 0, icode, 0xF0,  8, vscale); // this will in effect be signed
+			InitInput(inp2, i + 1, icode, 0x0F, 12, vscale);
 		}
 
 		ADPCM_madd(a, book1, book2, l1, l2, inp1);
