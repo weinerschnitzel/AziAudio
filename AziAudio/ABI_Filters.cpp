@@ -174,6 +174,9 @@ extern u16 adpcmtable[]; //size of 0x88 * 2
 // as well and enable POLEF across the board
 void POLEF()
 {
+#if defined(SSE2_SUPPORT)
+	__m128i xmm_source, xmm_target, prod_hi, prod_lo, prod_m, prod_n;
+#endif
 	u8 Flags = (u8)((k0 >> 16) & 0xff);
 	s16 Gain = (u16)(k0 & 0xffff);
 	u32 Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
@@ -199,10 +202,25 @@ void POLEF()
 		l2 = *(s16 *)(hleMixerWorkArea + 6);
 	}
 
-	for (i = 0; i < 8; ++i) {
-		h2_before[i] = h2[i];
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)h2);
+	xmm_source = _mm_set1_epi16(Gain);
+	_mm_storeu_si128((__m128i *)&h2_before[0], xmm_target);
+
+	prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
+	prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+	prod_hi = _mm_unpacklo_epi16(prod_n, prod_m);
+	prod_lo = _mm_unpackhi_epi16(prod_n, prod_m);
+	prod_hi = _mm_srai_epi32(prod_hi, 14);
+	prod_lo = _mm_srai_epi32(prod_lo, 14);
+	prod_hi = _mm_packs_epi32(prod_hi, prod_lo);
+	_mm_storeu_si128((__m128i *)&h2[0], prod_hi);
+#else
+	copy_vector(&h2_before[0], &h2[0]);
+	for (i = 0; i < 8; i++)
 		h2[i] = (((s32)h2[i] * Gain) >> 14);
-	}
+#endif
+
 	s16 *inp = (s16 *)(BufferSpace + AudioInBuffer);
 
 	do
