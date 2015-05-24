@@ -46,7 +46,7 @@ u16 ResampleLUT[0x200] = {
 	0xFFD8, 0x0E5F, 0x6696, 0x0B39, 0xFFDF, 0x0D46, 0x66AD, 0x0C39
 };
 
-s32 IncrAccum(s16 *src, u32 srcPtr, DWORD location)
+s32 MultAddLUT(s16 *src, u32 srcPtr, DWORD location)
 {
 	s16 *lut = (s16 *)(((u8 *)ResampleLUT) + location);
 	s32 accum = 0;
@@ -108,7 +108,7 @@ void RESAMPLE() {
 
 		// imul 
 
-		dst[MES(dstPtr)] = pack_signed(IncrAccum(src, srcPtr, location));
+		dst[MES(dstPtr)] = pack_signed(MultAddLUT(src, srcPtr, location));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
@@ -154,7 +154,7 @@ void RESAMPLE2() {
 		location = (((Accum * 0x40) >> 0x10) * 8);
 		//location = (Accum >> 0xa) << 0x3;
 
-		dst[MES(dstPtr)] = pack_signed(IncrAccum(src, srcPtr, location));
+		dst[MES(dstPtr)] = pack_signed(MultAddLUT(src, srcPtr, location));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
@@ -221,7 +221,7 @@ void RESAMPLE3() {
 		}
 		*/
 
-		dst[MES(dstPtr)] = pack_signed(IncrAccum(src, srcPtr, location));
+		dst[MES(dstPtr)] = pack_signed(MultAddLUT(src, srcPtr, location));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
