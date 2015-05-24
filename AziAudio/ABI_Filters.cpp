@@ -40,9 +40,12 @@ static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
 	return;
 }
 
-// rdot is borrowed from Mupen64Plus audio.c file.
+// rdot is borrowed from Mupen64Plus audio.c file, modified for SSE2
 s32 rdot(size_t n, const s16 *x, const s16 *y)
 {
+#if defined(SSE2_SUPPORT)
+	__m128i xmm_source, xmm_target;
+#endif
 	s32 accumulators[4];
 	s16 b[8]; /* (n <= 8) in all calls to this function. */
 	register size_t i;
@@ -57,11 +60,18 @@ s32 rdot(size_t n, const s16 *x, const s16 *y)
 	for (i = 0; i < n; i++)
 		b[i] = *(y - i);
 
+#if defined(SSE2_SUPPORT)
+	xmm_target = _mm_loadu_si128((__m128i *)&x[0]);
+	xmm_source = _mm_loadu_si128((__m128i *)&b[0]);
+	xmm_target = _mm_madd_epi16(xmm_target, xmm_source);
+	_mm_storeu_si128((__m128i *)&accumulators[0], xmm_target);
+#else
 	for (i = 0; i < 4; i++)
 		accumulators[i] =
 			(x[2*i + 0] * b[2*i + 0]) +
 			(x[2*i + 1] * b[2*i + 1])
 		;
+#endif
 	return (
 		accumulators[0] + accumulators[1] +
 		accumulators[2] + accumulators[3]
