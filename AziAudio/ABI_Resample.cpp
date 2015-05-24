@@ -109,7 +109,7 @@ void RESAMPLE() {
 
 		// imul 
 
-		dst[MES(dstPtr)] = (s16)(pack_signed(IncrAccum(src, srcPtr, lut)));
+		dst[MES(dstPtr)] = pack_signed(IncrAccum(src, srcPtr, lut));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
@@ -157,7 +157,7 @@ void RESAMPLE2() {
 		//location = (Accum >> 0xa) << 0x3;
 		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-		dst[MES(dstPtr)] = (s16)(pack_signed(IncrAccum(src, srcPtr, lut)));
+		dst[MES(dstPtr)] = pack_signed(IncrAccum(src, srcPtr, lut));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
@@ -226,7 +226,7 @@ void RESAMPLE3() {
 		}
 		*/
 
-		dst[MES(dstPtr)] = (s16)(pack_signed(IncrAccum(src, srcPtr, lut)));
+		dst[MES(dstPtr)] = pack_signed(IncrAccum(src, srcPtr, lut));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
