@@ -46,8 +46,9 @@ u16 ResampleLUT[0x200] = {
 	0xFFD8, 0x0E5F, 0x6696, 0x0B39, 0xFFDF, 0x0D46, 0x66AD, 0x0C39
 };
 
-s32 IncrAccum(s16 *src, u32 srcPtr, s16 *lut)
+s32 MultAddLUT(s16 *src, u32 srcPtr, DWORD location)
 {
+	s16 *lut = (s16 *)(((u8 *)ResampleLUT) + location);
 	s32 accum = 0;
 	for (int i = 0; i < 4; i++)
 	{
@@ -64,14 +65,13 @@ void RESAMPLE() {
 	u32 addy = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	DWORD Accum = 0;
 	DWORD location;
-	s16 *lut;
 	s16 *dst;
 	s16 *src;
 	dst = (s16 *)(BufferSpace);
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = (AudioInBuffer / 2);
 	u32 dstPtr = (AudioOutBuffer / 2);
-	s32 accum;
+
 	/*
 	if (addy > (1024*1024*8))
 	addy = (t9 & 0xffffff);
@@ -94,7 +94,6 @@ void RESAMPLE() {
 	for (int i = 0; i < ((AudioCount + 0xf) & 0xFFF0) / 2; i++)	{
 		//location = (((Accum * 0x40) >> 0x10) * 8);
 		location = (Accum >> 0xa) << 0x3;
-		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
 		// mov eax, dword ptr [src+srcPtr];
 		// movsx edx, word ptr [lut];
@@ -108,10 +107,8 @@ void RESAMPLE() {
 		// and edx, 0f000h
 
 		// imul 
-		accum = IncrAccum(src, srcPtr, lut);
-		accum = pack_signed(accum);
 
-		dst[MES(dstPtr)] = (s16)(accum);
+		dst[MES(dstPtr)] = pack_signed(MultAddLUT(src, srcPtr, location));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
@@ -129,14 +126,12 @@ void RESAMPLE2() {
 	u32 addy = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
 	DWORD Accum = 0;
 	DWORD location;
-	s16 *lut;
 	s16 *dst;
 	s16 *src;
 	dst = (s16 *)(BufferSpace);
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = (AudioInBuffer / 2);
 	u32 dstPtr = (AudioOutBuffer / 2);
-	s32 accum;
 
 	if (addy > (1024 * 1024 * 8))
 		addy = (t9 & 0xffffff);
@@ -158,12 +153,8 @@ void RESAMPLE2() {
 	for (int i = 0; i < ((AudioCount + 0xf) & 0xFFF0) / 2; i++)	{
 		location = (((Accum * 0x40) >> 0x10) * 8);
 		//location = (Accum >> 0xa) << 0x3;
-		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-		accum = IncrAccum(src, srcPtr, lut);
-		accum = pack_signed(accum);
-
-		dst[MES(dstPtr)] = (s16)(accum);
+		dst[MES(dstPtr)] = pack_signed(MultAddLUT(src, srcPtr, location));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
@@ -181,14 +172,12 @@ void RESAMPLE3() {
 	u32 addy = (k0 & 0xffffff);
 	DWORD Accum = 0;
 	DWORD location;
-	s16 *lut;
 	s16 *dst;
 	s16 *src;
 	dst = (s16 *)(BufferSpace);
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = ((((t9 >> 2) & 0xfff) + 0x4f0) / 2);
 	u32 dstPtr;//=(AudioOutBuffer/2);
-	s32 accum;
 
 	//if (addy > (1024*1024*8))
 	//	addy = (t9 & 0xffffff);
@@ -219,41 +208,20 @@ void RESAMPLE3() {
 	for (int i = 0; i < 0x170 / 2; i++)	{
 		location = (((Accum * 0x40) >> 0x10) * 8);
 		//location = (Accum >> 0xa) << 0x3;
-		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-		accum = IncrAccum(src, srcPtr, lut);
 		/*
-		temp =  ((s64)*(s16*)(src + MES(srcPtr+0))*((s64)((s16)lut[0]<<1)));
-		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-		else temp = (temp^0x8000);
-		temp = (s32)(temp >> 16);
-		temp = pack_signed((s32)temp);
-		accum = (s32)(s16)temp;
+		for (int i = 0; i < 4; i++)
+		{
+			temp =  ((s64)*(s16*)(src + MES(srcPtr+i))*((s64)((s16)lut[i]<<1)));
+			if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
+			else temp = (temp^0x8000);
+			temp = (s32)(temp >> 16);
+			temp = pack_signed((s32)temp);
+			accum = (s32)(s16)temp;
+		}
+		*/
 
-		temp = ((s64)*(s16*)(src + MES(srcPtr+1))*((s64)((s16)lut[1]<<1)));
-		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-		else temp = (temp^0x8000);
-		temp = (s32)(temp >> 16);
-		temp = pack_signed((s32)temp);
-		accum += (s32)(s16)temp;
-
-		temp = ((s64)*(s16*)(src + MES(srcPtr+2))*((s64)((s16)lut[2]<<1)));
-		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-		else temp = (temp^0x8000);
-		temp = (s32)(temp >> 16);
-		temp = pack_signed((s32)temp);
-		accum += (s32)(s16)temp;
-
-		temp = ((s64)*(s16*)(src + MES(srcPtr+3))*((s64)((s16)lut[3]<<1)));
-		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-		else temp = (temp^0x8000);
-		temp = (s32)(temp >> 16);
-		temp = pack_signed((s32)temp);
-		accum += (s32)(s16)temp;*/
-
-		accum = pack_signed(accum);
-
-		dst[MES(dstPtr)] = (s16)(accum);
+		dst[MES(dstPtr)] = pack_signed(MultAddLUT(src, srcPtr, location));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
