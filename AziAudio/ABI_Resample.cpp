@@ -223,33 +223,16 @@ void RESAMPLE3() {
 
 		accum = IncrAccum(src, srcPtr, lut);
 		/*
-		temp =  ((s64)*(s16*)(src + MES(srcPtr+0))*((s64)((s16)lut[0]<<1)));
-		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-		else temp = (temp^0x8000);
-		temp = (s32)(temp >> 16);
-		temp = pack_signed((s32)temp);
-		accum = (s32)(s16)temp;
-
-		temp = ((s64)*(s16*)(src + MES(srcPtr+1))*((s64)((s16)lut[1]<<1)));
-		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-		else temp = (temp^0x8000);
-		temp = (s32)(temp >> 16);
-		temp = pack_signed((s32)temp);
-		accum += (s32)(s16)temp;
-
-		temp = ((s64)*(s16*)(src + MES(srcPtr+2))*((s64)((s16)lut[2]<<1)));
-		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-		else temp = (temp^0x8000);
-		temp = (s32)(temp >> 16);
-		temp = pack_signed((s32)temp);
-		accum += (s32)(s16)temp;
-
-		temp = ((s64)*(s16*)(src + MES(srcPtr+3))*((s64)((s16)lut[3]<<1)));
-		if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
-		else temp = (temp^0x8000);
-		temp = (s32)(temp >> 16);
-		temp = pack_signed((s32)temp);
-		accum += (s32)(s16)temp;*/
+		for (int i = 0; i < 4; i++)
+		{
+			temp =  ((s64)*(s16*)(src + MES(srcPtr+i))*((s64)((s16)lut[i]<<1)));
+			if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
+			else temp = (temp^0x8000);
+			temp = (s32)(temp >> 16);
+			temp = pack_signed((s32)temp);
+			accum = (s32)(s16)temp;
+		}
+		*/
 
 		accum = pack_signed(accum);
 
