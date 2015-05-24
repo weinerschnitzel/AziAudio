@@ -113,11 +113,6 @@ s16 GetVec(s16 vec, u16 envValue, s16 v2Value)
 	return (s16)(((s32)vec  * (u32)envValue) >> 0x10) ^ v2Value;
 }
 
-void BuffValueIncr(int x, s16 vec, s16 *buff)
-{
-	buff[MES(x)] = pack_signed(buff[MES(x)] + vec);
-}
-
 void ENVMIXER() {
 	//static int envmixcnt = 0;
 	u8 flags = (u8)((k0 >> 16) & 0xff);
@@ -360,17 +355,17 @@ void ENVMIXER2() {
 		for (x = 0; x < 0x8; x++) {
 			vec9 = GetVec(buffs3[MES(x)], env[0], v2[0]);
 			vec10 = GetVec(buffs3[MES(x)], env[2], v2[1]);
-			BuffValueIncr(x, vec9, bufft6);
-			BuffValueIncr(x, vec10, bufft7);
+			bufft6[MES(x)] = pack_signed(bufft6[MES(x)] + vec9);
+			bufft7[MES(x)] = pack_signed(bufft7[MES(x)] + vec10);
 			vec9 = GetVec(vec9, env[4], v2[2]);
 			vec10 = GetVec(vec10, env[4], v2[3]);
 			if (k0 & 0x10) {
-				BuffValueIncr(x, vec10, buffs0);
-				BuffValueIncr(x, vec9, buffs1);
+				buffs0[MES(x)] = pack_signed(buffs0[MES(x)] + vec10);
+				buffs1[MES(x)] = pack_signed(buffs1[MES(x)] + vec9);
 			}
 			else {
-				BuffValueIncr(x, vec9, buffs0);
-				BuffValueIncr(x, vec10, buffs1);
+				buffs0[MES(x)] = pack_signed(buffs0[MES(x)] + vec9);
+				buffs1[MES(x)] = pack_signed(buffs1[MES(x)] + vec10);
 			}
 		}
 
@@ -378,17 +373,17 @@ void ENVMIXER2() {
 		for (x = 0x8; x < 0x10; x++) {
 			vec9 = GetVec(buffs3[MES(x)], env[1], v2[0]);
 			vec10 = GetVec(buffs3[MES(x)], env[3], v2[1]);
-			BuffValueIncr(x, vec9, bufft6);
-			BuffValueIncr(x, vec10, bufft7);
+			bufft6[MES(x)] = pack_signed(bufft6[MES(x)] + vec9);
+			bufft7[MES(x)] = pack_signed(bufft7[MES(x)] + vec10);
 			vec9 = GetVec(vec9, env[5], v2[2]);
 			vec10 = GetVec(vec10, env[5], v2[3]);
 			if (k0 & 0x10) {
-				BuffValueIncr(x, vec10, buffs0);
-				BuffValueIncr(x, vec9, buffs1);
+				buffs0[MES(x)] = pack_signed(buffs0[MES(x)] + vec10);
+				buffs1[MES(x)] = pack_signed(buffs1[MES(x)] + vec9);
 			}
 			else {
-				BuffValueIncr(x, vec9, buffs0);
-				BuffValueIncr(x, vec10, buffs1);
+				buffs0[MES(x)] = pack_signed(buffs0[MES(x)] + vec9);
+				buffs1[MES(x)] = pack_signed(buffs1[MES(x)] + vec10);
 			}
 		}
 		bufft6 += adder; bufft7 += adder;
