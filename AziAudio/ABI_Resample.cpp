@@ -71,7 +71,7 @@ void RESAMPLE() {
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = (AudioInBuffer / 2);
 	u32 dstPtr = (AudioOutBuffer / 2);
-	s32 accum;
+
 	/*
 	if (addy > (1024*1024*8))
 	addy = (t9 & 0xffffff);
@@ -108,10 +108,8 @@ void RESAMPLE() {
 		// and edx, 0f000h
 
 		// imul 
-		accum = IncrAccum(src, srcPtr, lut);
-		accum = pack_signed(accum);
 
-		dst[MES(dstPtr)] = (s16)(accum);
+		dst[MES(dstPtr)] = (s16)(pack_signed(IncrAccum(src, srcPtr, lut)));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
@@ -136,7 +134,6 @@ void RESAMPLE2() {
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = (AudioInBuffer / 2);
 	u32 dstPtr = (AudioOutBuffer / 2);
-	s32 accum;
 
 	if (addy > (1024 * 1024 * 8))
 		addy = (t9 & 0xffffff);
@@ -160,10 +157,7 @@ void RESAMPLE2() {
 		//location = (Accum >> 0xa) << 0x3;
 		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-		accum = IncrAccum(src, srcPtr, lut);
-		accum = pack_signed(accum);
-
-		dst[MES(dstPtr)] = (s16)(accum);
+		dst[MES(dstPtr)] = (s16)(pack_signed(IncrAccum(src, srcPtr, lut)));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
@@ -188,7 +182,6 @@ void RESAMPLE3() {
 	src = (s16 *)(BufferSpace);
 	u32 srcPtr = ((((t9 >> 2) & 0xfff) + 0x4f0) / 2);
 	u32 dstPtr;//=(AudioOutBuffer/2);
-	s32 accum;
 
 	//if (addy > (1024*1024*8))
 	//	addy = (t9 & 0xffffff);
@@ -221,7 +214,6 @@ void RESAMPLE3() {
 		//location = (Accum >> 0xa) << 0x3;
 		lut = (s16 *)(((u8 *)ResampleLUT) + location);
 
-		accum = IncrAccum(src, srcPtr, lut);
 		/*
 		for (int i = 0; i < 4; i++)
 		{
@@ -234,9 +226,7 @@ void RESAMPLE3() {
 		}
 		*/
 
-		accum = pack_signed(accum);
-
-		dst[MES(dstPtr)] = (s16)(accum);
+		dst[MES(dstPtr)] = (s16)(pack_signed(IncrAccum(src, srcPtr, lut)));
 		dstPtr++;
 		Accum += Pitch;
 		srcPtr += (Accum >> 16);
