@@ -170,8 +170,7 @@ void FILTER2() {
 extern u16 adpcmtable[]; //size of 0x88 * 2
 
 // POLEF filter - Much of the code is borrowed from Mupen64Plus
-// We need to refactor for SSE2 and AziAudio customizations
-// as well and enable POLEF across the board
+// We need to refactor for enabling POLEF across the board as well
 void POLEF()
 {
 #if defined(SSE2_SUPPORT)
@@ -266,9 +265,9 @@ void POLEF()
 		for (i = 0; i < 8; i++)
 			accumulators[i] += h2_before[i] * l2;
 #endif
-		for (i = 0; i < 8; ++i)
+		for (i = 0; i < 8; i++)
 			accumulators[i] += rdot(i, &h2[0], &frame[0]);
-		for (i = 0; i < 8; ++i)
+		for (i = 0; i < 8; i++)
 			accumulators[i] >>= 14;
 		vsats128(&dst[0], &accumulators[0]);
 
@@ -285,4 +284,3 @@ void POLEF()
 	*(s16 *)(hleMixerWorkArea + 6) = l2;
 	memcpy((rdram + Address), (u8 *)hleMixerWorkArea, 8);
 }
-
