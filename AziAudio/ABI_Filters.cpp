@@ -228,14 +228,44 @@ void POLEF()
 		s32 accumulators[8];
 		s16 frame[8];
 
-		copy_vector(&frame[0], &inp[0]);
+#if defined(SSE2_SUPPORT)
+		xmm_target = _mm_loadu_si128((__m128i *)inp);
+		_mm_storeu_si128((__m128i *)&frame[0], xmm_target);
 
-		for (i = 0; i < 8; ++i)
+		prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
+		prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+		prod_hi = _mm_unpacklo_epi16(prod_n, prod_m);
+		prod_lo = _mm_unpackhi_epi16(prod_n, prod_m);
+
+		xmm_source = _mm_set1_epi16(l1);
+		xmm_target = _mm_loadu_si128((__m128i *)h1[0]);
+		prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
+		prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+		xmm_source = _mm_unpacklo_epi16(prod_n, prod_m);
+		xmm_target = _mm_unpackhi_epi16(prod_n, prod_m);
+		prod_hi = _mm_add_epi32(prod_hi, xmm_source);
+		prod_lo = _mm_add_epi32(prod_lo, xmm_target);
+
+		xmm_source = _mm_set1_epi16(l2);
+		xmm_target = _mm_loadu_si128((__m128i *)h2_before[0]);
+		prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
+		prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+		xmm_source = _mm_unpacklo_epi16(prod_n, prod_m);
+		xmm_target = _mm_unpackhi_epi16(prod_n, prod_m);
+		prod_hi = _mm_add_epi32(prod_hi, xmm_source);
+		prod_lo = _mm_add_epi32(prod_lo, xmm_target);
+
+		_mm_storeu_si128((__m128i *)&accumulators[0], prod_hi);
+		_mm_storeu_si128((__m128i *)&accumulators[4], prod_lo);
+#else
+		copy_vector(&frame[0], &inp[0]);
+		for (i = 0; i < 8; i++)
 			accumulators[i]  = frame[i] * Gain;
-		for (i = 0; i < 8; ++i)
+		for (i = 0; i < 8; i++)
 			accumulators[i] += h1[i] * l1;
-		for (i = 0; i < 8; ++i)
+		for (i = 0; i < 8; i++)
 			accumulators[i] += h2_before[i] * l2;
+#endif
 		for (i = 0; i < 8; ++i)
 			accumulators[i] += rdot(i, &h2[0], &frame[0]);
 		for (i = 0; i < 8; ++i)
