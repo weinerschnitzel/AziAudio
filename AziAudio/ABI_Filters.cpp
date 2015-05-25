@@ -237,7 +237,7 @@ void POLEF()
 		prod_lo = _mm_unpackhi_epi16(prod_n, prod_m);
 
 		xmm_source = _mm_set1_epi16(l1);
-		xmm_target = _mm_loadu_si128((__m128i *)h1[0]);
+		xmm_target = _mm_loadu_si128((__m128i *)&h1[0]);
 		prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
 		prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
 		xmm_source = _mm_unpacklo_epi16(prod_n, prod_m);
@@ -246,7 +246,7 @@ void POLEF()
 		prod_lo = _mm_add_epi32(prod_lo, xmm_target);
 
 		xmm_source = _mm_set1_epi16(l2);
-		xmm_target = _mm_loadu_si128((__m128i *)h2_before[0]);
+		xmm_target = _mm_loadu_si128((__m128i *)&h2_before[0]);
 		prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
 		prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
 		xmm_source = _mm_unpacklo_epi16(prod_n, prod_m);
