@@ -227,9 +227,9 @@ void POLEF()
 		s32 accumulators[8];
 		s16 frame[8];
 
+		swap_elements(&frame[0], &inp[0]);
 #if defined(SSE2_SUPPORT)
-		xmm_target = _mm_loadu_si128((__m128i *)inp);
-		_mm_storeu_si128((__m128i *)&frame[0], xmm_target);
+		xmm_target = _mm_loadu_si128((__m128i *)&frame[0]);
 
 		prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
 		prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
@@ -257,7 +257,6 @@ void POLEF()
 		_mm_storeu_si128((__m128i *)&accumulators[0], prod_hi);
 		_mm_storeu_si128((__m128i *)&accumulators[4], prod_lo);
 #else
-		copy_vector(&frame[0], &inp[0]);
 		for (i = 0; i < 8; i++)
 			accumulators[i]  = frame[i] * Gain;
 		for (i = 0; i < 8; i++)
