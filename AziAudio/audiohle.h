@@ -176,10 +176,10 @@ vd[0] = pack_signed(vs[0]); vd[1] = pack_signed(vs[1]); }
 #define vsatu64(vd, vs) {       \
 vd[0] = pack_unsigned(vs[0]); vd[1] = pack_unsigned(vs[1]); }
 #else
-extern INLINE void vsats128(s16* vd, s32* vs); /* Clamp vectors using SSE2. */
-extern INLINE void vsatu128(u16* vd, s32* vs);
-extern INLINE void vsats64 (s16* vd, s32* vs); /* Clamp vectors using MMX. */
-extern INLINE void vsatu64 (u16* vd, s32* vs);
+extern void vsats128(s16* vd, s32* vs); /* Clamp vectors using SSE2. */
+extern void vsatu128(u16* vd, s32* vs);
+extern void vsats64 (s16* vd, s32* vs); /* Clamp vectors using MMX. */
+extern void vsatu64 (u16* vd, s32* vs);
 #endif
 
 /*
