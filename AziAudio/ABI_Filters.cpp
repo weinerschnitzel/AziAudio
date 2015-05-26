@@ -197,8 +197,8 @@ void POLEF()
 	}
 	else {
 		memcpy((u8 *)hleMixerWorkArea, (rdram + Address), 8);
-		l1 = *(s16 *)(hleMixerWorkArea + 4);
-		l2 = *(s16 *)(hleMixerWorkArea + 6);
+		l1 = hleMixerWorkArea[2];
+		l2 = hleMixerWorkArea[3];
 	}
 
 #if defined(SSE2_SUPPORT)
@@ -279,7 +279,7 @@ void POLEF()
 		count -= 16;
 	} while (count != 0);
 
-	*(s16 *)(hleMixerWorkArea + 4) = l1;
-	*(s16 *)(hleMixerWorkArea + 6) = l2;
+	hleMixerWorkArea[2] = l1;
+	hleMixerWorkArea[3] = l2;
 	memcpy((rdram + Address), (u8 *)hleMixerWorkArea, 8);
 }
