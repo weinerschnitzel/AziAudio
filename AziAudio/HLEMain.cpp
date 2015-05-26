@@ -345,7 +345,7 @@ u16 pack_unsigned(s32 slice)
     return (u16)(result & 0x0000FFFFul);
 }
 
-INLINE void vsats128(s16* vd, s32* vs)
+void vsats128(s16* vd, s32* vs)
 {
 #ifdef SSE2_SUPPORT
     __m128i result, xmm_hi, xmm_lo;
@@ -361,14 +361,14 @@ INLINE void vsats128(s16* vd, s32* vs)
         vd[i] = pack_signed(vs[i]);
 #endif
 }
-INLINE void vsatu128(u16* vd, s32* vs)
+void vsatu128(u16* vd, s32* vs)
 {
     register size_t i;
 
     for (i = 0; i < 8; i++)
         vd[i] = pack_unsigned(vs[i]);
 }
-INLINE void vsats64 (s16* vd, s32* vs)
+void vsats64 (s16* vd, s32* vs)
 {
 #if defined (_M_X64)
     __m128i xmm;
@@ -391,7 +391,7 @@ INLINE void vsats64 (s16* vd, s32* vs)
         vd[i] = pack_signed(vs[i]);
 #endif
 }
-INLINE void vsatu64 (u16* vd, s32* vs)
+void vsatu64 (u16* vd, s32* vs)
 {
     register size_t i;
 
