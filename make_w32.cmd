@@ -44,7 +44,6 @@ g++ -o %obj%\ABI_Resample.asm           -x c++ %src%\ABI_Resample.cpp          -
 g++ -o %obj%\DirectSoundDriver.asm      -x c++ %src%\DirectSoundDriver.cpp     -S %C_FLAGS% -Os
 g++ -o %obj%\HLEMain.asm                -x c++ %src%\HLEMain.cpp               -S %C_FLAGS% -Os
 g++ -o %obj%\main.asm                   -x c++ %src%\main.cpp                  -S %C_FLAGS% -Os
-g++ -o %obj%\SafeABI.asm                -x c++ %src%\SafeABI.cpp               -S %C_FLAGS% -Os
 g++ -o %obj%\WaveOut.asm                -x c++ %src%\WaveOut.cpp               -S %C_FLAGS% -Os
 g++ -o %obj%\XAudio2SoundDriver.asm     -x c++ %src%\XAudio2SoundDriver.cpp    -S %C_FLAGS% -Os
 
@@ -62,7 +61,6 @@ as -o %obj%\ABI_Resample.o                  %obj%\ABI_Resample.asm
 as -o %obj%\DirectSoundDriver.o             %obj%\DirectSoundDriver.asm
 as -o %obj%\HLEMain.o                       %obj%\HLEMain.asm
 as -o %obj%\main.o                          %obj%\main.asm
-as -o %obj%\SafeABI.o                       %obj%\SafeABI.asm
 as -o %obj%\WaveOut.o                       %obj%\WaveOut.asm
 as -o %obj%\XAudio2SoundDriver.o            %obj%\XAudio2SoundDriver.asm
 
@@ -86,7 +84,6 @@ set OBJ_LIST=^
 %obj%\DirectSoundDriver.o ^
 %obj%\HLEMain.o ^
 %obj%\main.o ^
-%obj%\SafeABI.o ^
 %obj%\WaveOut.o ^
 %obj%\XAudio2SoundDriver.o ^
 %obj%\Mupen64plusHLE\audio.o ^
