@@ -78,7 +78,14 @@ void ENVSETUP2() {
 	//fprintf (dfile, "	env[0] = %X / env[1] = %X / env[2] = %X / env[3] = %X\n", env[0], env[1], env[2], env[3]);
 }
 
-s32 MixVol(s16 left, s16 right)
+/*
+Fixed point multiplication for two Q15 numbers (meaning it has 15 fractional bits)
+
+You first have to multiply them as integers, but then you have twice as many bits to the right of the radix point, 
+so you have to discard the excess by shifting. If the discarded 15 bits is less than 0x4000, it gets rounded down, 
+and if it's 0x4000 or more, it gets rounded up.
+*/
+s32 MultQ15(s16 left, s16 right)
 {
 	return (left * right + 0x4000) >> 15;
 }
@@ -181,10 +188,10 @@ void ENVMIXER() {
 		aux2 = aux3 = zero;
 	}
 
-	oMainL = MixVol(Dry, (LTrg >> 16));
-	oAuxL = MixVol(Wet, (LTrg >> 16));
-	oMainR = MixVol(Dry, (RTrg >> 16));
-	oAuxR = MixVol(Wet, (RTrg >> 16));
+	oMainL = MultQ15(Dry, (LTrg >> 16));
+	oAuxL = MultQ15(Wet, (LTrg >> 16));
+	oMainR = MultQ15(Dry, (RTrg >> 16));
+	oAuxR = MultQ15(Wet, (RTrg >> 16));
 
 	for (int y = 0; y < AudioCount; y += 0x10) {
 
@@ -221,8 +228,8 @@ void ENVMIXER() {
 					AuxL = oAuxL;
 				}
 				else {
-					MainL = MixVol(Dry, ((s32)LAcc >> 16));
-					AuxL = MixVol(Wet, ((s32)LAcc >> 16));
+					MainL = MultQ15(Dry, ((s32)LAcc >> 16));
+					AuxL = MultQ15(Wet, ((s32)LAcc >> 16));
 				}
 			}
 			else {
@@ -233,8 +240,8 @@ void ENVMIXER() {
 					AuxL = oAuxL;
 				}
 				else {
-					MainL = MixVol(Dry, ((s32)LAcc >> 16));
-					AuxL = MixVol(Wet, ((s32)LAcc >> 16));
+					MainL = MultQ15(Dry, ((s32)LAcc >> 16));
+					AuxL = MultQ15(Wet, ((s32)LAcc >> 16));
 				}
 			}
 
@@ -246,8 +253,8 @@ void ENVMIXER() {
 					AuxR = oAuxR;
 				}
 				else {
-					MainR = MixVol(Dry, ((s32)RAcc >> 16));
-					AuxR = MixVol(Wet, ((s32)RAcc >> 16));
+					MainR = MultQ15(Dry, ((s32)RAcc >> 16));
+					AuxR = MultQ15(Wet, ((s32)RAcc >> 16));
 				}
 			}
 			else {
@@ -258,8 +265,8 @@ void ENVMIXER() {
 					AuxR = oAuxR;
 				}
 				else {
-					MainR = MixVol(Dry, ((s32)RAcc >> 16));
-					AuxR = MixVol(Wet, ((s32)RAcc >> 16));
+					MainR = MultQ15(Dry, ((s32)RAcc >> 16));
+					AuxR = MultQ15(Wet, ((s32)RAcc >> 16));
 				}
 			}
 
@@ -283,14 +290,14 @@ void ENVMIXER() {
 			/*		o1=((s64)(((s64)o1*0xfffe)+((s64)i1*MainR*2)+0x8000)>>16);
 			a1=((s64)(((s64)a1*0xfffe)+((s64)i1*MainL*2)+0x8000)>>16);*/
 
-			out[MES(ptr)] = pack_signed(out[MES(ptr)] + MixVol(/*(o1*0x7fff)+*/ (s16)i1, (s16)MainR));
-			aux1[MES(ptr)] = pack_signed(aux1[MES(ptr)] + MixVol(/*(a1*0x7fff)+*/ (s16)i1, (s16)MainL));
+			out[MES(ptr)] = pack_signed(out[MES(ptr)] + MultQ15(/*(o1*0x7fff)+*/ (s16)i1, (s16)MainR));
+			aux1[MES(ptr)] = pack_signed(aux1[MES(ptr)] + MultQ15(/*(a1*0x7fff)+*/ (s16)i1, (s16)MainL));
 			if (AuxIncRate) {
 				//a2=((s64)(((s64)a2*0xfffe)+((s64)i1*AuxR*2)+0x8000)>>16);
 				//a3=((s64)(((s64)a3*0xfffe)+((s64)i1*AuxL*2)+0x8000)>>16);
 
-				aux2[MES(ptr)] = pack_signed(aux2[MES(ptr)] + MixVol(/*(a2*0x7fff)+*/(s16)i1, (s16)AuxR));
-				aux3[MES(ptr)] = pack_signed(aux3[MES(ptr)] + MixVol(/*(a3*0x7fff)+*/(s16)i1, (s16)AuxL));
+				aux2[MES(ptr)] = pack_signed(aux2[MES(ptr)] + MultQ15(/*(a2*0x7fff)+*/(s16)i1, (s16)AuxR));
+				aux3[MES(ptr)] = pack_signed(aux3[MES(ptr)] + MultQ15(/*(a3*0x7fff)+*/(s16)i1, (s16)AuxL));
 			}
 			ptr++;
 		}
@@ -493,20 +500,20 @@ void ENVMIXER3() {
 			}
 		}
 		// ****************************************************************
-		MainL = MixVol(Dry, (s16)LVol);
-		MainR = MixVol(Dry, (s16)RVol);
+		MainL = MultQ15(Dry, (s16)LVol);
+		MainR = MultQ15(Dry, (s16)RVol);
 		i1 = inp[MES(y)];
 
-		out[MES(y)] = pack_signed(out[MES(y)] + MixVol((s16)i1, (s16)MainL));
-		aux1[MES(y)] = pack_signed(aux1[MES(y)] + MixVol((s16)i1, (s16)MainR));
+		out[MES(y)] = pack_signed(out[MES(y)] + MultQ15((s16)i1, (s16)MainL));
+		aux1[MES(y)] = pack_signed(aux1[MES(y)] + MultQ15((s16)i1, (s16)MainR));
 
 		// ****************************************************************
 		//if (!(flags&A_AUX)) {
-		AuxL = MixVol(Wet, (s16)LVol);
-		AuxR = MixVol(Wet, (s16)RVol);
+		AuxL = MultQ15(Wet, (s16)LVol);
+		AuxR = MultQ15(Wet, (s16)RVol);
 
-		aux2[MES(y)] = pack_signed(aux2[MES(y)] + MixVol((s16)i1, (s16)AuxL));
-		aux3[MES(y)] = pack_signed(aux3[MES(y)] + MixVol((s16)i1, (s16)AuxR));
+		aux2[MES(y)] = pack_signed(aux2[MES(y)] + MultQ15((s16)i1, (s16)AuxL));
+		aux3[MES(y)] = pack_signed(aux3[MES(y)] + MultQ15((s16)i1, (s16)AuxR));
 	}
 	//}
 
