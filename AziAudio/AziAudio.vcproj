@@ -210,10 +210,6 @@
 					RelativePath=".\HLEMain.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\SafeABI.cpp"
-					>
-				</File>
 				<Filter
 					Name="Mupen64Plus"
 					>
