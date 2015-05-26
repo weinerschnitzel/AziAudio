@@ -174,7 +174,7 @@ extern u16 adpcmtable[]; //size of 0x88 * 2
 void POLEF()
 {
 #if defined(SSE2_SUPPORT)
-	__m128i xmm_source, xmm_target, prod_hi, prod_lo, prod_m, prod_n;
+	__m128i xmm_source, xmm_target, prod_hi, prod_lo, prod_m, prod_n, xmm_gain;
 #endif
 	u8 Flags = (u8)((k0 >> 16) & 0xff);
 	s16 Gain = (u16)(k0 & 0xffff);
@@ -203,11 +203,11 @@ void POLEF()
 
 #if defined(SSE2_SUPPORT)
 	xmm_target = _mm_loadu_si128((__m128i *)h2);
-	xmm_source = _mm_set1_epi16(Gain);
+	xmm_gain   = _mm_set1_epi16(Gain);
 	_mm_storeu_si128((__m128i *)&h2_before[0], xmm_target);
 
-	prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
-	prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+	prod_m = _mm_mulhi_epi16(xmm_target, xmm_gain);
+	prod_n = _mm_mullo_epi16(xmm_target, xmm_gain);
 	prod_hi = _mm_unpacklo_epi16(prod_n, prod_m);
 	prod_lo = _mm_unpackhi_epi16(prod_n, prod_m);
 	prod_hi = _mm_srai_epi32(prod_hi, 14);
@@ -231,8 +231,8 @@ void POLEF()
 #if defined(SSE2_SUPPORT)
 		xmm_target = _mm_loadu_si128((__m128i *)&frame[0]);
 
-		prod_m = _mm_mulhi_epi16(xmm_target, xmm_source);
-		prod_n = _mm_mullo_epi16(xmm_target, xmm_source);
+		prod_m = _mm_mulhi_epi16(xmm_target, xmm_gain);
+		prod_n = _mm_mullo_epi16(xmm_target, xmm_gain);
 		prod_hi = _mm_unpacklo_epi16(prod_n, prod_m);
 		prod_lo = _mm_unpackhi_epi16(prod_n, prod_m);
 
