@@ -45,6 +45,7 @@ extern void (*SafeABI[0x20])();
 //				 60% of all games use this.  Distributed 3rd Party ABI
 //
 extern void (*ABI1[0x20])();
+extern void (*ABI1GE[0x20])();
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 2 : WaveRace JAP, MarioKart 64, Mario64 JAP RumbleEdition, 
@@ -73,52 +74,6 @@ extern void (*ABIUnknown[0x20])();
 void (*ABI[0x20])();
 bool locklistsize = false;
 
-//---------------------------------------------------------------------------------------------
-// Set the Current ABI
-void ChangeABI (int type) {
-	switch (type) {
-		case 0x0:
-			printf ("\nABI set to AutoDetect\n");
-			//MessageBox (NULL, "ABI set to AutoDetect", "Audio ABI Changed", MB_OK);
-			memcpy (ABI, SafeABI, 0x20*4);
-		break;
-		case 0x1:
-			printf ("\nABI set to ABI 1\n");
-			//MessageBox (NULL, "ABI set to ABI 1", "Audio ABI Changed", MB_OK);
-			memcpy (ABI, ABI1, 0x20*4);
-		break;
-		case 0x2:
-			printf ("\nABI set to ABI 2\n");
-			//MessageBox (NULL, "ABI set to ABI 2", "Audio ABI Changed", MB_OK);
-			//MessageBox (NULL, "Mario Kart, Zelda64, Zelda MoM, WaveRace JAP, etc. are not supported right now...", "Audio ABI Changed", MB_OK);
-			//memcpy (ABI, ABIUnknown, 0x20*4);
-			memcpy (ABI, ABI2, 0x20*4);
-		break;
-		case 0x3:
-			printf ("\nABI set to ABI 3\n");
-			//MessageBox (NULL, "ABI set to ABI 3", "Audio ABI Changed", MB_OK);
-			//MessageBox (NULL, "DK64, Perfect Dark, Banjo Kazooi, Banjo Tooie, (RARE), not supported yet...", "Audio ABI Changed", MB_OK);
-			//memcpy (ABI, ABIUnknown, 0x20*4);
-			memcpy (ABI, ABI3, 0x20*4);
-		break;
-		/*case 0x4: // Mario Kart, Zelda64 (Demo Version)
-			memcpy (ABI, ABI2, 0x20*4);
-		break;*/
-		case 0x5:
-			printf ("\nABI set to MusyX\n");
-			//MessageBox (NULL, "ABI set to ABI 5", "Audio ABI Changed", MB_OK);
-			//MessageBox (NULL, "Rogue Squadron, Tarzan, Hydro Thunder, Indiana Jones and Battle for Naboo, and TWINE not supported yet...", "Audio ABI Not Supported", MB_OK);
-//     ABI 5 : Factor 5 - MoSys/MusyX
-//				 Rogue Squadron, Tarzan, Hydro Thunder, and TWINE
-//				 Indiana Jones and Battle for Naboo (?)
-			//memcpy (ABI, ABI5, 0x20*4);
-		break;
-		default:
-			MessageBoxA(NULL, "ABI set to ABI Unknown", "Audio uCode Changed", MB_OK);
-			memcpy (ABI, ABIUnknown, 0x20*4);
-			return; // Quick out to prevent Dynarec from getting it...
-	}
-}
 
 //---------------------------------------------------------------------------------------------
 
@@ -173,19 +128,53 @@ void HLEStart() {
 
 	u8  *UData = rdram + UCData;
 
-	if (((u32*)UData)[0] != 0x1) { // Then it's either ABI 3, 4 or 5
-		if (*(u32*)(UData + (0x10)) == 0x00000001) {
-			ChangeABI(5); // v1
-			ProcessMusyX_v1();
-			return;
+	// Detect uCode
+	if (((u32*)UData)[0] != 0x1) {
+		switch (*(u32*)(UData + (0x10)))
+		{
+			case 0x00000001: // MusyX v1
+				// RogueSquadron, ResidentEvil2, PolarisSnoCross,
+				// TheWorldIsNotEnough, RugratsInParis, NBAShowTime,
+				// HydroThunder, Tarzan, GauntletLegend, Rush2049
+				ProcessMusyX_v1(); return;
+			case 0x0000127c: memcpy(ABI, ABI3, 0x20 * 4); break; // naudio (many games)
+			case 0x00001280: memcpy(ABI, ABI3, 0x20 * 4); break; // BanjoKazooie
+			case 0x1c58126c: memcpy(ABI, ABI3, 0x20 * 4); break; // DonkeyKong
+			case 0x1ae8143c: memcpy(ABI, ABI3, 0x20 * 4); break; // BanjoTooie, JetForceGemini, MickeySpeedWayUSA, PerfectDark
+			case 0x1ab0140c: memcpy(ABI, ABI3, 0x20 * 4); break; // ConkerBadFurDay
+			default: return;
 		}
 	}
-	else
+	else 
 	{
-		if (*(u32*)(UData + (0x30)) != 0xF0000F00 && *(u32*)(UData + (0x10)) == 0x00010010) { // v2
-			ChangeABI(5); // v2
-			ProcessMusyX_v2();
-			return;
+		if (*(u32*)(UData + (0x30)) == 0xF0000F00) 
+		{ // Should be common in ABI 1
+			switch (*(u32*)(UData + (0x28)))
+			{
+				case 0x1e24138c: memcpy(ABI, ABI1, 0x20 * 4); break;
+				case 0x1dc8138c: memcpy(ABI, ABI1GE, 0x20 * 4); break; // GoldenEye
+				case 0x1e3c1390: memcpy(ABI, ABI1, 0x20 * 4); break; // BlastCorp, DiddyKongRacing
+				default: return;
+			}
+		}
+		else  
+		{ 
+			switch (*(u32*)(UData + (0x10))) // ABI2 and MusyX
+			{
+				case 0x11181350: memcpy(ABI, ABI2, 0x20 * 4); break; // MarioKart, WaveRace (E) 
+				case 0x111812e0: memcpy(ABI, ABI2, 0x20 * 4); break; // StarFox (J) 
+				case 0x110412ac: memcpy(ABI, ABI2, 0x20 * 4); break; // WaveRace (J RevB) 
+				case 0x110412cc: memcpy(ABI, ABI2, 0x20 * 4); break; // StarFox/LylatWars (except J) 
+				case 0x1cd01250: memcpy(ABI, ABI2, 0x20 * 4); break; // FZeroX 
+				case 0x1f08122c: memcpy(ABI, ABI2, 0x20 * 4); break; // YoshisStory 
+				case 0x1f38122c: memcpy(ABI, ABI2, 0x20 * 4); break; // 1080° Snowboarding 
+				case 0x1f681230: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda OoT / Zelda MM (J, J RevA) 
+				case 0x1f801250: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda MM (except J, J RevA, E Beta), PokemonStadium 2 
+				case 0x109411f8: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda MM (E Beta)
+				case 0x1eac11b8: memcpy(ABI, ABI2, 0x20 * 4); break; // AnimalCrossing 
+				case 0x00010010: ProcessMusyX_v2(); return; // MusyX v2 (IndianaJones, BattleForNaboo)	
+				default: return;
+			}
 		}
 	}
 
@@ -263,13 +252,6 @@ void HLEStart() {
 //	fclose (dfile);
 //	assert(0);
 }
-
-void (*ABIUnknown [0x20])() = { // Unknown ABI
-	SPU, SPU, SPU, SPU, SPU, SPU, SPU, SPU,
-	SPU, SPU, SPU, SPU, SPU, SPU, SPU, SPU,
-	SPU, SPU, SPU, SPU, SPU, SPU, SPU, SPU,
-	SPU, SPU, SPU, SPU, SPU, SPU, SPU, SPU
-};
 
 #ifndef PREFER_MACRO_FUNCTIONS
 INLINE s32 sats_over(s32 slice)

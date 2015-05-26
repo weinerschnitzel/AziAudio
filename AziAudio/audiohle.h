@@ -65,7 +65,6 @@ extern u32 t9, k0;
 
 // Use these functions to interface with the HLE Audio...
 void HLEStart ();
-void ChangeABI (int type); // type 0 = AutoDetectMode
 
 extern u32 UCData, UDataLen;
 

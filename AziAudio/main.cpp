@@ -256,12 +256,10 @@ EXPORT BOOL CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	RSPInfo.SP_SEMAPHORE_REG = &RSPRegs[8];
 
 	InitiateRSP(RSPInfo, &junk);*/
-	ChangeABI(0);
 	return TRUE;
 }
 
 EXPORT void CALL CloseDLL(void) {
-	ChangeABI (0);
 	if (audioIsInitialized == TRUE) snd.DeInitialize();
 	snd.DeInitialize();
 }
@@ -291,7 +289,6 @@ EXPORT void CALL ProcessAList(void) {
 }
 
 EXPORT void CALL RomOpen(void) {
-	ChangeABI(0);
 	snd.DeInitialize();
 	Dacrate = 0;
 	audioIsInitialized = !snd.Initialize(AudioInfo.hwnd);
@@ -299,7 +296,6 @@ EXPORT void CALL RomOpen(void) {
 }
 
 EXPORT void CALL RomClosed(void) {
-	ChangeABI (0);
 	snd.DeInitialize();
 	Dacrate = 0;
 	audioIsInitialized = !snd.Initialize(AudioInfo.hwnd);

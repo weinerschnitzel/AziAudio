@@ -111,7 +111,6 @@
     <ClCompile Include="Mupen64plusHLE\memory.c" />
     <ClCompile Include="Mupen64plusHLE\Mupen64Support.c" />
     <ClCompile Include="Mupen64plusHLE\musyx.c" />
-    <ClCompile Include="SafeABI.cpp" />
     <ClCompile Include="WaveOut.cpp" />
     <ClCompile Include="XAudio2SoundDriver.cpp" />
   </ItemGroup>

@@ -107,9 +107,6 @@
     <ClCompile Include="HLEMain.cpp">
       <Filter>Source Files\HLE</Filter>
     </ClCompile>
-    <ClCompile Include="SafeABI.cpp">
-      <Filter>Source Files\HLE</Filter>
-    </ClCompile>
     <ClCompile Include="Mupen64plusHLE\memory.c">
       <Filter>Mupen64Plus HLE</Filter>
     </ClCompile>
