@@ -38,42 +38,41 @@ bool isZeldaABI = false;
 
 // Audio UCode lists
 //     Dummy UCode Handler for UCode detection... (Will always assume UCode1 until the nth list is executed)
-extern void (*SafeABI[0x20])();
+extern p_func SafeABI[0x20];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 1 : Mario64, WaveRace USA, Golden Eye 007, Quest64, SF Rush
 //				 60% of all games use this.  Distributed 3rd Party ABI
 //
-extern void (*ABI1[0x20])();
-extern void (*ABI1GE[0x20])();
+extern p_func ABI1[0x20];
+extern p_func ABI1GE[0x20];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 2 : WaveRace JAP, MarioKart 64, Mario64 JAP RumbleEdition, 
 //				 Yoshi Story, Pokemon Games, Zelda64, Zelda MoM (miyamoto) 
 //				 Most NCL or NOA games (Most commands)
-extern void (*ABI2[0x20])();
+extern p_func ABI2[0x20];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 3 : DK64, Perfect Dark, Banjo Kazooi, Banjo Tooie
 //				 All RARE games except Golden Eye 007
 //
-extern void (*ABI3[0x20])();
+extern p_func ABI3[0x20];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 5 : Factor 5 - MoSys/MusyX
 //				 Rogue Squadron, Tarzan, Hydro Thunder, and TWINE
 //				 Indiana Jones and Battle for Naboo (?)
-//extern void (*ABI5[0x20])();
+//extern p_func ABI5[0x20];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI ? : Unknown or unsupported UCode
 //
-extern void (*ABIUnknown[0x20])();
+extern p_func ABIUnknown[0x20];
 //---------------------------------------------------------------------------------------------
 
-void (*ABI[0x20])();
+p_func ABI[0x20];
 bool locklistsize = false;
-
 
 //---------------------------------------------------------------------------------------------
 
@@ -147,7 +146,7 @@ void HLEStart() {
 			case 0x1ae8143c:  break; // BanjoTooie, JetForceGemini, MickeySpeedWayUSA, PerfectDark
 			case 0x1ab0140c:  break; // ConkerBadFurDay
 		}
-		memcpy(ABI, ABI3, 32 * sizeof(void *));
+		memcpy(ABI, ABI3, 32 * sizeof(p_func));
 	}
 	else 
 	{
@@ -156,13 +155,13 @@ void HLEStart() {
 			switch (*(u32*)(UData + (0x28)))
 			{
 				case 0x1e24138c:
-					memcpy(ABI, ABI1, 32 * sizeof(void *));
+					memcpy(ABI, ABI1, 32 * sizeof(p_func));
 					break;
 				case 0x1dc8138c: // GoldenEye
-					memcpy(ABI, ABI1GE, 32 * sizeof(void *));
+					memcpy(ABI, ABI1GE, 32 * sizeof(p_func));
 					break;
 				case 0x1e3c1390: // BlastCorp, DiddyKongRacing
-					memcpy(ABI, ABI1GE, 32 * sizeof(void *));
+					memcpy(ABI, ABI1GE, 32 * sizeof(p_func));
 					break;
 				default: return;
 			}
@@ -189,7 +188,7 @@ void HLEStart() {
 				case 0x109411f8:  break; // Zelda MM (E Beta)
 				case 0x1eac11b8:  break; // AnimalCrossing
 			}
-			memcpy(ABI, ABI2, 32 * sizeof(void *));
+			memcpy(ABI, ABI2, 32 * sizeof(p_func));
 		}
 	}
 
