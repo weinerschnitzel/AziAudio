@@ -147,7 +147,7 @@ void HLEStart() {
 			case 0x1ae8143c:  break; // BanjoTooie, JetForceGemini, MickeySpeedWayUSA, PerfectDark
 			case 0x1ab0140c:  break; // ConkerBadFurDay
 		}
-		memcpy(ABI, ABI3, 0x20 * 4);
+		memcpy(ABI, ABI3, 32 * sizeof(void *));
 	}
 	else 
 	{
@@ -155,9 +155,15 @@ void HLEStart() {
 		{ // Should be common in ABI 1
 			switch (*(u32*)(UData + (0x28)))
 			{
-				case 0x1e24138c: memcpy(ABI, ABI1, 0x20 * 4); break;
-				case 0x1dc8138c: memcpy(ABI, ABI1GE, 0x20 * 4); break; // GoldenEye
-				case 0x1e3c1390: memcpy(ABI, ABI1GE, 0x20 * 4); break; // BlastCorp, DiddyKongRacing
+				case 0x1e24138c:
+					memcpy(ABI, ABI1, 32 * sizeof(void *));
+					break;
+				case 0x1dc8138c: // GoldenEye
+					memcpy(ABI, ABI1GE, 32 * sizeof(void *));
+					break;
+				case 0x1e3c1390: // BlastCorp, DiddyKongRacing
+					memcpy(ABI, ABI1GE, 32 * sizeof(void *));
+					break;
 				default: return;
 			}
 		}
@@ -183,7 +189,7 @@ void HLEStart() {
 				case 0x109411f8:  break; // Zelda MM (E Beta)
 				case 0x1eac11b8:  break; // AnimalCrossing
 			}
-			memcpy(ABI, ABI2, 0x20 * 4);
+			memcpy(ABI, ABI2, 32 * sizeof(void *));
 		}
 	}
 
