@@ -38,42 +38,41 @@ bool isZeldaABI = false;
 
 // Audio UCode lists
 //     Dummy UCode Handler for UCode detection... (Will always assume UCode1 until the nth list is executed)
-extern void (*SafeABI[0x20])();
+extern p_func SafeABI[NUM_ABI_COMMANDS];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 1 : Mario64, WaveRace USA, Golden Eye 007, Quest64, SF Rush
 //				 60% of all games use this.  Distributed 3rd Party ABI
 //
-extern void (*ABI1[0x20])();
-extern void (*ABI1GE[0x20])();
+extern p_func ABI1[NUM_ABI_COMMANDS];
+extern p_func ABI1GE[NUM_ABI_COMMANDS];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 2 : WaveRace JAP, MarioKart 64, Mario64 JAP RumbleEdition, 
 //				 Yoshi Story, Pokemon Games, Zelda64, Zelda MoM (miyamoto) 
 //				 Most NCL or NOA games (Most commands)
-extern void (*ABI2[0x20])();
+extern p_func ABI2[NUM_ABI_COMMANDS];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 3 : DK64, Perfect Dark, Banjo Kazooi, Banjo Tooie
 //				 All RARE games except Golden Eye 007
 //
-extern void (*ABI3[0x20])();
+extern p_func ABI3[NUM_ABI_COMMANDS];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI 5 : Factor 5 - MoSys/MusyX
 //				 Rogue Squadron, Tarzan, Hydro Thunder, and TWINE
 //				 Indiana Jones and Battle for Naboo (?)
-//extern void (*ABI5[0x20])();
+//extern p_func ABI5[NUM_ABI_COMMANDS];
 //---------------------------------------------------------------------------------------------
 //
 //     ABI ? : Unknown or unsupported UCode
 //
-extern void (*ABIUnknown[0x20])();
+extern p_func ABIUnknown[NUM_ABI_COMMANDS];
 //---------------------------------------------------------------------------------------------
 
-void (*ABI[0x20])();
+p_func ABI[NUM_ABI_COMMANDS];
 bool locklistsize = false;
-
 
 //---------------------------------------------------------------------------------------------
 
@@ -136,14 +135,18 @@ void HLEStart() {
 				// RogueSquadron, ResidentEvil2, PolarisSnoCross,
 				// TheWorldIsNotEnough, RugratsInParis, NBAShowTime,
 				// HydroThunder, Tarzan, GauntletLegend, Rush2049
-				ProcessMusyX_v1(); return;
-			case 0x0000127c: memcpy(ABI, ABI3, 0x20 * 4); break; // naudio (many games)
-			case 0x00001280: memcpy(ABI, ABI3, 0x20 * 4); break; // BanjoKazooie
-			case 0x1c58126c: memcpy(ABI, ABI3, 0x20 * 4); break; // DonkeyKong
-			case 0x1ae8143c: memcpy(ABI, ABI3, 0x20 * 4); break; // BanjoTooie, JetForceGemini, MickeySpeedWayUSA, PerfectDark
-			case 0x1ab0140c: memcpy(ABI, ABI3, 0x20 * 4); break; // ConkerBadFurDay
-			default: return;
+				ProcessMusyX_v1();
+				return;
+			default:
+				return;
+
+			case 0x0000127c:  break; // naudio (many games)
+			case 0x00001280:  break; // BanjoKazooie
+			case 0x1c58126c:  break; // DonkeyKong
+			case 0x1ae8143c:  break; // BanjoTooie, JetForceGemini, MickeySpeedWayUSA, PerfectDark
+			case 0x1ab0140c:  break; // ConkerBadFurDay
 		}
+		memcpy(ABI, ABI3, NUM_ABI_COMMANDS * sizeof(p_func));
 	}
 	else 
 	{
@@ -151,9 +154,15 @@ void HLEStart() {
 		{ // Should be common in ABI 1
 			switch (*(u32*)(UData + (0x28)))
 			{
-				case 0x1e24138c: memcpy(ABI, ABI1, 0x20 * 4); break;
-				case 0x1dc8138c: memcpy(ABI, ABI1GE, 0x20 * 4); break; // GoldenEye
-				case 0x1e3c1390: memcpy(ABI, ABI1GE, 0x20 * 4); break; // BlastCorp, DiddyKongRacing
+				case 0x1e24138c:
+					memcpy(ABI, ABI1, NUM_ABI_COMMANDS * sizeof(p_func));
+					break;
+				case 0x1dc8138c: // GoldenEye
+					memcpy(ABI, ABI1GE, NUM_ABI_COMMANDS * sizeof(p_func));
+					break;
+				case 0x1e3c1390: // BlastCorp, DiddyKongRacing
+					memcpy(ABI, ABI1GE, NUM_ABI_COMMANDS * sizeof(p_func));
+					break;
 				default: return;
 			}
 		}
@@ -161,35 +170,40 @@ void HLEStart() {
 		{ 
 			switch (*(u32*)(UData + (0x10))) // ABI2 and MusyX
 			{
-				case 0x11181350: memcpy(ABI, ABI2, 0x20 * 4); break; // MarioKart, WaveRace (E) 
-				case 0x111812e0: memcpy(ABI, ABI2, 0x20 * 4); break; // StarFox (J) 
-				case 0x110412ac: memcpy(ABI, ABI2, 0x20 * 4); break; // WaveRace (J RevB) 
-				case 0x110412cc: memcpy(ABI, ABI2, 0x20 * 4); break; // StarFox/LylatWars (except J) 
-				case 0x1cd01250: memcpy(ABI, ABI2, 0x20 * 4); break; // FZeroX 
-				case 0x1f08122c: memcpy(ABI, ABI2, 0x20 * 4); break; // YoshisStory 
-				case 0x1f38122c: memcpy(ABI, ABI2, 0x20 * 4); break; // 1080° Snowboarding 
-				case 0x1f681230: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda OoT / Zelda MM (J, J RevA) 
-				case 0x1f801250: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda MM (except J, J RevA, E Beta), PokemonStadium 2 
-				case 0x109411f8: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda MM (E Beta)
-				case 0x1eac11b8: memcpy(ABI, ABI2, 0x20 * 4); break; // AnimalCrossing 
-				case 0x00010010: ProcessMusyX_v2(); return; // MusyX v2 (IndianaJones, BattleForNaboo)	
-				default: return;
+				case 0x00010010: // MusyX v2 (IndianaJones, BattleForNaboo)
+					ProcessMusyX_v2();
+					return;
+				default:
+					return;
+
+				case 0x11181350:  break; // MarioKart, WaveRace (E)
+				case 0x111812e0:  break; // StarFox (J)
+				case 0x110412ac:  break; // WaveRace (J RevB)
+				case 0x110412cc:  break; // StarFox/LylatWars (except J)
+				case 0x1cd01250:  break; // FZeroX
+				case 0x1f08122c:  break; // YoshisStory
+				case 0x1f38122c:  break; // 1080° Snowboarding
+				case 0x1f681230:  break; // Zelda OoT / Zelda MM (J, J RevA)
+				case 0x1f801250:  break; // Zelda MM (except J, J RevA, E Beta), PokemonStadium 2
+				case 0x109411f8:  break; // Zelda MM (E Beta)
+				case 0x1eac11b8:  break; // AnimalCrossing
 			}
+			memcpy(ABI, ABI2, NUM_ABI_COMMANDS * sizeof(p_func));
 		}
 	}
 
 	//memcpy (imem+0x80, rdram+((u32*)dmem)[0xFD0/4], ((u32*)dmem)[0xFD4/4]);
 
 #ifdef ENABLELOG
-	u32 times[0x20];
-	u32 calls[0x20];
+	u32 times[NUM_ABI_COMMANDS];
+	u32 calls[NUM_ABI_COMMANDS];
 	u32 list=0;
 	u32 total;
 
 	//memcpy (dmem, rdram+UCData, UDataLen); // Load UCode Data (for RSP stuff)
 
-	memset (times, 0, 0x20*4);
-	memset (calls, 0, 0x20*4);
+	memset (times, 0, NUM_ABI_COMMANDS * sizeof(u32));
+	memset (calls, 0, NUM_ABI_COMMANDS * sizeof(u32));
 	u64 start, end;
 #endif
 
@@ -208,9 +222,17 @@ void HLEStart() {
 	}*/
 
 
-	for (u32 x=0; x < ListLen; x+=2) {
-		k0 = HLEPtr[x  ];
-		t9 = HLEPtr[x+1];
+	for (u32 x = 0; x < ListLen; x += 2) {
+		unsigned char command;
+
+		k0 = HLEPtr[x + 0];
+		t9 = HLEPtr[x + 1];
+		command = (unsigned char)((k0 >> 24) & 0xFF);
+#if 0
+		assert(command == command % NUM_ABI_COMMANDS);
+		command %= NUM_ABI_COMMANDS;
+#endif
+
 //		fprintf (dfile, "k0: %08X  t9: %08X\n", k0, t9);
 #ifdef ENABLELOG
 		__asm {
@@ -219,25 +241,25 @@ void HLEStart() {
 			mov dword ptr [start+4], edx;
 		}
 #endif
-		StartProfile (2 + (k0 >> 24));
-		ABI[k0 >> 24]();
-		EndProfile (2 + (k0 >> 24));
+		StartProfile (2 + command);
+		ABI[command]();
+		EndProfile (2 + command);
 #ifdef ENABLELOG
 		__asm {
 			rdtsc;
 			mov dword ptr [end+0], eax;
 			mov dword ptr [end+4], edx;
 		}
-		calls[k0>>24]++;
-		times[k0>>24]+=(u32)(end-start);
+		calls[command]++;
+		times[command] += (u32)(end - start);
 #endif
 	}
 #ifdef ENABLELOG
 	fprintf (dfile, "List #%i\n", list++);
 	total = 0;
-	for (x=0; x < 0x20; x++)
+	for (x = 0; x < NUM_ABI_COMMANDS; x++)
 		total += times[x];
-	for (x=0; x < 0x20; x++) {
+	for (x = 0; x < NUM_ABI_COMMANDS; x++) {
 		if (calls[x] != 0)
 			fprintf (dfile, 
 			"Command: %02X - Calls: %3i - Total Time: %6i - Avg Time: %8.2f - Percent: %5.2f%%\n", 
