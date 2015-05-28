@@ -53,6 +53,14 @@
 #define A_MAIN			0x00
 #define A_MIX			0x10
 
+/*
+ * The bit mask for each ABI command op-code seems to be:
+ * (command & 0xFF00000000000000) >> 56 # w0[31..24], but actually the
+ * repeating pattern seems to be that there are only 32 ABI commands.
+ * Either doc is lazy, or the potential of 256 commands is a reserved thing.
+ */
+#define NUM_ABI_COMMANDS    32
+
 //------------------------------------------------------------------------------------------
 
 extern u32 t9, k0;

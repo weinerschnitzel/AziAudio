@@ -91,7 +91,7 @@ achieve near-CD quality, an important specification to enable dual-channel ISDN
 static void DISABLE () {}
 static void WHATISTHIS () {}
 
-p_func ABI3[0x20] = {
+p_func ABI3[NUM_ABI_COMMANDS] = {
     DISABLE   ,ADPCM3    ,CLEARBUFF3,ENVMIXER3 ,LOADBUFF3 ,RESAMPLE3 ,SAVEBUFF3 ,MP3       ,
     MP3ADDY   ,SETVOL3   ,DMEMMOVE3 ,LOADADPCM3,MIXER3   ,INTERLEAVE3,WHATISTHIS,SETLOOP3  ,
     SPNOOP    ,SPNOOP    ,SPNOOP    ,SPNOOP    ,SPNOOP    ,SPNOOP    ,SPNOOP    ,SPNOOP    ,
