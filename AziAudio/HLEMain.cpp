@@ -136,14 +136,18 @@ void HLEStart() {
 				// RogueSquadron, ResidentEvil2, PolarisSnoCross,
 				// TheWorldIsNotEnough, RugratsInParis, NBAShowTime,
 				// HydroThunder, Tarzan, GauntletLegend, Rush2049
-				ProcessMusyX_v1(); return;
-			case 0x0000127c: memcpy(ABI, ABI3, 0x20 * 4); break; // naudio (many games)
-			case 0x00001280: memcpy(ABI, ABI3, 0x20 * 4); break; // BanjoKazooie
-			case 0x1c58126c: memcpy(ABI, ABI3, 0x20 * 4); break; // DonkeyKong
-			case 0x1ae8143c: memcpy(ABI, ABI3, 0x20 * 4); break; // BanjoTooie, JetForceGemini, MickeySpeedWayUSA, PerfectDark
-			case 0x1ab0140c: memcpy(ABI, ABI3, 0x20 * 4); break; // ConkerBadFurDay
-			default: return;
+				ProcessMusyX_v1();
+				return;
+			default:
+				return;
+
+			case 0x0000127c:  break; // naudio (many games)
+			case 0x00001280:  break; // BanjoKazooie
+			case 0x1c58126c:  break; // DonkeyKong
+			case 0x1ae8143c:  break; // BanjoTooie, JetForceGemini, MickeySpeedWayUSA, PerfectDark
+			case 0x1ab0140c:  break; // ConkerBadFurDay
 		}
+		memcpy(ABI, ABI3, 0x20 * 4);
 	}
 	else 
 	{
@@ -161,20 +165,25 @@ void HLEStart() {
 		{ 
 			switch (*(u32*)(UData + (0x10))) // ABI2 and MusyX
 			{
-				case 0x11181350: memcpy(ABI, ABI2, 0x20 * 4); break; // MarioKart, WaveRace (E) 
-				case 0x111812e0: memcpy(ABI, ABI2, 0x20 * 4); break; // StarFox (J) 
-				case 0x110412ac: memcpy(ABI, ABI2, 0x20 * 4); break; // WaveRace (J RevB) 
-				case 0x110412cc: memcpy(ABI, ABI2, 0x20 * 4); break; // StarFox/LylatWars (except J) 
-				case 0x1cd01250: memcpy(ABI, ABI2, 0x20 * 4); break; // FZeroX 
-				case 0x1f08122c: memcpy(ABI, ABI2, 0x20 * 4); break; // YoshisStory 
-				case 0x1f38122c: memcpy(ABI, ABI2, 0x20 * 4); break; // 1080° Snowboarding 
-				case 0x1f681230: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda OoT / Zelda MM (J, J RevA) 
-				case 0x1f801250: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda MM (except J, J RevA, E Beta), PokemonStadium 2 
-				case 0x109411f8: memcpy(ABI, ABI2, 0x20 * 4); break; // Zelda MM (E Beta)
-				case 0x1eac11b8: memcpy(ABI, ABI2, 0x20 * 4); break; // AnimalCrossing 
-				case 0x00010010: ProcessMusyX_v2(); return; // MusyX v2 (IndianaJones, BattleForNaboo)	
-				default: return;
+				case 0x00010010: // MusyX v2 (IndianaJones, BattleForNaboo)
+					ProcessMusyX_v2();
+					return;
+				default:
+					return;
+
+				case 0x11181350:  break; // MarioKart, WaveRace (E)
+				case 0x111812e0:  break; // StarFox (J)
+				case 0x110412ac:  break; // WaveRace (J RevB)
+				case 0x110412cc:  break; // StarFox/LylatWars (except J)
+				case 0x1cd01250:  break; // FZeroX
+				case 0x1f08122c:  break; // YoshisStory
+				case 0x1f38122c:  break; // 1080° Snowboarding
+				case 0x1f681230:  break; // Zelda OoT / Zelda MM (J, J RevA)
+				case 0x1f801250:  break; // Zelda MM (except J, J RevA, E Beta), PokemonStadium 2
+				case 0x109411f8:  break; // Zelda MM (E Beta)
+				case 0x1eac11b8:  break; // AnimalCrossing
 			}
+			memcpy(ABI, ABI2, 0x20 * 4);
 		}
 	}
 
