@@ -153,7 +153,7 @@ void HLEStart() {
 			{
 				case 0x1e24138c: memcpy(ABI, ABI1, 0x20 * 4); break;
 				case 0x1dc8138c: memcpy(ABI, ABI1GE, 0x20 * 4); break; // GoldenEye
-				case 0x1e3c1390: memcpy(ABI, ABI1, 0x20 * 4); break; // BlastCorp, DiddyKongRacing
+				case 0x1e3c1390: memcpy(ABI, ABI1GE, 0x20 * 4); break; // BlastCorp, DiddyKongRacing
 				default: return;
 			}
 		}

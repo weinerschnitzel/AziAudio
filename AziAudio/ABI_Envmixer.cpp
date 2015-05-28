@@ -319,6 +319,133 @@ void ENVMIXER() {
 	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
 }
 
+void ENVMIXER_GE() {
+	u8 flags = (u8)((k0 >> 16) & 0xff);
+	u32 addy = (t9 & 0xFFFFFF);// + SEGMENTS[(t9>>24)&0xf];
+	s16* inp = LoadBufferSpace(AudioInBuffer);
+	s16* out = LoadBufferSpace(AudioOutBuffer);
+	s16* aux1 = LoadBufferSpace(AudioAuxA);
+	s16* aux2 = LoadBufferSpace(AudioAuxC);
+	s16* aux3 = LoadBufferSpace(AudioAuxE);
+	s32 MainR;
+	s32 MainL;
+	s32 AuxR;
+	s32 AuxL;
+	s32 i1;
+	WORD AuxIncRate = 1;
+	s16 zero[8];
+	memset(zero, 0, sizeof(s16)* 8);
+	s32 LAdder, LAcc, LVol;
+	s32 RAdder, RAcc, RVol;
+	s16 RSig, LSig; // Most significant part of the Ramp Value
+	s16 Wet, Dry;
+	s16 LTrg, RTrg;
+
+	if (flags & A_INIT) {
+		LAdder = VolRamp_Left / 8;
+		LAcc = 0;
+		LVol = Vol_Left;
+		LSig = (s16)(VolRamp_Left >> 16);
+
+		RAdder = VolRamp_Right / 8;
+		RAcc = 0;
+		RVol = Vol_Right;
+		RSig = (s16)(VolRamp_Right >> 16);
+
+		Wet = (s16)Env_Wet; Dry = (s16)Env_Dry; // Save Wet/Dry values
+		LTrg = VolTrg_Left; RTrg = VolTrg_Right; // Save Current Left/Right Targets
+	}
+	else {
+		memcpy((u8 *)hleMixerWorkArea, rdram + addy, 80);
+		Wet = LoadMixer16(0); // 0-1
+		Dry = LoadMixer16(2); // 2-3
+		LTrg = LoadMixer16(4); // 4-5
+		RTrg = LoadMixer16(6); // 6-7
+		LAdder = LoadMixer32(8); // 8-9 (hleMixerWorkArea is a 16bit pointer)
+		RAdder = LoadMixer32(10); // 10-11
+		LAcc = LoadMixer32(12); // 12-13
+		RAcc = LoadMixer32(14); // 14-15
+		LVol = LoadMixer32(16); // 16-17
+		RVol = LoadMixer32(18); // 18-19
+		LSig = LoadMixer16(20); // 20-21
+		RSig = LoadMixer16(22); // 22-23
+	}
+
+	
+	if(!(flags&A_AUX)) {
+		AuxIncRate=0;
+		aux2=aux3=zero;
+	}
+
+	for (int y = 0; y < (AudioCount / 2); y++) {
+
+		// Left
+		LAcc += LAdder;
+		LVol += (LAcc >> 16);
+		LAcc &= 0xFFFF;
+
+		// Right
+		RAcc += RAdder;
+		RVol += (RAcc >> 16);
+		RAcc &= 0xFFFF;
+		// ****************************************************************
+		// Clamp Left
+		if (LSig >= 0) { // VLT
+			if (LVol > LTrg) {
+				LVol = LTrg;
+			}
+		}
+		else { // VGE
+			if (LVol < LTrg) {
+				LVol = LTrg;
+			}
+		}
+
+		// Clamp Right
+		if (RSig >= 0) { // VLT
+			if (RVol > RTrg) {
+				RVol = RTrg;
+			}
+		}
+		else { // VGE
+			if (RVol < RTrg) {
+				RVol = RTrg;
+			}
+		}
+		// ****************************************************************
+		MainL = MultQ15(Dry, (s16)(LVol&0xFFFF));
+		MainR = MultQ15(Dry, (s16)(RVol & 0xFFFF));
+		i1 = inp[MES(y)];
+
+		out[MES(y)] = pack_signed(out[MES(y)] + MultQ15((s16)i1, (s16)MainL));
+		aux1[MES(y)] = pack_signed(aux1[MES(y)] + MultQ15((s16)i1, (s16)MainR));
+
+		// ****************************************************************
+		if (!(flags&A_AUX)) {
+			AuxL = MultQ15(Wet, (s16)(LVol & 0xFFFF));
+			AuxR = MultQ15(Wet, (s16)(RVol & 0xFFFF));
+
+			aux2[MES(y)] = pack_signed(aux2[MES(y)] + MultQ15((s16)i1, (s16)AuxL));
+			aux3[MES(y)] = pack_signed(aux3[MES(y)] + MultQ15((s16)i1, (s16)AuxR));
+		}
+	}
+	//}
+
+	SaveMixer16(0, Wet); // 0-1
+	SaveMixer16(2, Dry); // 2-3
+	SaveMixer16(4, LTrg); // 4-5
+	SaveMixer16(6, RTrg); // 6-7
+	SaveMixer32(8, LAdder); // 8-9 (hleMixerWorkArea is a 16bit pointer)
+	SaveMixer32(10, RAdder); // 10-11
+	SaveMixer32(12, LAcc); // 12-13
+	SaveMixer32(14, RAcc); // 14-15
+	SaveMixer32(16, LVol); // 16-17
+	SaveMixer32(18, RVol); // 18-19
+	SaveMixer16(20, LSig); // 20-21
+	SaveMixer16(22, RSig); // 22-23
+	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
+}
+
 void ENVMIXER2() {
 	//fprintf (dfile, "ENVMIXER: k0 = %08X, t9 = %08X\n", k0, t9);
 
@@ -537,15 +664,19 @@ void SETVOL() {
 	u8 flags = (u8)((k0 >> 16) & 0xff);
 
 	if (flags & A_AUX) {
+		Env_Dry = (s16)(k0 & 0xffff);
+		Env_Wet = (u16)((t9 & 0xffff));
 		return;
 	} 
 	else if (flags & A_VOL) // Set the Source(start) Volumes 
 	{
 		if (flags & A_LEFT) 
 		{
+			Vol_Left = (s16)(k0 & 0xffff);
 		}
 		else  // A_RIGHT 
 		{
+			Vol_Right = (s16)(k0 & 0xffff);
 		}
 		return;
 	}
@@ -553,10 +684,12 @@ void SETVOL() {
 	{
 		if (flags & A_LEFT)  // Set the Ramping values Target, Ramp 
 		{
+			VolTrg_Left = *(s16 *)&k0;
 			VolRamp_Left = *(s32 *)&t9;
 		}
 		else // A_RIGHT
 		{
+			VolTrg_Right = *(s16 *)&k0;
 			VolRamp_Right = *(s32 *)&t9;
 		}
 	}

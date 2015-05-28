@@ -79,7 +79,7 @@ void ADPCM(); void ADPCM2(); void ADPCM3();
 void CLEARBUFF(); void CLEARBUFF2(); void CLEARBUFF3();
 void DMEMMOVE(); void DMEMMOVE2(); void DMEMMOVE3();
 void DUPLICATE2();
-void ENVMIXER(); void ENVMIXER2(); void ENVMIXER3();
+void ENVMIXER(); void ENVMIXER2(); void ENVMIXER3(); void ENVMIXER_GE();
 void ENVSETUP1(); void ENVSETUP2();
 void FILTER2();
 void HILOGAIN();
