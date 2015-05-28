@@ -534,49 +534,31 @@ void ENVMIXER3() {
 }
 
 void SETVOL() {
-	// Might be better to unpack these depending on the flags...
 	u8 flags = (u8)((k0 >> 16) & 0xff);
-	u16 vol = (s16)(k0 & 0xffff);
-	//u16 voltarg = (u16)((t9 >> 16) & 0xffff);
-	u16 volrate = (u16)((t9 & 0xffff));
 
 	if (flags & A_AUX) {
-		Env_Dry = (s16)vol;			// m_MainVol
-		Env_Wet = (s16)volrate;		// m_AuxVol
 		return;
-	}
-
-	if (flags & A_VOL) { // Set the Source(start) Volumes
-		if (flags & A_LEFT) {
-			Vol_Left = (s16)vol;	// m_LeftVolume
+	} 
+	else if (flags & A_VOL) // Set the Source(start) Volumes 
+	{
+		if (flags & A_LEFT) 
+		{
 		}
-		else { // A_RIGHT
-			Vol_Right = (s16)vol;	// m_RightVolume
+		else  // A_RIGHT 
+		{
 		}
 		return;
 	}
-
-	//0x370				Loop Value (shared location)
-	//0x370				Target Volume (Left)
-	//u16 VolRamp_Left;	// 0x0012(T8)
-	if (flags & A_LEFT) { // Set the Ramping values Target, Ramp
-		//loopval = (((u32)vol << 0x10) | (u32)voltarg);
-		VolTrg_Left = *(s16 *)&k0;		// m_LeftVol
-		//VolRamp_Left = (s32)t9;
-		VolRamp_Left = *(s32 *)&t9;//(u16)(t9) | (s32)(s16)(t9 << 0x10);
-		//fprintf (dfile, "Ramp Left: %f\n", (float)VolRamp_Left/65536.0);
-		//fprintf (dfile, "Ramp Left: %08X\n", t9);
-		//VolRamp_Left = (s16)voltarg;	// m_LeftVolTarget
-		//VolRate_Left = (s16)volrate;	// m_LeftVolRate
-	}
-	else { // A_RIGHT
-		VolTrg_Right = *(s16 *)&k0;		// m_RightVol
-		//VolRamp_Right = (s32)t9;
-		VolRamp_Right = *(s32 *)&t9;//(u16)(t9 >> 0x10) | (s32)(s16)(t9 << 0x10);
-		//fprintf (dfile, "Ramp Right: %f\n", (float)VolRamp_Right/65536.0);
-		//fprintf (dfile, "Ramp Right: %08X\n", t9);
-		//VolRamp_Right = (s16)voltarg;	// m_RightVolTarget
-		//VolRate_Right = (s16)volrate;	// m_RightVolRate
+	else
+	{
+		if (flags & A_LEFT)  // Set the Ramping values Target, Ramp 
+		{
+			VolRamp_Left = *(s32 *)&t9;
+		}
+		else // A_RIGHT
+		{
+			VolRamp_Right = *(s32 *)&t9;
+		}
 	}
 }
 
