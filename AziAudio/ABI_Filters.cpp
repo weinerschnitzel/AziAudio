@@ -143,17 +143,7 @@ void FILTER2() {
 			out1[i]  += 0x4000;
 		for (i = 0; i < 8; i++)
 			out1[i] >>= 15;
-#if 1
-/*
- * Clamp the result to fit within the legal range of 16-bit short elements.
- * VMULF, I know, never needs this in games, because the only way for VMULF
- * to produce an out-of-range value is if audio ucode does -32768 * -32768.
- */
-		for (i = 0; i < 8; i++)
-			assert(out1[i] >= -32768 && out1[i] <= +32767);
-		for (i = 0; i < 8; i++)
-			outp[i] = pack_signed(out1[i]);
-#endif
+		vsats128(&outp[0], &out1[0]);
 		outp += 8;
 
 		inp1 = inp2 + 0;
