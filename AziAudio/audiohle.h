@@ -67,7 +67,6 @@ extern u32 t9, k0;
 
 // These must be defined...
 #include "AudioSpec.h"
-#define dmem	AudioInfo.DMEM
 #define imem	AudioInfo.IMEM
 #define rdram	AudioInfo.RDRAM
 extern u8 * DMEM;
