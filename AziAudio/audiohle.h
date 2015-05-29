@@ -70,6 +70,9 @@ extern u32 t9, k0;
 #define dmem	AudioInfo.DMEM
 #define imem	AudioInfo.IMEM
 #define rdram	AudioInfo.RDRAM
+extern u8 * DMEM;
+extern u8 * IMEM;
+extern u8 * DRAM;
 
 // Use these functions to interface with the HLE Audio...
 void HLEStart ();
