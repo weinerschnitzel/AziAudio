@@ -170,7 +170,7 @@ void ENVMIXER() {
 	else {
 		// Load LVol, RVol, LAcc, and RAcc (all 32bit)
 		// Load Wet, Dry, LTrg, RTrg
-		memcpy((u8 *)hleMixerWorkArea, (rdram + addy), 80);
+		memcpy((u8 *)hleMixerWorkArea, DRAM + addy, 80);
 		Wet = LoadMixer16(0); // 0-1
 		Dry = LoadMixer16(2); // 2-3
 		LTrg = LoadMixer32(4); // 4-5
@@ -316,7 +316,7 @@ void ENVMIXER() {
 	SaveMixer32(14, RAdderEnd); // 14-15
 	SaveMixer32(16, LAdderStart); // 12-13
 	SaveMixer32(18, RAdderStart); // 14-15
-	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
+	memcpy(DRAM + addy, (u8 *)hleMixerWorkArea, 80);
 }
 
 void ENVMIXER_GE() {
@@ -356,7 +356,7 @@ void ENVMIXER_GE() {
 		LTrg = VolTrg_Left; RTrg = VolTrg_Right; // Save Current Left/Right Targets
 	}
 	else {
-		memcpy((u8 *)hleMixerWorkArea, rdram + addy, 80);
+		memcpy((u8 *)hleMixerWorkArea, DRAM + addy, 80);
 		Wet = LoadMixer16(0); // 0-1
 		Dry = LoadMixer16(2); // 2-3
 		LTrg = LoadMixer16(4); // 4-5
@@ -443,7 +443,7 @@ void ENVMIXER_GE() {
 	SaveMixer32(18, RVol); // 18-19
 	SaveMixer16(20, LSig); // 20-21
 	SaveMixer16(22, RSig); // 22-23
-	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
+	memcpy(DRAM + addy, (u8 *)hleMixerWorkArea, 80);
 }
 
 void ENVMIXER2() {
@@ -570,7 +570,7 @@ void ENVMIXER3() {
 		LTrg = VolTrg_Left; RTrg = VolTrg_Right; // Save Current Left/Right Targets
 	}
 	else {
-		memcpy((u8 *)hleMixerWorkArea, rdram + addy, 80);
+		memcpy((u8 *)hleMixerWorkArea, DRAM + addy, 80);
 		Wet = LoadMixer16(0); // 0-1
 		Dry = LoadMixer16(2); // 2-3
 		LTrg = LoadMixer16(4); // 4-5
@@ -657,7 +657,7 @@ void ENVMIXER3() {
 	SaveMixer16(20, LSig); // 20-21
 	SaveMixer16(22, RSig); // 22-23
 	//*(u32 *)(hleMixerWorkArea + 24) = 0x13371337; // 22-23
-	memcpy(rdram + addy, (u8 *)hleMixerWorkArea, 80);
+	memcpy(DRAM + addy, (u8 *)hleMixerWorkArea, 80);
 }
 
 void SETVOL() {

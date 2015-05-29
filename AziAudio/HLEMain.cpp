@@ -125,7 +125,7 @@ void HLEStart() {
 	isMKABI = false;
 	isZeldaABI = false;
 
-	u8  *UData = rdram + UCData;
+	u8 * UData = DRAM + UCData;
 
 	// Detect uCode
 	if (((u32*)UData)[0] != 0x1) {
