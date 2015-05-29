@@ -497,14 +497,17 @@ void InnerLoop () {
 		v2 = v4 = v6 = v8 = 0;
 
 		//addptr = t1;
+		for (i = 0; i < 8; i++)
+			v2 += CalcDeWindow(addptr + 0x00 + 2*i, offset + 0x00 + i);
+		for (i = 0; i < 8; i++)
+			v4 += CalcDeWindow(addptr + 0x10 + 2*i, offset + 0x08 + i);
+		for (i = 0; i < 8; i++)
+			v6 += CalcDeWindow(addptr + 0x20 + 2*i, offset + 0x20 + i);
+		for (i = 0; i < 8; i++)
+			v8 += CalcDeWindow(addptr + 0x30 + 2*i, offset + 0x28 + i);
+		addptr += 8 * 2;
+		offset += 8 * 1;
 
-		for (int i = 7; i >= 0; i--) {
-			v2 += CalcDeWindow(addptr + 0x00, offset + 0x00);
-			v4 += CalcDeWindow(addptr + 0x10, offset + 0x08);
-			v6 += CalcDeWindow(addptr + 0x20, offset + 0x20);
-			v8 += CalcDeWindow(addptr + 0x30, offset + 0x28);
-			addptr += 2; offset++;
-		}
 		s32 v0  = v2 + v4;
 		s32 v18 = v6 + v8;
 		//Clamp(v0);
@@ -519,14 +522,17 @@ void InnerLoop () {
 
 	offset = 0x10 - (t4 >> 1) + 8 * 0x40;
 	v2 = v4 = 0;
-	for (int i = 0; i < 4; i++) {
-		v2 += CalcDeWindow(addptr + 0x00, offset + 0x00);
-		v2 += CalcDeWindow(addptr + 0x10, offset + 0x08);
-		addptr += 2; offset++;
-		v4 += CalcDeWindow(addptr + 0x00, offset + 0x00);
-		v4 += CalcDeWindow(addptr + 0x10, offset + 0x08);
-		addptr += 2; offset++;
-	}
+	for (i = 0; i < 4; i++)
+		v2 += CalcDeWindow(addptr + 0x00 + 4*i + 0, offset + 0x00 + 2*i + 0);
+	for (i = 0; i < 4; i++)
+		v2 += CalcDeWindow(addptr + 0x10 + 4*i + 0, offset + 0x08 + 2*i + 0);
+	for (i = 0; i < 4; i++)
+		v4 += CalcDeWindow(addptr + 0x00 + 4*i + 2, offset + 0x00 + 2*i + 1);
+	for (i = 0; i < 4; i++)
+		v4 += CalcDeWindow(addptr + 0x10 + 4*i + 2, offset + 0x08 + 2*i + 1);
+	addptr += 2 * 4 * 2;
+	offset += 2 * 4 * 1;
+
 	s32 mult6 = *(s32 *)(mp3data + 0xCE8);
 	s32 mult4 = *(s32 *)(mp3data + 0xCEC);
 	if (t4 & 0x2) {
@@ -545,17 +551,25 @@ void InnerLoop () {
 
 		offset = (0x22F - (t4 >> 1) + x * 0x40);
 
-		for (int i = 0; i < 4; i++) {
-			v2 += CalcDeWindow(addptr + 0 + 0x20, offset + 0x00);
-			v2 -= CalcDeWindow(addptr + 2 + 0x20, offset + 0x01);
-			v4 += CalcDeWindow(addptr + 0 + 0x30, offset + 0x08);
-			v4 -= CalcDeWindow(addptr + 2 + 0x30, offset + 0x09);
-			v6 += CalcDeWindow(addptr + 0 + 0x00, offset + 0x20);
-			v6 -= CalcDeWindow(addptr + 2 + 0x00, offset + 0x21);
-			v8 += CalcDeWindow(addptr + 0 + 0x10, offset + 0x28);
-			v8 -= CalcDeWindow(addptr + 2 + 0x10, offset + 0x29);
-			addptr += 4; offset += 2;
-		}
+		for (i = 0; i < 4; i++)
+			v2 += CalcDeWindow(addptr + 0 + 0x20 + 4*i, offset + 0x00 + 2*i);
+		for (i = 0; i < 4; i++)
+			v2 -= CalcDeWindow(addptr + 2 + 0x20 + 4*i, offset + 0x01 + 2*i);
+		for (i = 0; i < 4; i++)
+			v4 += CalcDeWindow(addptr + 0 + 0x30 + 4*i, offset + 0x08 + 2*i);
+		for (i = 0; i < 4; i++)
+			v4 -= CalcDeWindow(addptr + 2 + 0x30 + 4*i, offset + 0x09 + 2*i);
+		for (i = 0; i < 4; i++)
+			v6 += CalcDeWindow(addptr + 0 + 0x00 + 4*i, offset + 0x20 + 2*i);
+		for (i = 0; i < 4; i++)
+			v6 -= CalcDeWindow(addptr + 2 + 0x00 + 4*i, offset + 0x21 + 2*i);
+		for (i = 0; i < 4; i++)
+			v8 += CalcDeWindow(addptr + 0 + 0x10 + 4*i, offset + 0x28 + 2*i);
+		for (i = 0; i < 4; i++)
+			v8 -= CalcDeWindow(addptr + 2 + 0x10 + 4*i, offset + 0x29 + 2*i);
+		addptr += 4 * 4;
+		offset += 4 * 2;
+
 		s32 v0 = v2 + v4;
 		s32 v18 = v6 + v8;
 		//Clamp(v0);
