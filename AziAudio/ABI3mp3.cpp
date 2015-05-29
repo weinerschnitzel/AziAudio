@@ -577,17 +577,17 @@ void InnerLoop () {
 	hi0 = (int)hi0 >> 0x10;
 	hi1 = (int)hi1 >> 0x10;
 	for (int i = 0; i < 8; i++) {
-		acc[ 0][i] = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x40)) * hi0);
-		*(s16 *)((u8 *)mp3data + HES(tmp - 0x40)) = (s16)acc[ 0][i];
+		acc[ 0][i] = (s32)*(s16 *)(mp3data + HES(tmp - 0x40)) * hi0;
+		*(s16 *)((u8 *)mp3data + HES(tmp - 0x40)) = pack_signed(acc[ 0][i]);
 
-		acc[17][i] = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x30)) * hi0);
-		*(s16 *)((u8 *)mp3data + HES(tmp - 0x30)) = (s16)acc[17][i];
+		acc[17][i] = (s32)*(s16 *)(mp3data + HES(tmp - 0x30)) * hi0;
+		*(s16 *)((u8 *)mp3data + HES(tmp - 0x30)) = pack_signed(acc[17][i]);
 
-		acc[ 2][i] = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x1E)) * hi1);
-		*(s16 *)((u8 *)mp3data + HES(tmp - 0x1E)) = (s16)acc[ 2][i];
+		acc[ 2][i] = (s32)*(s16 *)(mp3data + HES(tmp - 0x1E)) * hi1;
+		*(s16 *)((u8 *)mp3data + HES(tmp - 0x1E)) = pack_signed(acc[ 2][i]);
 
-		acc[ 4][i] = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x0E)) * hi1);
-		*(s16 *)((u8 *)mp3data + HES(tmp - 0x0E)) = (s16)acc[ 4][i];
+		acc[ 4][i] = (s32)*(s16 *)(mp3data + HES(tmp - 0x0E)) * hi1;
+		*(s16 *)((u8 *)mp3data + HES(tmp - 0x0E)) = pack_signed(acc[ 4][i]);
 		tmp += 2;
 	}
 }
