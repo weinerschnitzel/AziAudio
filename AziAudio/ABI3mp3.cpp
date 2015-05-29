@@ -575,17 +575,21 @@ void InnerLoop () {
 	*/
 	hi0 = (int)hi0 >> 0x10;
 	hi1 = (int)hi1 >> 0x10;
-	for (int i = 0; i < 8; i++) {
+	for (i = 0; i < 8; i++)
 		acc[ 0][i] = (s32)*(s16 *)(mp3data + HES(outPtr + 2*i - 0x40)) * hi0;
-		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x40)) = pack_signed(acc[ 0][i]);
-
+	for (i = 0; i < 8; i++)
 		acc[17][i] = (s32)*(s16 *)(mp3data + HES(outPtr + 2*i - 0x30)) * hi0;
-		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x30)) = pack_signed(acc[17][i]);
-
+	for (i = 0; i < 8; i++)
 		acc[ 2][i] = (s32)*(s16 *)(mp3data + HES(outPtr + 2*i - 0x1E)) * hi1;
-		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x1E)) = pack_signed(acc[ 2][i]);
-
+	for (i = 0; i < 8; i++)
 		acc[ 4][i] = (s32)*(s16 *)(mp3data + HES(outPtr + 2*i - 0x0E)) * hi1;
+
+	for (i = 0; i < 8; i++)
+		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x40)) = pack_signed(acc[ 0][i]);
+	for (i = 0; i < 8; i++)
+		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x30)) = pack_signed(acc[17][i]);
+	for (i = 0; i < 8; i++)
+		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x1E)) = pack_signed(acc[ 2][i]);
+	for (i = 0; i < 8; i++)
 		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x0E)) = pack_signed(acc[ 4][i]);
-	}
 }
