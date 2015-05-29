@@ -522,14 +522,10 @@ void InnerLoop () {
 
 	offset = 0x10 - (t4 >> 1) + 8 * 0x40;
 	v2 = v4 = 0;
-	for (i = 0; i < 4; i++)
-		v2 += CalcDeWindow(addptr + 0x00 + 4*i + 0, offset + 0x00 + 2*i + 0);
-	for (i = 0; i < 4; i++)
-		v2 += CalcDeWindow(addptr + 0x10 + 4*i + 0, offset + 0x08 + 2*i + 0);
-	for (i = 0; i < 4; i++)
-		v4 += CalcDeWindow(addptr + 0x00 + 4*i + 2, offset + 0x00 + 2*i + 1);
-	for (i = 0; i < 4; i++)
-		v4 += CalcDeWindow(addptr + 0x10 + 4*i + 2, offset + 0x08 + 2*i + 1);
+	for (i = 0; i < 8; i++)
+		v2 += CalcDeWindow(addptr + 4*i + 0, offset + 2*i + 0);
+	for (i = 0; i < 8; i++)
+		v4 += CalcDeWindow(addptr + 4*i + 2, offset + 2*i + 1);
 	addptr += 2 * 4 * 2;
 	offset += 2 * 4 * 1;
 
