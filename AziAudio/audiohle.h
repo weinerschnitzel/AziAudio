@@ -61,6 +61,12 @@
  */
 #define NUM_ABI_COMMANDS    32
 
+/*
+ * number of elements in SIMD processor
+ * In the RSP's case, this is always 8 elements per vector.
+ */
+#define N       8
+
 //------------------------------------------------------------------------------------------
 
 extern u32 t9, k0;
@@ -117,6 +123,12 @@ extern u16 AudioAuxA, AudioAuxC, AudioAuxE;
 extern u32 loopval; // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
 extern bool isMKABI;
 extern bool isZeldaABI;
+
+/*
+ * Each vector accumulator element is 48 bits, but that is a technical
+ * advancement.  Only 32 bits at a time can be accessed during clamping.
+ */
+extern s32 acc[32][N];
 
 /*
  * Include the SSE2 headers if MSVC is set to target SSE2 in code generation.

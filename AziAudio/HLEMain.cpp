@@ -36,6 +36,8 @@ u32 loopval;			// 0x0010(T8) // Value set by A_SETLOOP : Possible conflict with 
 bool isMKABI = false;
 bool isZeldaABI = false;
 
+s32 acc[32][N];
+
 // Audio UCode lists
 //     Dummy UCode Handler for UCode detection... (Will always assume UCode1 until the nth list is executed)
 extern p_func SafeABI[NUM_ABI_COMMANDS];
