@@ -573,23 +573,27 @@ void InnerLoop () {
 	assert((hi0 & 0xffff) == 0);
 	assert((hi1 & 0xffff) == 0);
 	*/
-	hi0 = (int)hi0 >> 0x10;
-	hi1 = (int)hi1 >> 0x10;
+	hi0 = (s32)hi0 >> 16;
+	hi1 = (s32)hi1 >> 16;
 	for (i = 0; i < 8; i++)
-		acc[ 0][i] = (s32)*(s16 *)(mp3data + HES(outPtr + 2*i - 0x40)) * hi0;
+		acc[ 0][i] = *(s16 *)(mp3data + HES(outPtr - 0x40 + 2*i)) * hi0;
 	for (i = 0; i < 8; i++)
-		acc[17][i] = (s32)*(s16 *)(mp3data + HES(outPtr + 2*i - 0x30)) * hi0;
+		acc[17][i] = *(s16 *)(mp3data + HES(outPtr - 0x30 + 2*i)) * hi0;
 	for (i = 0; i < 8; i++)
-		acc[ 2][i] = (s32)*(s16 *)(mp3data + HES(outPtr + 2*i - 0x1E)) * hi1;
+		acc[ 2][i] = *(s16 *)(mp3data + HES(outPtr - 0x1E + 2*i)) * hi1;
 	for (i = 0; i < 8; i++)
-		acc[ 4][i] = (s32)*(s16 *)(mp3data + HES(outPtr + 2*i - 0x0E)) * hi1;
+		acc[ 4][i] = *(s16 *)(mp3data + HES(outPtr - 0x0E + 2*i)) * hi1;
 
+	vsats128(&acc_clamped[0], acc[ 0]);
 	for (i = 0; i < 8; i++)
-		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x40)) = pack_signed(acc[ 0][i]);
+		*(s16 *)(mp3data + HES(outPtr - 0x40 + 2*i)) = acc_clamped[i];
+	vsats128(&acc_clamped[0], acc[17]);
 	for (i = 0; i < 8; i++)
-		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x30)) = pack_signed(acc[17][i]);
+		*(s16 *)(mp3data + HES(outPtr - 0x30 + 2*i)) = acc_clamped[i];
+	vsats128(&acc_clamped[0], acc[ 2]);
 	for (i = 0; i < 8; i++)
-		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x1E)) = pack_signed(acc[ 2][i]);
+		*(s16 *)(mp3data + HES(outPtr - 0x1E + 2*i)) = acc_clamped[i];
+	vsats128(&acc_clamped[0], acc[ 4]);
 	for (i = 0; i < 8; i++)
-		*(s16 *)(mp3data + HES(outPtr + 2*i - 0x0E)) = pack_signed(acc[ 4][i]);
+		*(s16 *)(mp3data + HES(outPtr - 0x0E + 2*i)) = acc_clamped[i];
 }

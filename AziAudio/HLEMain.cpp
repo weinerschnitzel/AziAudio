@@ -37,6 +37,7 @@ bool isMKABI = false;
 bool isZeldaABI = false;
 
 s32 acc[32][N];
+s16 acc_clamped[N];
 
 // Audio UCode lists
 //     Dummy UCode Handler for UCode detection... (Will always assume UCode1 until the nth list is executed)

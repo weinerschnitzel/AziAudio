@@ -129,6 +129,7 @@ extern bool isZeldaABI;
  * advancement.  Only 32 bits at a time can be accessed during clamping.
  */
 extern s32 acc[32][N];
+extern s16 acc_clamped[N];
 
 /*
  * Include the SSE2 headers if MSVC is set to target SSE2 in code generation.
