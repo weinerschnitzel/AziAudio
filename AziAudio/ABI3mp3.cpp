@@ -288,7 +288,7 @@ void InnerLoop () {
 	for (i = 16; i < 32; i++)
 		v[i] = GetData(2 * i);
 	for (i = 0; i < 16; i++)
-		v[i] += v[(32 - i) ^ (i / 2) ^ (i / 4) ^ (i / 8)];
+		v[i] += v[(31 - i) ^ (i / 2) ^ (i / 4) ^ (i / 8)];
 
 	// Part 2-4
 	MP3AB0 ();
@@ -377,7 +377,7 @@ void InnerLoop () {
 	for (i = 16; i < 32; i++)
 		v[i] = GetData(2 * i);
 	for (i = 0; i < 16; i++)
-		v[i] -= v[(32 - i) ^ (i / 2) ^ (i / 4) ^ (i / 8)];
+		v[i] -= v[(31 - i) ^ (i / 2) ^ (i / 4) ^ (i / 8)];
 
 	//0, 1, 3, 2, 7, 6, 4, 5, 7, 6, 4, 5, 0, 1, 3, 2
 	const u16 LUT6[16] = {
