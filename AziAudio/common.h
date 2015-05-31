@@ -64,14 +64,21 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #endif
 
 #ifdef _DEBUG
-#define PLUGIN_DEBUG " (Debug)"
+#define PLUGIN_DEBUG "Debug "
 #else
 #define PLUGIN_DEBUG ""
 #endif
 
+#ifdef __GNUC__
+#define PLUGIN_BUILDSYS "Mingw"
+#else
+#define PLUGIN_BUILDSYS "MSVC"
+#endif
+
 #define PLUGIN_RELEASE " v0.70 "
 #define PLUGIN_BUILD "WIP 5" \
-	PLUGIN_DEBUG
+	"(" PLUGIN_DEBUG \
+	    PLUGIN_BUILDSYS ")"
 
 #define PLUGIN_VERSION \
 "Azimer's " \
