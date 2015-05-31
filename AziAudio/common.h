@@ -77,8 +77,8 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 
 #define PLUGIN_RELEASE " v0.70 "
 #define PLUGIN_BUILD "WIP 5" \
-	"(" PLUGIN_DEBUG \
-	    PLUGIN_BUILDSYS ")"
+	" (" PLUGIN_DEBUG \
+	PLUGIN_BUILDSYS ")"
 
 #define PLUGIN_VERSION \
 "Azimer's " \
