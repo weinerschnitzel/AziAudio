@@ -58,7 +58,9 @@ void RedirectIOToConsole();
 HINSTANCE hInstance;
 static bool	bAbortAiUpdate = false;
 
-
+#ifdef __GNUC__
+extern "C"
+#endif
 BOOL WINAPI DllMain(
   HINSTANCE hinstDLL,  // handle to DLL module
   DWORD fdwReason,     // reason for calling function
