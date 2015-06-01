@@ -366,27 +366,13 @@ void ENVMIXER_GE() {
 		RAcc &= 0xFFFF;
 		// ****************************************************************
 		// Clamp Left
-		if (LSig >= 0) { // VLT
-			if (LVol > LTrg) {
-				LVol = LTrg;
-			}
-		}
-		else { // VGE
-			if (LVol < LTrg) {
-				LVol = LTrg;
-			}
+		if ((LSig >= 0 && LVol > LTrg) || (LSig < 0 && LVol < LTrg)) { // VLT or VGE
+			LVol = LTrg;
 		}
 
 		// Clamp Right
-		if (RSig >= 0) { // VLT
-			if (RVol > RTrg) {
-				RVol = RTrg;
-			}
-		}
-		else { // VGE
-			if (RVol < RTrg) {
-				RVol = RTrg;
-			}
+		if ((RSig >= 0 && RVol > RTrg) || (RSig < 0 && RVol < RTrg)) { // VLT or VGE
+			RVol = RTrg;
 		}
 		// ****************************************************************
 		MainL = MultQ15(Dry, (s16)(LVol&0xFFFF));
@@ -580,27 +566,13 @@ void ENVMIXER3() {
 		RAcc &= 0xFFFF;
 		// ****************************************************************
 		// Clamp Left
-		if (LSig >= 0) { // VLT
-			if (LVol > LTrg) {
-				LVol = LTrg;
-			}
-		}
-		else { // VGE
-			if (LVol < LTrg) {
-				LVol = LTrg;
-			}
+		if ((LSig >= 0 && LVol > LTrg) || (LSig < 0 && LVol < LTrg)) { // VLT or VGE
+			LVol = LTrg;
 		}
 
 		// Clamp Right
-		if (RSig >= 0) { // VLT
-			if (RVol > RTrg) {
-				RVol = RTrg;
-			}
-		}
-		else { // VGE
-			if (RVol < RTrg) {
-				RVol = RTrg;
-			}
+		if ((RSig >= 0 && RVol > RTrg) || (RSig < 0 && RVol < RTrg)) { // VLT or VGE
+			RVol = RTrg;
 		}
 		// ****************************************************************
 		MainL = MultQ15(Dry, (s16)LVol);
