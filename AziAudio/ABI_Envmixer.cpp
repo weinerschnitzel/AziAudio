@@ -212,62 +212,37 @@ void ENVMIXER() {
 		}
 
 		for (int x = 0; x < 8; x++) {
-			i1 = inp[MES(ptr)];
+			
 			// TODO: here...
 			//LAcc = LTrg;
 			//RAcc = RTrg;
 
 			LAcc += LVol;
+			if ((LVol <= 0 && LAcc < LTrg) || (LVol > 0 && LAcc > LTrg)) //decrementing or incrementing beyond target
+			{
+				LAcc = LTrg;
+				LAdderStart = LTrg;
+				MainL = oMainL;
+				AuxL = oAuxL;
+			}
+			else
+			{
+				MainL = MultQ15(Dry, ((s32)LAcc >> 16));
+				AuxL = MultQ15(Wet, ((s32)LAcc >> 16));
+			}
+
 			RAcc += RVol;
-
-			if (LVol <= 0) { // Decrementing
-				if (LAcc < LTrg) {
-					LAcc = LTrg;
-					LAdderStart = LTrg;
-					MainL = oMainL;
-					AuxL = oAuxL;
-				}
-				else {
-					MainL = MultQ15(Dry, ((s32)LAcc >> 16));
-					AuxL = MultQ15(Wet, ((s32)LAcc >> 16));
-				}
+			if ((RVol <= 0 && RAcc < RTrg) || (RVol > 0 && RAcc > RTrg)) //decrementing or incrementing beyond target
+			{
+				RAcc = RTrg;
+				RAdderStart = RTrg;
+				MainR = oMainR;
+				AuxR = oAuxR;
 			}
-			else {
-				if (LAcc > LTrg) {
-					LAcc = LTrg;
-					LAdderStart = LTrg;
-					MainL = oMainL;
-					AuxL = oAuxL;
-				}
-				else {
-					MainL = MultQ15(Dry, ((s32)LAcc >> 16));
-					AuxL = MultQ15(Wet, ((s32)LAcc >> 16));
-				}
-			}
-
-			if (RVol <= 0) { // Decrementing
-				if (RAcc < RTrg) {
-					RAcc = RTrg;
-					RAdderStart = RTrg;
-					MainR = oMainR;
-					AuxR = oAuxR;
-				}
-				else {
-					MainR = MultQ15(Dry, ((s32)RAcc >> 16));
-					AuxR = MultQ15(Wet, ((s32)RAcc >> 16));
-				}
-			}
-			else {
-				if (RAcc > RTrg) {
-					RAcc = RTrg;
-					RAdderStart = RTrg;
-					MainR = oMainR;
-					AuxR = oAuxR;
-				}
-				else {
-					MainR = MultQ15(Dry, ((s32)RAcc >> 16));
-					AuxR = MultQ15(Wet, ((s32)RAcc >> 16));
-				}
+			else 
+			{
+				MainR = MultQ15(Dry, ((s32)RAcc >> 16));
+				AuxR = MultQ15(Wet, ((s32)RAcc >> 16));
 			}
 
 			//fprintf (dfile, "%04X ", (LAcc>>16));
@@ -289,7 +264,8 @@ void ENVMIXER() {
 
 			/*		o1=((s64)(((s64)o1*0xfffe)+((s64)i1*MainR*2)+0x8000)>>16);
 			a1=((s64)(((s64)a1*0xfffe)+((s64)i1*MainL*2)+0x8000)>>16);*/
-
+			
+			i1 = inp[MES(ptr)];
 			out[MES(ptr)] = pack_signed(out[MES(ptr)] + MultQ15(/*(o1*0x7fff)+*/ (s16)i1, (s16)MainR));
 			aux1[MES(ptr)] = pack_signed(aux1[MES(ptr)] + MultQ15(/*(a1*0x7fff)+*/ (s16)i1, (s16)MainL));
 			if (AuxIncRate) {
