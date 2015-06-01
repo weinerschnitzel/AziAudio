@@ -22,7 +22,7 @@ DS_FLAGS = -DXAUDIO_LIBRARIES_UNAVAILABLE
 # Cfg
 ifeq ($(BUILD_ARCH),)
 GCC_ARCH = $(shell gcc -dumpmachine | sed s/-.*//)
-ifeq ($(BUILD_ARCH),x86_64)
+ifeq ($(GCC_ARCH),x86_64)
 BUILD_ARCH = x86_64
 else
 BUILD_ARCH = x86
