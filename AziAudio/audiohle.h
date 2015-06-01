@@ -69,16 +69,14 @@
 
 //------------------------------------------------------------------------------------------
 
+// Use these functions to interface with the HLE Audio...
+#include "AudioSpec.h"
+
 extern u32 t9, k0;
 
-// These must be defined...
-#include "AudioSpec.h"
-#define dmem	AudioInfo.DMEM
-#define imem	AudioInfo.IMEM
-#define rdram	AudioInfo.RDRAM
-
-// Use these functions to interface with the HLE Audio...
-void HLEStart ();
+extern u8 * DMEM;
+extern u8 * IMEM;
+extern u8 * DRAM;
 
 extern u32 UCData, UDataLen;
 

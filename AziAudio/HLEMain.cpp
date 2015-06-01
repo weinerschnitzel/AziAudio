@@ -115,20 +115,20 @@ extern "C"
 u32 base, dmembase;
 
 void HLEStart() {
-	u32 List = ((u32*)dmem)[0xFF0 / 4], ListLen = ((u32*)dmem)[0xFF4 / 4];
-	u32 *HLEPtr = (u32 *)(rdram + List);
+	u32 List = ((u32*)DMEM)[0xFF0 / 4], ListLen = ((u32*)DMEM)[0xFF4 / 4];
+	u32 *HLEPtr = (u32 *)(DRAM + List);
 
-	UCData = ((u32*)dmem)[0xFD8 / 4];
-	UDataLen = ((u32*)dmem)[0xFDC / 4];
-	base = ((u32*)dmem)[0xFD0 / 4];
-	dmembase = ((u32*)dmem)[0xFD8 / 4];
+	UCData = ((u32*)DMEM)[0xFD8 / 4];
+	UDataLen = ((u32*)DMEM)[0xFDC / 4];
+	base = ((u32*)DMEM)[0xFD0 / 4];
+	dmembase = ((u32*)DMEM)[0xFD8 / 4];
 
 	loopval = 0;
 	memset(SEGMENTS, 0, 0x10 * 4);
 	isMKABI = false;
 	isZeldaABI = false;
 
-	u8  *UData = rdram + UCData;
+	u8 * UData = DRAM + UCData;
 
 	// Detect uCode
 	if (((u32*)UData)[0] != 0x1) {

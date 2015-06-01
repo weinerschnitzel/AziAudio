@@ -83,7 +83,7 @@ void FILTER2() {
 	static int cnt = 0;
 	static s16 *lutt6;
 	static s16 *lutt5;
-	u8 *save = (rdram + (t9 & 0xFFFFFF));
+	u8 *save = DRAM + (t9 & 0xFFFFFF);
 	u8 t4 = (u8)((k0 >> 0x10) & 0xFF);
 
 	if (t4 > 1) { // Then set the cnt variable
@@ -196,7 +196,7 @@ void POLEF()
 		l2 = 0;
 	}
 	else {
-		memcpy((u8 *)hleMixerWorkArea, (rdram + Address), 8);
+		memcpy(hleMixerWorkArea, DRAM + Address, 8);
 		l1 = hleMixerWorkArea[2];
 		l2 = hleMixerWorkArea[3];
 	}
@@ -281,5 +281,5 @@ void POLEF()
 
 	hleMixerWorkArea[2] = l1;
 	hleMixerWorkArea[3] = l2;
-	memcpy((rdram + Address), (u8 *)hleMixerWorkArea, 8);
+	memcpy(DRAM + Address, (u8 *)hleMixerWorkArea, 8);
 }
