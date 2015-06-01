@@ -192,13 +192,13 @@ void MP3AB0 () {
 	}
 }
 
-s32 CalcDeWindow(u32 addptr, int mp3DataIndex, u32 offset, int offsetValue)
+s32 CalcDeWindow(u32 addptr, u32 offset)
 {
     s32 product;
 
     product =
-        (s32)*(s16 *)(mp3data + addptr + mp3DataIndex)
-      * (s32)(s16)DeWindowLUT[offset + offsetValue]
+        (s32)*(s16 *)(mp3data + addptr)
+      * (s32)(s16)DeWindowLUT[offset]
     ;
     product = (product + 0x4000) >> 15; /* single-precision fraction rounding */
     return (product);
@@ -389,10 +389,11 @@ void InnerLoop () {
 	for (i = 0; i < 16; i++) {
 		v[0+i] = (v[0+i] * LUT6[i]) >> 0x10;
 	}
-	v[ 0] = v[ 0] + v[ 0]; v[ 1] = v[ 1] + v[ 1];
-	v[ 2] = v[ 2] + v[ 2]; v[ 3] = v[ 3] + v[ 3]; v[ 4] = v[ 4] + v[ 4];
-	v[ 5] = v[ 5] + v[ 5]; v[ 6] = v[ 6] + v[ 6]; v[ 7] = v[ 7] + v[ 7];
-	v[12] = v[12] + v[12]; v[13] = v[13] + v[13]; v[15] = v[15] + v[15];
+	for (i = 0; i < 8; i++)
+		v[i] += v[i]; /* = 2 * v[i] */
+	v[12] = v[12] + v[12];
+	v[13] = v[13] + v[13];
+	v[15] = v[15] + v[15];
 	MP3AB0 ();
 
 	// Part 7: - 100% Accurate + SSV - Unoptimized
@@ -471,14 +472,17 @@ void InnerLoop () {
 		v2 = v4 = v6 = v8 = 0;
 
 		//addptr = t1;
+		for (i = 0; i < 8; i++)
+			v2 += CalcDeWindow(addptr + 0x00 + 2*i, offset + 0x00 + i);
+		for (i = 0; i < 8; i++)
+			v4 += CalcDeWindow(addptr + 0x10 + 2*i, offset + 0x08 + i);
+		for (i = 0; i < 8; i++)
+			v6 += CalcDeWindow(addptr + 0x20 + 2*i, offset + 0x20 + i);
+		for (i = 0; i < 8; i++)
+			v8 += CalcDeWindow(addptr + 0x30 + 2*i, offset + 0x28 + i);
+		addptr += 8 * 2;
+		offset += 8 * 1;
 
-		for (int i = 7; i >= 0; i--) {
-			v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
-			v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
-			v6 += CalcDeWindow(addptr, 0x20, offset, 0x20);
-			v8 += CalcDeWindow(addptr, 0x30, offset, 0x28);
-			addptr += 2; offset++;
-		}
 		s32 v0  = v2 + v4;
 		s32 v18 = v6 + v8;
 		//Clamp(v0);
@@ -493,14 +497,13 @@ void InnerLoop () {
 
 	offset = 0x10 - (t4 >> 1) + 8 * 0x40;
 	v2 = v4 = 0;
-	for (int i = 0; i < 4; i++) {
-		v2 += CalcDeWindow(addptr, 0x00, offset, 0x00);
-		v2 += CalcDeWindow(addptr, 0x10, offset, 0x08);
-		addptr += 2; offset++;
-		v4 += CalcDeWindow(addptr, 0x00, offset, 0x00);
-		v4 += CalcDeWindow(addptr, 0x10, offset, 0x08);
-		addptr += 2; offset++;
-	}
+	for (i = 0; i < 8; i++)
+		v2 += CalcDeWindow(addptr + 4*i + 0, offset + 2*i + 0);
+	for (i = 0; i < 8; i++)
+		v4 += CalcDeWindow(addptr + 4*i + 2, offset + 2*i + 1);
+	addptr += 2 * 4 * 2;
+	offset += 2 * 4 * 1;
+
 	s32 mult6 = *(s32 *)(mp3data + 0xCE8);
 	s32 mult4 = *(s32 *)(mp3data + 0xCEC);
 	if (t4 & 0x2) {
@@ -519,17 +522,25 @@ void InnerLoop () {
 
 		offset = (0x22F - (t4 >> 1) + x * 0x40);
 
-		for (int i = 0; i < 4; i++) {
-			v2 += CalcDeWindow(addptr + 0, 0x20, offset, 0x00);
-			v2 -= CalcDeWindow(addptr + 2, 0x20, offset, 0x01);
-			v4 += CalcDeWindow(addptr + 0, 0x30, offset, 0x08);
-			v4 -= CalcDeWindow(addptr + 2, 0x30, offset, 0x09);
-			v6 += CalcDeWindow(addptr + 0, 0x00, offset, 0x20);
-			v6 -= CalcDeWindow(addptr + 2, 0x00, offset, 0x21);
-			v8 += CalcDeWindow(addptr + 0, 0x10, offset, 0x28);
-			v8 -= CalcDeWindow(addptr + 2, 0x10, offset, 0x29);
-			addptr += 4; offset += 2;
-		}
+		for (i = 0; i < 4; i++)
+			v2 += CalcDeWindow(addptr + 0 + 0x20 + 4*i, offset + 0x00 + 2*i);
+		for (i = 0; i < 4; i++)
+			v2 -= CalcDeWindow(addptr + 2 + 0x20 + 4*i, offset + 0x01 + 2*i);
+		for (i = 0; i < 4; i++)
+			v4 += CalcDeWindow(addptr + 0 + 0x30 + 4*i, offset + 0x08 + 2*i);
+		for (i = 0; i < 4; i++)
+			v4 -= CalcDeWindow(addptr + 2 + 0x30 + 4*i, offset + 0x09 + 2*i);
+		for (i = 0; i < 4; i++)
+			v6 += CalcDeWindow(addptr + 0 + 0x00 + 4*i, offset + 0x20 + 2*i);
+		for (i = 0; i < 4; i++)
+			v6 -= CalcDeWindow(addptr + 2 + 0x00 + 4*i, offset + 0x21 + 2*i);
+		for (i = 0; i < 4; i++)
+			v8 += CalcDeWindow(addptr + 0 + 0x10 + 4*i, offset + 0x28 + 2*i);
+		for (i = 0; i < 4; i++)
+			v8 -= CalcDeWindow(addptr + 2 + 0x10 + 4*i, offset + 0x29 + 2*i);
+		addptr += 4 * 4;
+		offset += 4 * 2;
+
 		s32 v0 = v2 + v4;
 		s32 v18 = v6 + v8;
 		//Clamp(v0);
@@ -541,29 +552,33 @@ void InnerLoop () {
 		addptr -= 0x50;
 	}
 
-	int tmp = outPtr;
 	s32 hi0 = mult6;
 	s32 hi1 = mult4;
-	s32 v;
 	/*
 	assert((hi0 & 0xffff) == 0);
 	assert((hi1 & 0xffff) == 0);
 	*/
-	hi0 = (int)hi0 >> 0x10;
-	hi1 = (int)hi1 >> 0x10;
-	for (int i = 0; i < 8; i++) {
-		// v0
-		v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x40)) * hi0);
-		*(s16 *)((u8 *)mp3data + HES(tmp - 0x40)) = (s16)v;
-		// v17
-		v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x30)) * hi0);
-		*(s16 *)((u8 *)mp3data + HES(tmp - 0x30)) = (s16)v;
-		// v2
-		v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x1E)) * hi1);
-		*(s16 *)((u8 *)mp3data + HES(tmp - 0x1E)) = (s16)v;
-		// v4
-		v = pack_signed(*(s16 *)(mp3data + HES(tmp - 0x0E)) * hi1);
-		*(s16 *)((u8 *)mp3data + HES(tmp - 0x0E)) = (s16)v;
-		tmp += 2;
-	}
+	hi0 = (s32)hi0 >> 16;
+	hi1 = (s32)hi1 >> 16;
+	for (i = 0; i < 8; i++)
+		acc[ 0][i] = *(s16 *)(mp3data + HES(outPtr - 0x40 + 2*i)) * hi0;
+	for (i = 0; i < 8; i++)
+		acc[17][i] = *(s16 *)(mp3data + HES(outPtr - 0x30 + 2*i)) * hi0;
+	for (i = 0; i < 8; i++)
+		acc[ 2][i] = *(s16 *)(mp3data + HES(outPtr - 0x1E + 2*i)) * hi1;
+	for (i = 0; i < 8; i++)
+		acc[ 4][i] = *(s16 *)(mp3data + HES(outPtr - 0x0E + 2*i)) * hi1;
+
+	vsats128(&acc_clamped[0], acc[ 0]);
+	for (i = 0; i < 8; i++)
+		*(s16 *)(mp3data + HES(outPtr - 0x40 + 2*i)) = acc_clamped[i];
+	vsats128(&acc_clamped[0], acc[17]);
+	for (i = 0; i < 8; i++)
+		*(s16 *)(mp3data + HES(outPtr - 0x30 + 2*i)) = acc_clamped[i];
+	vsats128(&acc_clamped[0], acc[ 2]);
+	for (i = 0; i < 8; i++)
+		*(s16 *)(mp3data + HES(outPtr - 0x1E + 2*i)) = acc_clamped[i];
+	vsats128(&acc_clamped[0], acc[ 4]);
+	for (i = 0; i < 8; i++)
+		*(s16 *)(mp3data + HES(outPtr - 0x0E + 2*i)) = acc_clamped[i];
 }

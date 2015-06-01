@@ -36,6 +36,9 @@ u32 loopval;			// 0x0010(T8) // Value set by A_SETLOOP : Possible conflict with 
 bool isMKABI = false;
 bool isZeldaABI = false;
 
+s32 acc[32][N];
+s16 acc_clamped[N];
+
 // Audio UCode lists
 //     Dummy UCode Handler for UCode detection... (Will always assume UCode1 until the nth list is executed)
 extern p_func SafeABI[NUM_ABI_COMMANDS];
@@ -308,37 +311,6 @@ INLINE s32 sats_under(s32 slice)
     return (slice);
 #endif
 }
-INLINE s32 satu_over(s32 slice)
-{
-#ifdef TWOS_COMPLEMENT_NEGATION
-    s32 adder, mask;
-
-    adder  = +65535 - slice;
-    mask  =  ((s32)adder >> 31); /* if (65535 - x < 0 */
-    mask &= ~((s32)slice >> 31); /*  && x >= 0) */
-    adder &= mask;
-    return (s32)(slice + adder); /* slice + (65535 - slice) == 65535 */
-#else
-    if (slice > +0x0000FFFFL)
-        return +0x0000FFFFL;
-    return (slice);
-#endif
-}
-INLINE s32 satu_under(s32 slice)
-{
-#ifdef TWOS_COMPLEMENT_NEGATION
-    s32 adder, mask;
-
-    adder  = slice;
-    mask  = ~((s32)adder >> 31); /* if (x >= 0) */
-    adder &= mask;
-    return (s32)(slice);
-#else
-    if (slice < 0)
-        slice = 0;
-    return (slice);
-#endif
-}
 
 s16 pack_signed(s32 slice)
 {
@@ -357,15 +329,6 @@ s16 pack_signed(s32 slice)
     return (s16)(result & 0x0000FFFFul);
 #endif
 }
-u16 pack_unsigned(s32 slice)
-{
-    s32 result;
-
-    result = slice;
-    result = satu_under(result);
-    result = satu_over (result);
-    return (u16)(result & 0x0000FFFFul);
-}
 
 void vsats128(s16* vd, s32* vs)
 {
@@ -382,13 +345,6 @@ void vsats128(s16* vd, s32* vs)
     for (i = 0; i < 8; i++)
         vd[i] = pack_signed(vs[i]);
 #endif
-}
-void vsatu128(u16* vd, s32* vs)
-{
-    register size_t i;
-
-    for (i = 0; i < 8; i++)
-        vd[i] = pack_unsigned(vs[i]);
 }
 void vsats64 (s16* vd, s32* vs)
 {
@@ -412,13 +368,6 @@ void vsats64 (s16* vd, s32* vs)
     for (i = 0; i < 4; i++)
         vd[i] = pack_signed(vs[i]);
 #endif
-}
-void vsatu64 (u16* vd, s32* vs)
-{
-    register size_t i;
-
-    for (i = 0; i < 4; i++)
-        vd[i] = pack_unsigned(vs[i]);
 }
 #endif
 
