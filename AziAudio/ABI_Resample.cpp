@@ -81,8 +81,8 @@ void RESAMPLE() {
 	if ((Flags & 0x1) == 0) {
 		//memcpy (src+srcPtr, rdram+addy, 0x8);
 		for (int x = 0; x < 4; x++)
-			src[MES(srcPtr + x)] = ((u16 *)rdram)[MES((addy / 2) + x)];
-		Accum = *(u16 *)(rdram + addy + 10);
+			src[MES(srcPtr + x)] = ((u16 *)DRAM)[MES((addy / 2) + x)];
+		Accum = *(u16 *)(DRAM + addy + 10);
 	}
 	else {
 		for (int x = 0; x < 4; x++)
@@ -115,9 +115,9 @@ void RESAMPLE() {
 		Accum &= 0xffff;
 	}
 	for (int x = 0; x < 4; x++)
-		((u16 *)rdram)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
+		((u16 *)DRAM)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
 	//memcpy (RSWORK, src+srcPtr, 0x8);
-	*(u16 *)(rdram + addy + 10) = (u16)Accum;
+	*(u16 *)(DRAM + addy + 10) = (u16)Accum;
 }
 
 void RESAMPLE2() {
@@ -140,8 +140,8 @@ void RESAMPLE2() {
 
 	if ((Flags & 0x1) == 0) {
 		for (int x = 0; x < 4; x++) //memcpy (src+srcPtr, rdram+addy, 0x8);
-			src[MES(srcPtr + x)] = ((u16 *)rdram)[MES((addy / 2) + x)];
-		Accum = *(u16 *)(rdram + addy + 10);
+			src[MES(srcPtr + x)] = ((u16 *)DRAM)[MES((addy / 2) + x)];
+		Accum = *(u16 *)(DRAM + addy + 10);
 	}
 	else {
 		for (int x = 0; x < 4; x++)
@@ -161,8 +161,8 @@ void RESAMPLE2() {
 		Accum &= 0xffff;
 	}
 	for (int x = 0; x < 4; x++)
-		((u16 *)rdram)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
-	*(u16 *)(rdram + addy + 10) = (u16)Accum;
+		((u16 *)DRAM)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
+	*(u16 *)(DRAM + addy + 10) = (u16)Accum;
 	//memcpy (RSWORK, src+srcPtr, 0x8);
 }
 
@@ -193,8 +193,8 @@ void RESAMPLE3() {
 
 	if ((Flags & 0x1) == 0) {
 		for (int x = 0; x < 4; x++) //memcpy (src+srcPtr, rdram+addy, 0x8);
-			src[MES(srcPtr + x)] = ((u16 *)rdram)[MES((addy / 2) + x)];
-		Accum = *(u16 *)(rdram + addy + 10);
+			src[MES(srcPtr + x)] = ((u16 *)DRAM)[MES((addy / 2) + x)];
+		Accum = *(u16 *)(DRAM + addy + 10);
 	}
 	else {
 		for (int x = 0; x < 4; x++)
@@ -228,6 +228,6 @@ void RESAMPLE3() {
 		Accum &= 0xffff;
 	}
 	for (int x = 0; x < 4; x++)
-		((u16 *)rdram)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
-	*(u16 *)(rdram + addy + 10) = (u16)Accum;
+		((u16 *)DRAM)[MES((addy / 2) + x)] = src[MES(srcPtr + x)];
+	*(u16 *)(DRAM + addy + 10) = (u16)Accum;
 }

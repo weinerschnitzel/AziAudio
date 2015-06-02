@@ -100,14 +100,14 @@ void LOADBUFF() { // memcpy causes static... endianess issue :(
 	if (AudioCount == 0)
 		return;
 	v0 = (t9 & 0xfffffc);// + SEGMENTS[(t9>>24)&0xf];
-	memcpy(BufferSpace + (AudioInBuffer & 0xFFFC), rdram + v0, (AudioCount + 3) & 0xFFFC);
+	memcpy(BufferSpace + (AudioInBuffer & 0xFFFC), DRAM + v0, (AudioCount + 3) & 0xFFFC);
 }
 
 void LOADBUFF2() { // Needs accuracy verification...
 	u32 v0;
 	u32 cnt = (((k0 >> 0xC) + 3) & 0xFFC);
 	v0 = (t9 & 0xfffffc);// + SEGMENTS[(t9>>24)&0xf];
-	memcpy(BufferSpace + (k0 & 0xfffc), rdram + v0, (cnt + 3) & 0xFFFC);
+	memcpy(BufferSpace + (k0 & 0xfffc), DRAM + v0, (cnt + 3) & 0xFFFC);
 }
 
 void LOADBUFF3() {
@@ -115,7 +115,7 @@ void LOADBUFF3() {
 	u32 cnt = (((k0 >> 0xC) + 3) & 0xFFC);
 	v0 = (t9 & 0xfffffc);
 	u32 src = (k0 & 0xffc) + 0x4f0;
-	memcpy(BufferSpace + src, rdram + v0, cnt);
+	memcpy(BufferSpace + src, DRAM + v0, cnt);
 }
 
 // TODO: This comment has me wondering if there's a problem.  10+ year old comments are hard to remember. -Azimer
@@ -124,14 +124,14 @@ void SAVEBUFF() { // memcpy causes static... endianess issue :(
 	if (AudioCount == 0)
 		return;
 	v0 = (t9 & 0xfffffc);// + SEGMENTS[(t9>>24)&0xf];
-	memcpy(rdram + v0, BufferSpace + (AudioOutBuffer & 0xFFFC), (AudioCount + 3) & 0xFFFC);
+	memcpy(DRAM + v0, BufferSpace + (AudioOutBuffer & 0xFFFC), (AudioCount + 3) & 0xFFFC);
 }
 
 void SAVEBUFF2() { // Needs accuracy verification...
 	u32 v0;
 	u32 cnt = (((k0 >> 0xC) + 3) & 0xFFC);
 	v0 = (t9 & 0xfffffc);// + SEGMENTS[(t9>>24)&0xf];
-	memcpy(rdram + v0, BufferSpace + (k0 & 0xfffc), (cnt + 3) & 0xFFFC);
+	memcpy(DRAM + v0, BufferSpace + (k0 & 0xfffc), (cnt + 3) & 0xFFFC);
 }
 
 void SAVEBUFF3() {
@@ -139,7 +139,7 @@ void SAVEBUFF3() {
 	u32 cnt = (((k0 >> 0xC) + 3) & 0xFFC);
 	v0 = (t9 & 0xfffffc);
 	u32 src = (k0 & 0xffc) + 0x4f0;
-	memcpy(rdram + v0, BufferSpace + src, cnt);
+	memcpy(DRAM + v0, BufferSpace + src, cnt);
 }
 
 void SEGMENT() { // Should work

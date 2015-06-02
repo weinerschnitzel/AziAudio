@@ -216,6 +216,10 @@ DWORD junk;
 DWORD RSPRegs[10];
 BOOL audioIsInitialized = FALSE;
 
+u8 * DMEM;
+u8 * IMEM;
+u8 * DRAM;
+
 EXPORT BOOL CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 
 	//RedirectIOToConsole();
@@ -236,7 +240,11 @@ EXPORT BOOL CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	//snd.configDevice = 0;
 	snd.configVolume = 0;
 
-	memcpy (&AudioInfo, &Audio_Info, sizeof(AUDIO_INFO));
+	memcpy(&AudioInfo, &Audio_Info, sizeof(AUDIO_INFO));
+	DRAM = Audio_Info.RDRAM;
+	DMEM = Audio_Info.DMEM;
+	IMEM = Audio_Info.IMEM;
+
 	audioIsInitialized = !snd.Initialize (AudioInfo.hwnd);
 	if (audioIsInitialized == TRUE) snd.SetVolume(snd.configVolume);
 /*	RSPInfo.DMEM = AudioInfo.DMEM;

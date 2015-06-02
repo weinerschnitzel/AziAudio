@@ -83,7 +83,7 @@ void FILTER2() {
 	static int cnt = 0;
 	static s16 *lutt6;
 	static s16 *lutt5;
-	u8 *save = (rdram + (t9 & 0xFFFFFF));
+	u8 *save = DRAM + (t9 & 0xFFFFFF);
 	u8 t4 = (u8)((k0 >> 0x10) & 0xFF);
 
 	if (t4 > 1) { // Then set the cnt variable
@@ -140,18 +140,10 @@ void FILTER2() {
 		packed_multiply_accumulate(&out1[7], &inputs_matrix[1], &lutt6[0]);
 
 		for (i = 0; i < 8; i++)
-			outp[i] = (s16)((out1[i] + 0x4000) >> 15); /* fractional round and shift */
-#if 0
-/*
- * Clamp the result to fit within the legal range of 16-bit short elements.
- * VMULF, I know, never needs this in games, because the only way for VMULF
- * to produce an out-of-range value is if audio ucode does -32768 * -32768.
- */
+			out1[i]  += 0x4000;
 		for (i = 0; i < 8; i++)
-			assert(outp[i] >= -32768 && outp[i] <= +32767);
-		for (i = 0; i < 8; i++)
-			outp[i] = pack_signed(outp[i]);
-#endif
+			out1[i] >>= 15;
+		vsats128(&outp[0], &out1[0]);
 		outp += 8;
 
 		inp1 = inp2 + 0;
@@ -196,7 +188,7 @@ void POLEF()
 		l2 = 0;
 	}
 	else {
-		memcpy((u8 *)hleMixerWorkArea, (rdram + Address), 8);
+		memcpy(hleMixerWorkArea, DRAM + Address, 8);
 		l1 = hleMixerWorkArea[2];
 		l2 = hleMixerWorkArea[3];
 	}
@@ -281,5 +273,5 @@ void POLEF()
 
 	hleMixerWorkArea[2] = l1;
 	hleMixerWorkArea[3] = l2;
-	memcpy((rdram + Address), (u8 *)hleMixerWorkArea, 8);
+	memcpy(DRAM + Address, (u8 *)hleMixerWorkArea, 8);
 }

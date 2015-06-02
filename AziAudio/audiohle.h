@@ -61,18 +61,22 @@
  */
 #define NUM_ABI_COMMANDS    32
 
+/*
+ * number of elements in SIMD processor
+ * In the RSP's case, this is always 8 elements per vector.
+ */
+#define N       8
+
 //------------------------------------------------------------------------------------------
+
+// Use these functions to interface with the HLE Audio...
+#include "AudioSpec.h"
 
 extern u32 t9, k0;
 
-// These must be defined...
-#include "AudioSpec.h"
-#define dmem	AudioInfo.DMEM
-#define imem	AudioInfo.IMEM
-#define rdram	AudioInfo.RDRAM
-
-// Use these functions to interface with the HLE Audio...
-void HLEStart ();
+extern u8 * DMEM;
+extern u8 * IMEM;
+extern u8 * DRAM;
 
 extern u32 UCData, UDataLen;
 
@@ -119,6 +123,13 @@ extern bool isMKABI;
 extern bool isZeldaABI;
 
 /*
+ * Each vector accumulator element is 48 bits, but that is a technical
+ * advancement.  Only 32 bits at a time can be accessed during clamping.
+ */
+extern s32 acc[32][N];
+extern s16 acc_clamped[N];
+
+/*
  * Include the SSE2 headers if MSVC is set to target SSE2 in code generation.
  */
 #if defined(_M_IX86_FP) && (_M_IX86_FP >= 2)
@@ -144,6 +155,8 @@ extern bool isZeldaABI;
  * RSP hardware has two types of saturated arithmetic:
  *     1.  signed clamping from 32- to 16-bit elements
  *     2.  unsigned clamping from 32- to 16-bit elements
+ * (Note that no audio microcode for the RSP has ever been seen encountering
+ * unsigned fractions or addends, so we only need to emulate signed clamps.)
  *
  * Accumulators are 48-bit, but only 32-bit-segment intervals at one time are
  * involved in the clamp.  The upper and lower bounds for signed and unsigned
@@ -155,39 +168,26 @@ extern bool isZeldaABI;
 #ifdef PREFER_MACRO_FUNCTIONS
 #define sats_over(slice)        (((slice) > +32767) ? +32767  : (slice))
 #define sats_under(slice)       (((slice) < -32768) ? -32768  : (slice))
-#define satu_over(slice)        (((slice) < 0x0000) ? 0x0000U : (slice))
-#define satu_under(slice)       (((slice) > 0xFFFF) ? 0xFFFFU : (slice))
 #else
 extern INLINE s32 sats_over(s32 slice);
 extern INLINE s32 sats_under(s32 slice);
-extern INLINE s32 satu_over(s32 slice);
-extern INLINE s32 satu_under(s32 slice);
 #endif
 
 #ifdef PREFER_MACRO_FUNCTIONS
 #define pack_signed(slice)      sats_over(sats_under(slice))
-#define pack_unsigned(slice)    satu_over(satu_under(slice))
 #else
 extern s16 pack_signed(s32 slice);
-extern u16 pack_unsigned(s32 slice);
 #endif
 
 #ifdef PREFER_MACRO_FUNCTIONS
 #define vsats128(vd, vs) {      \
 vd[0] = pack_signed(vs[0]); vd[1] = pack_signed(vs[1]); \
 vd[2] = pack_signed(vs[2]); vd[3] = pack_signed(vs[3]); }
-#define vsatu128(vd, vs) {      \
-vd[0] = pack_unsigned(vs[0]); vd[1] = pack_unsigned(vs[1]); \
-vd[2] = pack_unsigned(vs[2]); vd[3] = pack_unsigned(vs[3]); }
 #define vsats64(vd, vs) {       \
 vd[0] = pack_signed(vs[0]); vd[1] = pack_signed(vs[1]); }
-#define vsatu64(vd, vs) {       \
-vd[0] = pack_unsigned(vs[0]); vd[1] = pack_unsigned(vs[1]); }
 #else
 extern void vsats128(s16* vd, s32* vs); /* Clamp vectors using SSE2. */
-extern void vsatu128(u16* vd, s32* vs);
 extern void vsats64 (s16* vd, s32* vs); /* Clamp vectors using MMX. */
-extern void vsatu64 (u16* vd, s32* vs);
 #endif
 
 /*
