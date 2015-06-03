@@ -10,14 +10,12 @@
 #### Compiler and tool definitions shared by all build targets #####
 CC = gcc
 CXX = g++
-AR = ar
 WINDRES = windres
 CFLAGS = $(BASICOPTS) -msse2 -DSSE2_SUPPORT -mstackrealign
 CXXFLAGS = $(BASICOPTS) -msse2 -DSSE2_SUPPORT -mstackrealign
-# -Wno-write-strings
 LDFLAGS = -static-libstdc++ -static-libgcc
 XA_FLAGS = -I3rd\ Party/directx/include -I3rd\ Party
-DS_FLAGS = -DXAUDIO_LIBRARIES_UNAVAILABLE
+DS_FLAGS = -DXAUDIO_LIBRARIES_UNAVAILABLE -I3rd\ Party/directx/include
 
 # Cfg
 ifeq ($(BUILD_ARCH),)
@@ -35,43 +33,27 @@ DS_PLUGIN_FILE = AziAudioDS8_m.dll
 XA_PLUGIN_FILE = AziAudioXA2_m.dll
 RESFLAGS =
 BASICOPTS = -O2
+BUILD_TYPE = Release
 else
 BUILD_DEBUG = YES
 DS_PLUGIN_FILE = AziAudioDS8_md.dll
 XA_PLUGIN_FILE = AziAudioXA2_md.dll
 RESFLAGS = -D_DEBUG
 BASICOPTS = -g -D_DEBUG
+BUILD_TYPE = Debug
 endif
 
 # Define the target directories.
 #OBJDIR=obj
 #BUILDDIR=build
-SRCDIR=AziAudio
-OBJDIR32=build/Release_mingw32
-OBJDIR64=build/Release_mingw64
-OBJDIR32DEBUG=build/Debug_mingw32
-OBJDIR64DEBUG=build/Debug_mingw64
-BUILDDIR32=bin/Release_mingw32
-BUILDDIR64=bin/Release_mingw64
-BUILDDIR32DEBUG=bin/Debug_mingw32
-BUILDDIR64DEBUG=bin/Debug_mingw64
 ifeq ($(BUILD_ARCH),x86_64)
-ifeq ($(BUILD_DEBUG),YES)
-OBJDIR=$(OBJDIR64DEBUG)
-BUILDDIR=$(BUILDDIR64DEBUG)
+FOLDER = $(BUILD_TYPE)_mingw64
 else
-OBJDIR=$(OBJDIR64)
-BUILDDIR=$(BUILDDIR64)
+FOLDER = $(BUILD_TYPE)_mingw32
 endif
-else
-ifeq ($(BUILD_DEBUG),YES)
-OBJDIR=$(OBJDIR32DEBUG)
-BUILDDIR=$(BUILDDIR32DEBUG)
-else
-OBJDIR=$(OBJDIR32)
-BUILDDIR=$(BUILDDIR32)
-endif
-endif
+OBJDIR = build/$(FOLDER)/AziAudio
+BUILDDIR = bin/$(FOLDER)
+SRCDIR=AziAudio
 
 all: ds xa
 
@@ -110,23 +92,22 @@ COMMON_OBJS =  \
 	$(OBJDIR)/ABI3.o \
 	$(OBJDIR)/ABI2.o \
 	$(OBJDIR)/ABI1.o \
-	$(OBJDIR)/musyx.o \
-	$(OBJDIR)/Mupen64Support.o \
-	$(OBJDIR)/memory.o \
-	$(OBJDIR)/audio.o \
+	$(OBJDIR)/Mupen64plusHLE/musyx.o \
+	$(OBJDIR)/Mupen64plusHLE/Mupen64Support.o \
+	$(OBJDIR)/Mupen64plusHLE/memory.o \
+	$(OBJDIR)/Mupen64plusHLE/audio.o \
 	$(OBJDIR)/resource.o
 
 XA_OBJS =	\
-	$(OBJDIR)/XAudio2SoundDriver.o \
-	$(OBJDIR)/XA2HLEMain.o \
-	$(OBJDIR)/XA2main.o \
-	$(OBJDIR)/DummyDirectSoundDriver.o
+	$(OBJDIR)/XA/XAudio2SoundDriver.o \
+	$(OBJDIR)/XA/HLEMain.o \
+	$(OBJDIR)/XA/main.o
 
 DS_OBJS =	\
-	$(OBJDIR)/DummyXAudio2SoundDriver.o \
-	$(OBJDIR)/DS8HLEMain.o \
-	$(OBJDIR)/DS8main.o \
-	$(OBJDIR)/DirectSoundDriver.o \
+	$(OBJDIR)/DS/DirectSoundDriver.o \
+	$(OBJDIR)/DS/HLEMain.o \
+	$(OBJDIR)/DS/main.o
+	
 
 # Link or archive
 $(BUILDDIR)/$(XA_PLUGIN_FILE): $(BUILDDIR) $(OBJDIR) $(XA_OBJS) $(COMMON_OBJS)
@@ -138,29 +119,23 @@ $(BUILDDIR)/$(DS_PLUGIN_FILE): $(BUILDDIR) $(OBJDIR) $(DS_OBJS) $(COMMON_OBJS)
 
 # Compile source files into .o files
 
-$(OBJDIR)/XAudio2SoundDriver.o: $(OBJDIR) $(SRCDIR)/XAudio2SoundDriver.cpp
+$(OBJDIR)/XA/XAudio2SoundDriver.o: $(OBJDIR)/XA $(SRCDIR)/XAudio2SoundDriver.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(XA_FLAGS) -o $@ -c $(SRCDIR)/XAudio2SoundDriver.cpp
 
-$(OBJDIR)/DummyXAudio2SoundDriver.o: $(OBJDIR) $(SRCDIR)/XAudio2SoundDriver.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/XAudio2SoundDriver.cpp
+$(OBJDIR)/DS/DirectSoundDriver.o: $(OBJDIR)/DS $(SRCDIR)/DirectSoundDriver.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/DirectSoundDriver.cpp
 
-$(OBJDIR)/XA2main.o: $(OBJDIR) $(SRCDIR)/main.cpp
+$(OBJDIR)/XA/main.o: $(OBJDIR)/XA $(SRCDIR)/main.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(XA_FLAGS) -o $@ -c $(SRCDIR)/main.cpp
 
-$(OBJDIR)/DS8main.o: $(OBJDIR) $(SRCDIR)/main.cpp
+$(OBJDIR)/DS/main.o: $(OBJDIR)/DS $(SRCDIR)/main.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/main.cpp
 
-$(OBJDIR)/XA2HLEMain.o: $(OBJDIR) $(SRCDIR)/HLEMain.cpp
+$(OBJDIR)/XA/HLEMain.o: $(OBJDIR)/XA $(SRCDIR)/HLEMain.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(XA_FLAGS) -o $@ -c $(SRCDIR)/HLEMain.cpp
 
-$(OBJDIR)/DS8HLEMain.o: $(OBJDIR) $(SRCDIR)/HLEMain.cpp
+$(OBJDIR)/DS/HLEMain.o: $(OBJDIR)/DS $(SRCDIR)/HLEMain.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/HLEMain.cpp
-
-$(OBJDIR)/DummyDirectSoundDriver.o: $(OBJDIR) $(SRCDIR)/DirectSoundDriver.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(XA_FLAGS) -o $@ -c $(SRCDIR)/DirectSoundDriver.cpp
-
-$(OBJDIR)/DirectSoundDriver.o: $(OBJDIR) $(SRCDIR)/DirectSoundDriver.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/DirectSoundDriver.cpp
 
 $(OBJDIR)/WaveOut.o: $(OBJDIR) $(SRCDIR)/WaveOut.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ -c $(SRCDIR)/WaveOut.cpp
@@ -195,16 +170,16 @@ $(OBJDIR)/ABI2.o: $(OBJDIR) $(SRCDIR)/ABI2.cpp
 $(OBJDIR)/ABI1.o: $(OBJDIR) $(SRCDIR)/ABI1.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ -c $(SRCDIR)/ABI1.cpp
 
-$(OBJDIR)/musyx.o: $(OBJDIR) $(SRCDIR)/Mupen64plusHLE/musyx.c
+$(OBJDIR)/Mupen64plusHLE/musyx.o: $(OBJDIR)/Mupen64plusHLE $(SRCDIR)/Mupen64plusHLE/musyx.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $(SRCDIR)/Mupen64plusHLE/musyx.c
 
-$(OBJDIR)/Mupen64Support.o: $(OBJDIR) $(SRCDIR)/Mupen64plusHLE/Mupen64Support.c
+$(OBJDIR)/Mupen64plusHLE/Mupen64Support.o: $(OBJDIR)/Mupen64plusHLE $(SRCDIR)/Mupen64plusHLE/Mupen64Support.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $(SRCDIR)/Mupen64plusHLE/Mupen64Support.c
 
-$(OBJDIR)/memory.o: $(OBJDIR) $(SRCDIR)/Mupen64plusHLE/memory.c
+$(OBJDIR)/Mupen64plusHLE/memory.o: $(OBJDIR)/Mupen64plusHLE $(SRCDIR)/Mupen64plusHLE/memory.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $(SRCDIR)/Mupen64plusHLE/memory.c
 
-$(OBJDIR)/audio.o: $(OBJDIR) $(SRCDIR)/Mupen64plusHLE/audio.c
+$(OBJDIR)/Mupen64plusHLE/audio.o: $(OBJDIR)/Mupen64plusHLE $(SRCDIR)/Mupen64plusHLE/audio.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $(SRCDIR)/Mupen64plusHLE/audio.c
 
 $(OBJDIR)/resource.o: $(OBJDIR) $(SRCDIR)/resource.rc
@@ -220,10 +195,19 @@ clean:
 
 # Create the target directory (if needed)
 $(BUILDDIR):
-	mkdir -p $(BUILDDIR)
+	mkdir -p $@
 
 $(OBJDIR):
-	mkdir -p $(OBJDIR)
+	mkdir -p $@
+
+$(OBJDIR)/Mupen64plusHLE:
+	mkdir -p $@
+
+$(OBJDIR)/XA:
+	mkdir -p $@
+
+$(OBJDIR)/DS:
+	mkdir -p $@
 
 # Enable dependency checking
 .KEEP_STATE:

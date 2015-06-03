@@ -61,10 +61,6 @@ CALL:existsinpath g++
 IF errorlevel 404 (
     exit /b 404
 )
-CALL:existsinpath ar
-IF errorlevel 404 (
-    exit /b 404
-)
 CALL:existsinpath windres
 IF errorlevel 404 (
     exit /b 404
@@ -113,14 +109,17 @@ IF NOT %ARCH% == %ARCH_DETECTED% (
 )
 
  REM Set variables
-set OBJDIR=build/%OUTDIR%
+set OBJDIR=build/%OUTDIR%/AziAudio
 set BUILDDIR=bin/%OUTDIR%
 set CFLAGS= %CFLAGS_BUILD% -msse2 -DSSE2_SUPPORT -mstackrealign
 set LDFLAGS= -static-libstdc++ -static-libgcc
 set RESFLAGS= %RESFLAGS_BUILD%
 set XA_FLAGS= -I"3rd Party/directx/include" -I"3rd Party" -Wno-attributes
-set DS_FLAGS= -DXAUDIO_LIBRARIES_UNAVAILABLE -Wno-conversion-null
+set DS_FLAGS= -DXAUDIO_LIBRARIES_UNAVAILABLE -I"3rd Party/directx/include" -Wno-conversion-null
 set SRCDIR=AziAudio
+SET OBJS=
+SET XA_OBJS=
+SET DS_OBJS=
 
 ECHO ฦออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
 ECHO ณ Configuration:                                                         ณ
@@ -132,94 +131,40 @@ ECHO ณ Build type:          %BUILD_TYPE%
 ECHO ภ Starting build...
 
  REM Make directories
-CALL:mkdir %OBJDIR%
+CALL:mkdir %OBJDIR%/Mupen64plusHLE
+CALL:mkdir %OBJDIR%/XA
+CALL:mkdir %OBJDIR%/DS
 CALL:mkdir %BUILDDIR%
 
 ECHO Compiling Sources...
-ECHO     XAudio2SoundDriver.cpp (for XA2 plugin)...
-g++ %CFLAGS% %XA_FLAGS%     -o %OBJDIR%/XAudio2SoundDriver.o        -c %SRCDIR%/XAudio2SoundDriver.cpp
-ECHO     XAudio2SoundDriver.cpp (for DS8 plugin)...
-g++ %CFLAGS% %DS_FLAGS%     -o %OBJDIR%/DummyXAudio2SoundDriver.o   -c %SRCDIR%/XAudio2SoundDriver.cpp
-ECHO     main.cpp (for XA2 plugin)...
-g++ %CFLAGS% %XA_FLAGS%     -o %OBJDIR%/XA2main.o                   -c %SRCDIR%/main.cpp
-ECHO     main.cpp (for DS8 plugin)...
-g++ %CFLAGS% %DS_FLAGS%     -o %OBJDIR%/DS8main.o                   -c %SRCDIR%/main.cpp
-ECHO     HLEMain.cpp (for XA2 plugin)...
-g++ %CFLAGS% %XA_FLAGS%     -o %OBJDIR%/XA2HLEMain.o                -c %SRCDIR%/HLEMain.cpp
-ECHO     HLEMain.cpp (for DS8 plugin)...
-g++ %CFLAGS% %DS_FLAGS%     -o %OBJDIR%/DS8HLEMain.o                -c %SRCDIR%/HLEMain.cpp
-ECHO     DirectSoundDriver.cpp (for XA2 plugin)...
-g++ %CFLAGS% %XA_FLAGS%     -o %OBJDIR%/DummyDirectSoundDriver.o    -c %SRCDIR%/DirectSoundDriver.cpp
-ECHO     DirectSoundDriver.cpp (for DS8 plugin)...
-g++ %CFLAGS% %DS_FLAGS%     -o %OBJDIR%/DirectSoundDriver.o         -c %SRCDIR%/DirectSoundDriver.cpp
-ECHO     WaveOut.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/WaveOut.o                   -c %SRCDIR%/WaveOut.cpp
-ECHO     ABI_Resample.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI_Resample.o              -c %SRCDIR%/ABI_Resample.cpp
-ECHO     ABI_MixerInterleave.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI_MixerInterleave.o       -c %SRCDIR%/ABI_MixerInterleave.cpp
-ECHO     ABI_Filters.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI_Filters.o               -c %SRCDIR%/ABI_Filters.cpp
-ECHO     ABI_Envmixer.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI_Envmixer.o              -c %SRCDIR%/ABI_Envmixer.cpp
-ECHO     ABI_Buffers.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI_Buffers.o               -c %SRCDIR%/ABI_Buffers.cpp
-ECHO     ABI_Adpcm.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI_Adpcm.o                 -c %SRCDIR%/ABI_Adpcm.cpp
-ECHO     ABI3mp3.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI3mp3.o                   -c %SRCDIR%/ABI3mp3.cpp
-ECHO     ABI3.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI3.o                      -c %SRCDIR%/ABI3.cpp
-ECHO     ABI2.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI2.o                      -c %SRCDIR%/ABI2.cpp
-ECHO     ABI1.cpp...
-g++ %CFLAGS%                -o %OBJDIR%/ABI1.o                      -c %SRCDIR%/ABI1.cpp
-ECHO     Mupen64plusHLE/musyx.c...
-gcc %CFLAGS%                -o %OBJDIR%/musyx.o                     -c %SRCDIR%/Mupen64plusHLE/musyx.c
-ECHO     Mupen64plusHLE/Mupen64Support.c...
-gcc %CFLAGS%                -o %OBJDIR%/Mupen64Support.o            -c %SRCDIR%/Mupen64plusHLE/Mupen64Support.c
-ECHO     Mupen64plusHLE/memory.c...
-gcc %CFLAGS%                -o %OBJDIR%/memory.o                    -c %SRCDIR%/Mupen64plusHLE/memory.c
-ECHO     Mupen64plusHLE/audio.c...
-gcc %CFLAGS%                -o %OBJDIR%/audio.o                     -c %SRCDIR%/Mupen64plusHLE/audio.c
+CALL:gppcust HLEMain ALL
+CALL:gppcust main ALL
+CALL:gppcust XAudio2SoundDriver XA
+CALL:gppcust DirectSoundDriver DS
+CALL:gpp WaveOut
+CALL:gpp ABI_Resample
+CALL:gpp ABI_MixerInterleave
+CALL:gpp ABI_Filters
+CALL:gpp ABI_Envmixer
+CALL:gpp ABI_Buffers
+CALL:gpp ABI_Adpcm
+CALL:gpp ABI3mp3
+CALL:gpp ABI3
+CALL:gpp ABI2
+CALL:gpp ABI1
+CALL:gcc Mupen64plusHLE/musyx
+CALL:gcc Mupen64plusHLE/Mupen64Support
+CALL:gcc Mupen64plusHLE/memory
+CALL:gcc Mupen64plusHLE/audio
 ECHO Compiling resources...
-windres %RESFLAGS% %SRCDIR%/resource.rc %OBJDIR%/resource.o
-
-set COMMON_OBJS=^
-%OBJDIR%/WaveOut.o ^
-%OBJDIR%/ABI_Resample.o ^
-%OBJDIR%/ABI_MixerInterleave.o ^
-%OBJDIR%/ABI_Filters.o ^
-%OBJDIR%/ABI_Envmixer.o ^
-%OBJDIR%/ABI_Buffers.o ^
-%OBJDIR%/ABI_Adpcm.o ^
-%OBJDIR%/ABI3mp3.o ^
-%OBJDIR%/ABI3.o ^
-%OBJDIR%/ABI2.o ^
-%OBJDIR%/ABI1.o ^
-%OBJDIR%/musyx.o ^
-%OBJDIR%/Mupen64Support.o ^
-%OBJDIR%/memory.o ^
-%OBJDIR%/audio.o ^
-%OBJDIR%/resource.o
-
-set XA_OBJS=^
-%OBJDIR%/XAudio2SoundDriver.o ^
-%OBJDIR%/XA2HLEMain.o ^
-%OBJDIR%/XA2main.o ^
-%OBJDIR%/DummyDirectSoundDriver.o
-
-set DS_OBJS=^
-%OBJDIR%/DummyXAudio2SoundDriver.o ^
-%OBJDIR%/DS8HLEMain.o ^
-%OBJDIR%/DS8main.o ^
-%OBJDIR%/DirectSoundDriver.o
+windres %RESFLAGS% "%SRCDIR%/resource.rc" "%OBJDIR%/resource.o"
+SET OBJS=%OBJS% "%OBJDIR%/resource.o"
 
 ECHO Linking...
 ECHO     %XA_PLUGIN_FILE%
-g++ -shared %CFLAGS% -o %obj%\%XA_PLUGIN_FILE% %XA_OBJS% %COMMON_OBJS% %LDFLAGS% -lole32
+g++ -shared %CFLAGS% -o "%BUILDDIR%\%XA_PLUGIN_FILE%" %XA_OBJS% %OBJS% %LDFLAGS% -lole32
 ECHO     %DS_PLUGIN_FILE%
-g++ -shared %CFLAGS% -o %obj%\%DS_PLUGIN_FILE% %DS_OBJS% %COMMON_OBJS% %LDFLAGS% -ldsound
+g++ -shared %CFLAGS% -o "%BUILDDIR%\%DS_PLUGIN_FILE%" %DS_OBJS% %OBJS% %LDFLAGS% -ldsound
 
 GOTO done
 
@@ -281,6 +226,34 @@ GOTO:EOF
 :mkdir
 IF NOT EXIST "%~f1" (
     mkdir "%~f1"
+)
+GOTO:EOF
+
+:gcc
+ECHO     %~1.c...
+gcc %CFLAGS% -o "%OBJDIR%/%~1.o" -c "%SRCDIR%/%~1.c"
+SET OBJS=%OBJS% "%OBJDIR%/%~1.o"
+GOTO:EOF
+
+:gpp
+ECHO     %~1.cpp...
+g++ %CFLAGS% -o "%OBJDIR%/%~1.o" -c "%SRCDIR%/%~1.cpp"
+SET OBJS=%OBJS% "%OBJDIR%/%~1.o"
+GOTO:EOF
+
+:gppcust
+IF "%~2" == "ALL" (
+    ECHO     %~1.cpp (for XAudio2 plugin^)...
+    g++ %CFLAGS% %XA_FLAGS% -o "%OBJDIR%/XA/%~1.o" -c "%SRCDIR%/%~1.cpp"
+    SET XA_OBJS="%OBJDIR%/XA/%~1.o" %XA_OBJS%
+    ECHO     %~1.cpp (for DirectSound8 plugin^)...
+    g++ %CFLAGS% %DS_FLAGS% -o "%OBJDIR%/DS/%~1.o" -c "%SRCDIR%/%~1.cpp"
+    SET DS_OBJS="%OBJDIR%/DS/%~1.o" %DS_OBJS%
+) ELSE (
+    ECHO     %~1.cpp...
+    SET TEMPVAR=%~2
+    g++ %CFLAGS% !%~2_FLAGS! -o "%OBJDIR%/%~2/%~1.o" -c "%SRCDIR%/%~1.cpp"
+    SET %~2_OBJS="%OBJDIR%/%~2/%~1.o" !%~2_OBJS!
 )
 GOTO:EOF
 
