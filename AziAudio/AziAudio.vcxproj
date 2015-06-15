@@ -17,7 +17,7 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-  </ItemGroup<name />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{835979AC-BC6A-45B7-A513-8EEE79B443DE}</ProjectGuid>
     <RootNamespace>AziAudio</RootNamespace>
