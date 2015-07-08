@@ -83,7 +83,7 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #endif
 
 #define PLUGIN_RELEASE " v0.70 "
-#define PLUGIN_BUILD "WIP 5" \
+#define PLUGIN_BUILD "WIP 6" \
 	   PLUGIN_DEBUG 
 
 #define PLUGIN_VERSION \

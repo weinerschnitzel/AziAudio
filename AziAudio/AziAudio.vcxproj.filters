@@ -137,6 +137,9 @@
     <ClCompile Include="ABI_MixerInterleave.cpp">
       <Filter>Source Files\HLE</Filter>
     </ClCompile>
+    <ClCompile Include="SoundDriver.cpp">
+      <Filter>Source Files\Sound Driver</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">
