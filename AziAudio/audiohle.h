@@ -131,8 +131,12 @@ extern s16 acc_clamped[N];
 
 /*
  * Include the SSE2 headers if MSVC is set to target SSE2 in code generation.
+ * [Update 2015.07.08 ... or if targeting Intel x86_64.]
  */
 #if defined(_M_IX86_FP) && (_M_IX86_FP >= 2)
+#include <emmintrin.h>
+#endif
+#if defined(_M_X64)
 #include <emmintrin.h>
 #endif
 
