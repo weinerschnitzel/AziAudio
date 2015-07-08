@@ -352,7 +352,7 @@ void vsats64 (s16* vd, s32* vs)
     __m128i xmm;
 
     xmm = _mm_loadu_si128((__m128i *)vs);
-    xmm = _mm_packs_pi32(xmm, xmm);
+    xmm = _mm_packs_epi32(xmm, xmm);
     *(i64 *)vd = _mm_cvtsi128_si64(xmm);
 #elif defined(SSE1_SUPPORT) || defined(SSE2_SUPPORT)
     __m64 result, mmx_hi, mmx_lo;
