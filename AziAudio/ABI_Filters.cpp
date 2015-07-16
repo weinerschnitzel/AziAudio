@@ -41,7 +41,7 @@ static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
 }
 
 // rdot is borrowed from Mupen64Plus audio.c file, modified for SSE2
-s32 rdot(size_t n, const s16 *x, const s16 *y)
+s32 rdot_ABI(size_t n, const s16 *x, const s16 *y)
 {
 #if defined(SSE2_SUPPORT)
 	__m128i xmm_source, xmm_target;
@@ -257,7 +257,7 @@ void POLEF()
 			accumulators[i] += h2_before[i] * l2;
 #endif
 		for (i = 0; i < 8; i++)
-			accumulators[i] += rdot(i, &h2[0], &frame[0]);
+			accumulators[i] += rdot_ABI(i, &h2[0], &frame[0]);
 		for (i = 0; i < 8; i++)
 			accumulators[i] >>= 14;
 		vsats128(&dst[0], &accumulators[0]);
