@@ -156,6 +156,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SoundDriver.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WaveOut.cpp"
 				>
 			</File>
