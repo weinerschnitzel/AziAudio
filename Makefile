@@ -101,11 +101,13 @@ COMMON_OBJS =  \
 XA_OBJS =	\
 	$(OBJDIR)/XA/XAudio2SoundDriver.o \
 	$(OBJDIR)/XA/HLEMain.o \
+	$(OBJDIR)/XA/SoundDriver.o \
 	$(OBJDIR)/XA/main.o
 
 DS_OBJS =	\
 	$(OBJDIR)/DS/DirectSoundDriver.o \
 	$(OBJDIR)/DS/HLEMain.o \
+	$(OBJDIR)/DS/SoundDriver.o \
 	$(OBJDIR)/DS/main.o
 	
 
@@ -124,6 +126,12 @@ $(OBJDIR)/XA/XAudio2SoundDriver.o: $(OBJDIR)/XA $(SRCDIR)/XAudio2SoundDriver.cpp
 
 $(OBJDIR)/DS/DirectSoundDriver.o: $(OBJDIR)/DS $(SRCDIR)/DirectSoundDriver.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/DirectSoundDriver.cpp
+
+$(OBJDIR)/XA/SoundDriver.o: $(OBJDIR)/DS $(SRCDIR)/SoundDriver.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/SoundDriver.cpp
+
+$(OBJDIR)/DS/SoundDriver.o: $(OBJDIR)/DS $(SRCDIR)/SoundDriver.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/SoundDriver.cpp
 
 $(OBJDIR)/XA/main.o: $(OBJDIR)/XA $(SRCDIR)/main.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(XA_FLAGS) -o $@ -c $(SRCDIR)/main.cpp
