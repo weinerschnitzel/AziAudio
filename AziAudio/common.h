@@ -18,6 +18,7 @@
 #else
 #include <windows.h>
 #include <commctrl.h>
+#include <mmreg.h>
 #endif
 
 #include <stdio.h>
