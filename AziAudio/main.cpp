@@ -348,7 +348,7 @@ BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, L
 
 int safe_strcpy(char* dst, size_t limit, const char* src)
 {
-#if defined(_MSC_VER) && !defined(_XBOX)
+#if (_MSC_VER > 1400)
     return strcpy_s(dst, limit, src);
 #else
     size_t bytes;
