@@ -32,7 +32,7 @@ void WaveOut::BeginWaveOut(char *filename, WORD channels, WORD bitsPerSample, DW
 	memcpy(header.Subchunk2ID,"data",4);
 	header.Subchunk2Size=0; // TODO at EndWaveOut
 
-#if (_MSC_VER > 1400) && !defined(_CRT_SECURE_NO_WARNINGS)
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 	fopen_s(&waveoutput, filename, "wb");
 #else
 	waveoutput = fopen(filename, "wb");

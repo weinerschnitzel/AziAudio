@@ -89,7 +89,7 @@ protected:
 		configHLE = true;
 		configRSP = true;
 		configVolume = 0;
-#if (_MSC_VER > 1400) && !defined(_CRT_SECURE_NO_WARNINGS)
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS) && !defined(_XBOX)
 		strcpy_s(configAudioLogFolder, 500, "D:\\");
 		strcpy_s(configDevice, 100, "");
 #else
