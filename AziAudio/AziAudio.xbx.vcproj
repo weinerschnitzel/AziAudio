@@ -233,9 +233,6 @@
 				<File
 					RelativePath=".\ABI_Resample.cpp">
 				</File>
-				<File
-					RelativePath=".\SafeABI.cpp">
-				</File>
 			</Filter>
 			<Filter
 				Name="BSmilesRSP"
