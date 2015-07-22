@@ -198,6 +198,9 @@
 				RelativePath=".\main.cpp">
 			</File>
 			<File
+				RelativePath=".\SoundDriver.cpp">
+			</File>
+			<File
 				RelativePath=".\XBox\xbox_depp.cpp">
 			</File>
 			<Filter
