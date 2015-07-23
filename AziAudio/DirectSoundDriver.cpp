@@ -29,7 +29,7 @@
 // TODO: Clean this up a bit...
 DWORD last_pos = 0, write_pos = 0, play_pos = 0, temp = 0, next_pos = 0;
 DWORD last_play = 0;
-DWORD last_write = -1;
+DWORD last_write = ~0u;
 LPVOID lpvPtr1, lpvPtr2;
 DWORD dwBytes1, dwBytes2;
 int AudioInterruptTime = -1;
@@ -147,7 +147,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 	while (ac->audioIsDone == false) { // While the thread is still alive
 		while (last_pos == write_pos) { // Cycle around until a new buffer position is available
 			if (lpdsbuff == NULL)
-				ExitThread(-1);
+				ExitThread(~0u);
 			// Check to see if the audio pointer moved on to the next segment
 			if (write_pos == last_pos) {
 				Sleep (1);
@@ -730,7 +730,7 @@ DWORD DirectSoundDriver::GetReadStatus() {
 
 void DirectSoundDriver::SetVolume(DWORD volume) {
 	DWORD dsVolume = (DWORD)((volume * -25));
-	if (volume == 100) dsVolume = DSBVOLUME_MIN;
+	if (volume == 100) dsVolume = (DWORD)DSBVOLUME_MIN;
 	if (volume = 0) dsVolume = DSBVOLUME_MAX;
 	if (lpdsb != NULL) lpdsb->SetVolume(dsVolume);
 }
