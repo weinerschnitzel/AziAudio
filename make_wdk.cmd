@@ -13,7 +13,7 @@ set incl=/I"%DDK%\inc\crt" /I"%DDK%\inc\api" /I"%DDK%\inc\api\crt\stl60" /I"%src
 set libs=/LIBPATH:"%DDK%\lib\crt\%target%" /LIBPATH:"%DDK%\lib\wnet\%target%"
 
 set C_FLAGS=/W4 /Ox /Ob2 /Gm /Zi /Oi /GS- /EHa /MD
-set LINK_FLAGS=%libs% kernel32.lib user32.lib ole32.lib /DLL
+set LINK_FLAGS=%libs% kernel32.lib user32.lib ole32.lib %obj%\resource.res /DLL
 
 set files=%src%\main.cpp^
  %src%\ABI_Adpcm.cpp^
@@ -36,6 +36,7 @@ set files=%src%\main.cpp^
  %src%\Mupen64plusHLE\Mupen64Support.c^
  %src%\Mupen64plusHLE\musyx.c
 
+%DDK%\bin\x86\rc.exe %incl% /fo %obj%\resource.res %src%\resource.rc
 %MSVC%\cl.exe %files% %incl% %C_FLAGS% /link /OUT:AziAudio.dll %LINK_FLAGS%
 
 pause
