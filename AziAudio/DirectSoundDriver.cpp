@@ -49,7 +49,7 @@ DWORD interruptcnt = 0;
 #ifdef STREAM_DMA
 void DirectSoundDriver::FillBuffer(BYTE *buff, DWORD len) {
 	DWORD cnt = 0;
-	DWORD writeCnt = 0;
+//	DWORD writeCnt = 0;
 	DWORD lastValue = 0;
 	// Fill buffer from play buffer
 	if (remainingBytes >= LOCK_SIZE)
@@ -130,7 +130,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 	DWORD dwStatus;
 	DWORD last_play_pos = 0, bytesMoved = 0;
 	//LPDIRECTSOUNDBUFFER8  lpdsbuf = ac->lpdsbuf;
-	LPDIRECTSOUND8        lpds = ac->lpds;
+//	LPDIRECTSOUND8        lpds = ac->lpds;
 
 	lpdsbuff = ac->lpdsbuf;
 
@@ -214,8 +214,8 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 				writeOut = 0;
 				else
 				writeOut = LOCK_SIZE/8;			*/
-				DWORD SavedDMALen0 = DMALen[0];
-				DWORD SavedDMALen1 = DMALen[1];
+			//	DWORD SavedDMALen0 = DMALen[0];
+			//	DWORD SavedDMALen1 = DMALen[1];
 				while (writeCnt != writeOut && DMAData[0] > 0)
 				{
 					ac->SoundBuffer[ac->writeLoc++] = DMAData[0][2];
