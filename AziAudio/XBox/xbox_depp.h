@@ -33,6 +33,29 @@
 #define AiCallBack              _AUDIO_AZIAUD_##AiCallBack
 #endif
 
+/*
+ * more name-mangling for Windows stubs needed to prevent collisions with 
+ * stubs in the emulator or in another statically linked plugin
+ */
+#if 1
+#define PathFileExists		_WIN32_AZIAUD_##PathFileExists
+#define MessageBox			_WIN32_AZIAUD_##MessageBox
+#define MessageBoxA			_WIN32_AZIAUD_##MessageBoxA
+#define TerminateThread		_WIN32_AZIAUD_##TerminateThread
+#define IsWindow			_WIN32_AZIAUD_##IsWindow
+#define ShowWindow			_WIN32_AZIAUD_##ShowWindow
+#define SetWindowText		_WIN32_AZIAUD_##SetWindowText
+#define SetWindowLong		_WIN32_AZIAUD_##SetWindowLong
+#define GetClientRect		_WIN32_AZIAUD_##GetClientRect
+#define ShowCursor			_WIN32_AZIAUD_##ShowCursor
+#define GetDlgCtrlID		_WIN32_AZIAUD_##GetDlgCtrlID
+#define GetDlgItem			_WIN32_AZIAUD_##GetDlgItem
+#define GetModuleFileName	_WIN32_AZIAUD_##GetModuleFileName
+#define StrTrim				_WIN32_AZIAUD_##StrTrim
+#define WaitMessage			_WIN32_AZIAUD_##WaitMessage
+#define DllMain				_WIN32_AZIAUD_##DllMain
+#endif
+
 #ifndef _XBOX_ICC
 #include <xtl.h>
 #else
