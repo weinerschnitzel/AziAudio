@@ -322,7 +322,7 @@ _exit_:
 	ReleaseMutex(ac->hMutex);
 	ac->handleAudioThread = NULL;
 	ExitThread(0);
-	return 0;
+//	return 0;
 }
 
 
@@ -502,8 +502,8 @@ void DirectSoundDriver::AiUpdate(BOOL Wait) {
 
 	if (Wait)
 		WaitMessage();
-	return;
 
+#if 0
 	if (configForceSync && (*AudioInfo.AI_STATUS_REG & 0x80000000)) {
 		if (remainingBytes < LOCK_SIZE * 2) {
 			*AudioInfo.AI_STATUS_REG &= ~0x80000000;
@@ -512,6 +512,7 @@ void DirectSoundDriver::AiUpdate(BOOL Wait) {
 			interruptcnt--;
 		}
 	}
+#endif
 }
 
 #ifdef STREAM_DMA
@@ -705,9 +706,10 @@ DWORD DirectSoundDriver::GetReadStatus() {
 	if (configAIEmulation == true) {
 #ifdef STREAM_DMA
 		return DMALen[0] & ~7;
-		if (remainingBytes < LOCK_SIZE)
-			return 0;
-		else return DMALen[0] & ~3;
+	//	if (remainingBytes < LOCK_SIZE)
+	//		return 0;
+	//	else
+	//		return DMALen[0] & ~3;
 #else
 		if (remainingBytes < (LOCK_SIZE * 2)) {
 			return 0;
