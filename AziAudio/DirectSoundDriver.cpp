@@ -11,9 +11,6 @@
 
 #include "common.h"
 #ifndef USE_XAUDIO2
-#pragma warning(disable : 4100)
-#include <dsound.h>
-#pragma warning(default : 4100)
 #include <stdio.h>
 #include "DirectSoundDriver.h"
 #include "AudioSpec.h"
