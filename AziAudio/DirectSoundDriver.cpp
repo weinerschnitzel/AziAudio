@@ -731,7 +731,7 @@ DWORD DirectSoundDriver::GetReadStatus() {
 void DirectSoundDriver::SetVolume(DWORD volume) {
 	DWORD dsVolume = (DWORD)((volume * -25));
 	if (volume == 100) dsVolume = (DWORD)DSBVOLUME_MIN;
-	if (volume = 0) dsVolume = DSBVOLUME_MAX;
+	if (volume == 0) dsVolume = DSBVOLUME_MAX;
 	if (lpdsb != NULL) lpdsb->SetVolume(dsVolume);
 }
 
