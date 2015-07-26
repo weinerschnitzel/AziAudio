@@ -52,9 +52,8 @@ XAudio2SoundDriver::~XAudio2SoundDriver()
 static HANDLE hMutex;
 
 
-BOOL XAudio2SoundDriver::Initialize(HWND hwnd)
+BOOL XAudio2SoundDriver::Initialize()
 {
-	UNREFERENCED_PARAMETER(hwnd);
 	if (g_source != NULL)
 	{
 		g_source->Start();

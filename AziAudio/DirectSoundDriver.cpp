@@ -378,7 +378,7 @@ void DirectSoundDriver::SetSegmentSize(DWORD length) {
 
 LPDIRECTSOUNDBUFFER lpdsb = NULL;
 // TODO: Should clear out AI registers on romopen and initialize
-BOOL DirectSoundDriver::Initialize(HWND hwnd) {
+BOOL DirectSoundDriver::Initialize() {
 	audioIsPlaying = FALSE;
 
 	DSBUFFERDESC        dsPrimaryBuff;
@@ -401,7 +401,7 @@ BOOL DirectSoundDriver::Initialize(HWND hwnd) {
 	if (FAILED(hr))
 		return -2;
 
-	if (FAILED(hr = IDirectSound_SetCooperativeLevel(lpds, hwnd, DSSCL_PRIORITY))) {
+	if (FAILED(hr = IDirectSound_SetCooperativeLevel(lpds, AudioInfo.hwnd, DSSCL_PRIORITY))) {
 		return -1;
 	}
 

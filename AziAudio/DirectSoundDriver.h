@@ -64,7 +64,7 @@ public:
 	~DirectSoundDriver() { };
 
 	// Setup and Teardown Functions
-	BOOL Initialize(HWND hwnd);
+	BOOL Initialize();
 	void DeInitialize();
 
 	// Buffer Functions for the Audio Code

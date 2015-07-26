@@ -71,6 +71,7 @@
     <ClInclude Include="Mupen64plusHLE\memory.h" />
     <ClInclude Include="Mupen64plusHLE\ucodes.h" />
     <ClInclude Include="my_types.h" />
+    <ClInclude Include="NoSoundDriver.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SoundDriver.h" />
     <ClInclude Include="WaveOut.h" />
@@ -94,6 +95,7 @@
     <ClCompile Include="Mupen64plusHLE\memory.c" />
     <ClCompile Include="Mupen64plusHLE\Mupen64Support.c" />
     <ClCompile Include="Mupen64plusHLE\musyx.c" />
+    <ClCompile Include="NoSoundDriver.cpp" />
     <ClCompile Include="SoundDriver.cpp" />
     <ClCompile Include="WaveOut.cpp" />
     <ClCompile Include="XAudio2SoundDriver.cpp" />

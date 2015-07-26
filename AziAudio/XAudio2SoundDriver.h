@@ -53,7 +53,7 @@ public:
 	~XAudio2SoundDriver();
 	
 	// Setup and Teardown Functions
-	BOOL Initialize(HWND hwnd);
+	BOOL Initialize();
 	void DeInitialize();
 
 	BOOL Setup();
