@@ -140,6 +140,7 @@ ECHO Compiling Sources...
 CALL:gppcust HLEMain ALL
 CALL:gppcust main ALL
 CALL:gppcust SoundDriver ALL
+CALL:gppcust NoSoundDriver ALL
 CALL:gppcust XAudio2SoundDriver XA
 CALL:gppcust DirectSoundDriver DS
 CALL:gpp WaveOut

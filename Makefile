@@ -133,6 +133,12 @@ $(OBJDIR)/XA/SoundDriver.o: $(OBJDIR)/DS $(SRCDIR)/SoundDriver.cpp
 $(OBJDIR)/DS/SoundDriver.o: $(OBJDIR)/DS $(SRCDIR)/SoundDriver.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/SoundDriver.cpp
 
+$(OBJDIR)/XA/NoSoundDriver.o: $(OBJDIR)/DS $(SRCDIR)/NoSoundDriver.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/NoSoundDriver.cpp
+
+$(OBJDIR)/DS/NoSoundDriver.o: $(OBJDIR)/DS $(SRCDIR)/NoSoundDriver.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(DS_FLAGS) -o $@ -c $(SRCDIR)/NoSoundDriver.cpp
+
 $(OBJDIR)/XA/main.o: $(OBJDIR)/XA $(SRCDIR)/main.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(XA_FLAGS) -o $@ -c $(SRCDIR)/main.cpp
 

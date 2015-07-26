@@ -156,6 +156,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NoSoundDriver.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SoundDriver.cpp"
 				>
 			</File>
@@ -259,6 +263,10 @@
 			</File>
 			<File
 				RelativePath=".\my_types.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NoSoundDriver.h"
 				>
 			</File>
 			<File

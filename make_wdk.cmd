@@ -29,6 +29,7 @@ set files=%src%\main.cpp^
  %src%\DirectSoundDriver.cpp^
  %src%\HLEMain.cpp^
  %src%\SoundDriver.cpp^
+ %src%\NoSoundDriver.cpp^
  %src%\WaveOut.cpp^
  %src%\XAudio2SoundDriver.cpp^
  %src%\Mupen64plusHLE\audio.c^
