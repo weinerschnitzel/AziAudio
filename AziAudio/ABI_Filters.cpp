@@ -102,7 +102,7 @@ void FILTER2() {
 
 	//			lutt5 = (s16 *)(dmem + 0xFC0);
 	//			lutt6 = (s16 *)(dmem + 0xFE0);
-	for (int x = 0; x < 8; x++) {
+	for (x = 0; x < 8; x++) {
 		s32 a;
 		a = (lutt5[x] + lutt6[x]) >> 1;
 		lutt5[x] = lutt6[x] = (s16)a;

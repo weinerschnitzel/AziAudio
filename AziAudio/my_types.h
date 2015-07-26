@@ -310,14 +310,14 @@ typedef void(*p_func)(void);
  * helper macros with exporting functions for shared objects or dynamically
  * loaded libraries
  */
-#if defined(_WIN32)
+#if defined(_XBOX)
+#define EXPORT      
+#define CALL        
+#elif defined(_WIN32)
 #define EXPORT      __declspec(dllexport)
 #define CALL        __cdecl
 #elif (__GNUC__)
 #define EXPORT      __attribute__((visibility("default")))
-#define CALL
-#else
-#define EXPORT
 #define CALL
 #endif
 

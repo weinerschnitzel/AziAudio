@@ -12,10 +12,7 @@
 #pragma once
 
 #include "common.h"
-#include <mmreg.h>
-#pragma warning(disable : 4100)
 #include <dsound.h>
-#pragma warning(default : 4100)
 #include "SoundDriver.h"
 
 static DWORD sLOCK_SIZE;
