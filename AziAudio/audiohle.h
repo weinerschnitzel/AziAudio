@@ -187,11 +187,8 @@ extern s16 pack_signed(s32 slice);
 #define vsats128(vd, vs) {      \
 vd[0] = pack_signed(vs[0]); vd[1] = pack_signed(vs[1]); \
 vd[2] = pack_signed(vs[2]); vd[3] = pack_signed(vs[3]); }
-#define vsats64(vd, vs) {       \
-vd[0] = pack_signed(vs[0]); vd[1] = pack_signed(vs[1]); }
 #else
 extern void vsats128(s16* vd, s32* vs); /* Clamp vectors using SSE2. */
-extern void vsats64 (s16* vd, s32* vs); /* Clamp vectors using MMX. */
 #endif
 
 /*
