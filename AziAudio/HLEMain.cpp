@@ -346,29 +346,6 @@ void vsats128(s16* vd, s32* vs)
         vd[i] = pack_signed(vs[i]);
 #endif
 }
-void vsats64 (s16* vd, s32* vs)
-{
-#if defined (_M_X64)
-    __m128i xmm;
-
-    xmm = _mm_loadu_si128((__m128i *)vs);
-    xmm = _mm_packs_epi32(xmm, xmm);
-    *(i64 *)vd = _mm_cvtsi128_si64(xmm);
-#elif defined(SSE1_SUPPORT) || defined(SSE2_SUPPORT)
-    __m64 result, mmx_hi, mmx_lo;
-
-    mmx_hi = *(__m64 *)&vs[0];
-    mmx_lo = *(__m64 *)&vs[2];
-    result = _mm_packs_pi32(mmx_hi, mmx_lo);
-    *(__m64 *)vd = result;
-    _mm_empty();
-#else
-    register size_t i;
-
-    for (i = 0; i < 4; i++)
-        vd[i] = pack_signed(vs[i]);
-#endif
-}
 #endif
 
 void copy_vector(void * vd, const void * vs)
