@@ -22,7 +22,7 @@ void ADDMIXER() {
 	outp = (s16 *)(BufferSpace + OutBuffer);
 	for (s16 cntr = 0; cntr < Count; cntr += 2) {
 		temp = *outp + *inp;
-		temp = pack_signed(temp);
+		*outp = pack_signed(temp);
 		outp++;	inp++;
 	}
 }
