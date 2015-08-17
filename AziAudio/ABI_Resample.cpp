@@ -216,8 +216,7 @@ void RESAMPLE3() {
 			if (temp & 0x8000) temp = (temp^0x8000) + 0x10000;
 			else temp = (temp^0x8000);
 			temp = (s32)(temp >> 16);
-			temp = pack_signed((s32)temp);
-			accum = (s32)(s16)temp;
+			accum = (s32)pack_signed(temp);
 		}
 		*/
 
