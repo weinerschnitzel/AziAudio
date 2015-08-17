@@ -41,8 +41,11 @@ void DMEMMOVE() {
 
 	u32 count = ((t9 + 3) & 0xfffc);
 
-	for (cnt = 0; cnt < count; cnt++) {
-		*(u8 *)(BufferSpace + BES(cnt + v1)) = *(u8 *)(BufferSpace + BES(cnt + v0));
+	for (cnt = 0; cnt < count; cnt += 4) {
+		BufferSpace[BES(v1 + cnt + 0)] = BufferSpace[BES(v0 + cnt + 0)];
+		BufferSpace[BES(v1 + cnt + 1)] = BufferSpace[BES(v0 + cnt + 1)];
+		BufferSpace[BES(v1 + cnt + 2)] = BufferSpace[BES(v0 + cnt + 2)];
+		BufferSpace[BES(v1 + cnt + 3)] = BufferSpace[BES(v0 + cnt + 3)];
 	}
 }
 
@@ -60,8 +63,11 @@ void DMEMMOVE2() { // Needs accuracy verification...
 	//v1 = (v1) & 0xfffc;
 
 	//memcpy (dmem+v1, dmem+v0, count-1);
-	for (cnt = 0; cnt < count; cnt++) {
-		*(u8 *)(BufferSpace + BES(cnt + v1)) = *(u8 *)(BufferSpace + BES(cnt + v0));
+	for (cnt = 0; cnt < count; cnt += 4) {
+		BufferSpace[BES(v1 + cnt + 0)] = BufferSpace[BES(v0 + cnt + 0)];
+		BufferSpace[BES(v1 + cnt + 1)] = BufferSpace[BES(v0 + cnt + 1)];
+		BufferSpace[BES(v1 + cnt + 2)] = BufferSpace[BES(v0 + cnt + 2)];
+		BufferSpace[BES(v1 + cnt + 3)] = BufferSpace[BES(v0 + cnt + 3)];
 	}
 }
 
@@ -73,8 +79,11 @@ void DMEMMOVE3() { // Needs accuracy verification...
 	u32 count = ((t9 + 3) & 0xfffc);
 
 	//memcpy (dmem+v1, dmem+v0, count-1);
-	for (cnt = 0; cnt < count; cnt++) {
-		*(u8 *)(BufferSpace + BES(cnt + v1)) = *(u8 *)(BufferSpace + BES(cnt + v0));
+	for (cnt = 0; cnt < count; cnt += 4) {
+		BufferSpace[BES(v1 + cnt + 0)] = BufferSpace[BES(v0 + cnt + 0)];
+		BufferSpace[BES(v1 + cnt + 1)] = BufferSpace[BES(v0 + cnt + 1)];
+		BufferSpace[BES(v1 + cnt + 2)] = BufferSpace[BES(v0 + cnt + 2)];
+		BufferSpace[BES(v1 + cnt + 3)] = BufferSpace[BES(v0 + cnt + 3)];
 	}
 }
 
