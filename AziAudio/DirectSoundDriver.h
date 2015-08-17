@@ -11,6 +11,10 @@
 
 #pragma once
 
+#if defined(_WIN32) && !defined(_XBOX)
+#include <mmreg.h>
+#endif
+
 #include "common.h"
 #include <dsound.h>
 #include "SoundDriver.h"
