@@ -21,6 +21,10 @@
 #define SND_IS_FULL		 0x8000000
 #define LEGACY_SOUND_DRIVER
 
+#if !defined(_WIN32) && !defined(_XBOX)
+#define UNREFERENCED_PARAMETER(msg)     msg
+#endif
+
 class SoundDriver
 {
 public:
