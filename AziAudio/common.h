@@ -15,7 +15,7 @@
 #if defined (_XBOX)
 #include <xtl.h>
 #include "XBox/xbox_depp.h"
-#else
+#elif defined(_WIN32)
 #include <windows.h>
 #include <commctrl.h>
 #endif
