@@ -13,16 +13,20 @@
 #include "AudioSpec.h"
 #ifdef USE_XAUDIO2
 #include "XAudio2SoundDriver.h"
-#else
+#elif defined(_WIN32)
 #include "DirectSoundDriver.h"
 #endif
 #include "NoSoundDriver.h"
 #include "audiohle.h"
 //#include "rsp/rsp.h"
-#include <stdio.h>
+
+#ifdef _WIN32
 #include <conio.h>
-#include <fcntl.h>
 #include <io.h>
+#endif
+
+#include <stdio.h>
+#include <fcntl.h>
 #include <ios>
 #include "resource.h"
 

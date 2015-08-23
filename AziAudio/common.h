@@ -30,7 +30,9 @@
 #endif
 
 #ifndef XAUDIO_LIBRARIES_UNAVAILABLE
+#ifdef _WIN32
 #define USE_XAUDIO2
+#endif
 #endif
 
 #include "my_types.h"
