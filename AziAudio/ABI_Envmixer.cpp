@@ -140,7 +140,7 @@ void ENVMIXER() {
 	s32 AuxR;
 	s32 AuxL;
 	s32 i1;
-	WORD AuxIncRate = 1;
+	u16 AuxIncRate = 1;
 	s16 zero[8];
 	memset(zero, 0, sizeof(s16) * 8);
 	s32 LVol, RVol;
@@ -308,7 +308,7 @@ void ENVMIXER_GE() {
 	s32 AuxR;
 	s32 AuxL;
 	s32 i1;
-	WORD AuxIncRate = 1;
+	u16 AuxIncRate = 1;
 	s16 zero[8];
 	memset(zero, 0, sizeof(s16)* 8);
 	s32 LAdder, LAcc, LVol;

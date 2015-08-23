@@ -46,7 +46,7 @@ u16 ResampleLUT[0x200] = {
 	0xFFD8, 0x0E5F, 0x6696, 0x0B39, 0xFFDF, 0x0D46, 0x66AD, 0x0C39
 };
 
-s32 MultAddLUT(s16 *src, u32 srcPtr, DWORD location)
+s32 MultAddLUT(s16 *src, u32 srcPtr, u32 location)
 {
 	s16 *lut = (s16 *)(((u8 *)ResampleLUT) + location);
 	s32 accum = 0;
@@ -60,11 +60,11 @@ s32 MultAddLUT(s16 *src, u32 srcPtr, DWORD location)
 }
 
 void RESAMPLE() {
-	BYTE Flags = (u8)((k0 >> 16) & 0xff);
-	DWORD Pitch = ((k0 & 0xffff)) << 1;
+	u8 Flags = (u8)((k0 >> 16) & 0xff);
+	u32 Pitch = ((k0 & 0xffff)) << 1;
 	u32 addy = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
-	DWORD Accum = 0;
-	DWORD location;
+	u32 Accum = 0;
+	u32 location;
 	s16 *dst;
 	s16 *src;
 	dst = (s16 *)(BufferSpace);
@@ -121,11 +121,11 @@ void RESAMPLE() {
 }
 
 void RESAMPLE2() {
-	BYTE Flags = (u8)((k0 >> 16) & 0xff);
-	DWORD Pitch = ((k0 & 0xffff)) << 1;
+	u8 Flags = (u8)((k0 >> 16) & 0xff);
+	u32 Pitch = ((k0 & 0xffff)) << 1;
 	u32 addy = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
-	DWORD Accum = 0;
-	DWORD location;
+	u32 Accum = 0;
+	u32 location;
 	s16 *dst;
 	s16 *src;
 	dst = (s16 *)(BufferSpace);
@@ -167,11 +167,11 @@ void RESAMPLE2() {
 }
 
 void RESAMPLE3() {
-	BYTE Flags = (u8)((t9 >> 0x1e));
-	DWORD Pitch = ((t9 >> 0xe) & 0xffff) << 1;
+	u8 Flags = (u8)((t9 >> 0x1e));
+	u32 Pitch = ((t9 >> 0xe) & 0xffff) << 1;
 	u32 addy = (k0 & 0xffffff);
-	DWORD Accum = 0;
-	DWORD location;
+	u32 Accum = 0;
+	u32 location;
 	s16 *dst;
 	s16 *src;
 	dst = (s16 *)(BufferSpace);
