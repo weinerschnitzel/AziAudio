@@ -9,6 +9,9 @@
 *                                                                           *
 ****************************************************************************/
 
+/* memset() and memcpy() */
+#include <string.h>
+
 #include "audiohle.h"
 
 u16 adpcmtable[0x88];

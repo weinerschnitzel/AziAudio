@@ -9,6 +9,9 @@
 *                                                                           *
 ****************************************************************************/
 
+/* memset() and memcpy() */
+#include <string.h>
+
 #include "audiohle.h"
 
 s16 Vol_Left;		// 0x0006(T8)

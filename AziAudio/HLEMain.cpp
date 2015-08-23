@@ -9,6 +9,9 @@
 *                                                                           *
 ****************************************************************************/
 
+/* memset() and memcpy() */
+#include <string.h>
+
 #include "audiohle.h"
 //#include "RSP/rsp.h"
 
