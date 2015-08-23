@@ -12,7 +12,7 @@
 #include "SoundDriver.h"
 
 // Load the buffer from the AI interface to our emulated buffer
-void SoundDriver::AI_LenChanged(BYTE *start, DWORD length)
+void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 {
 #ifdef LEGACY_SOUND_DRIVER
 	if (m_audioIsInitialized == false)
@@ -72,7 +72,7 @@ void SoundDriver::AI_LenChanged(BYTE *start, DWORD length)
 #endif
 }
 
-void SoundDriver::AI_SetFrequency(DWORD Frequency)
+void SoundDriver::AI_SetFrequency(u32 Frequency)
 {
 #ifdef LEGACY_SOUND_DRIVER
 	if (m_audioIsInitialized == true) SetFrequency(Frequency);
@@ -82,7 +82,7 @@ void SoundDriver::AI_SetFrequency(DWORD Frequency)
 #endif
 }
 
-DWORD SoundDriver::AI_ReadLength()
+u32 SoundDriver::AI_ReadLength()
 {
 #ifdef LEGACY_SOUND_DRIVER
 	if (m_audioIsInitialized == false) return 0;
@@ -143,18 +143,18 @@ void SoundDriver::AI_ResetAudio()
 	StartAudio();
 }
 
-void SoundDriver::AI_Update(BOOL Wait)
+void SoundDriver::AI_Update(Boolean Wait)
 {
 	AiUpdate(Wait);
 }
 
 // Copies data to the audio playback buffer
-DWORD SoundDriver::LoadAiBuffer(BYTE *start, DWORD length)
+u32 SoundDriver::LoadAiBuffer(u8 *start, u32 length)
 {
-	DWORD bytesToMove = length & 0xFFFFFFF8;
+	u32 bytesToMove = length & 0xFFFFFFF8;
 #ifndef LEGACY_SOUND_DRIVER
-	BYTE *ptrStart = start;
-	BYTE nullBuff[MAX_SIZE];
+	u8 *ptrStart = start;
+	u8 nullBuff[MAX_SIZE];
 	if (start == NULL)
 		ptrStart = nullBuff;
 
