@@ -25,14 +25,14 @@ public:
 	~NoSoundDriver() {};
 
 	// Setup and Teardown Functions
-	BOOL Initialize();
+	Boolean Initialize();
 	void DeInitialize();
 
 	// Management functions
-	void AiUpdate(BOOL Wait);
+	void AiUpdate(Boolean Wait);
 	void StopAudio();
 	void StartAudio();
-	void SetFrequency(DWORD Frequency);
+	void SetFrequency(u32 Frequency);
 
 protected:
 
