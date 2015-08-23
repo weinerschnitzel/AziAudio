@@ -38,12 +38,12 @@
 typedef struct {
 	u16 Version;
 	u32 BufferSize;
-	BOOL doAIHACK;
-	BOOL syncAudio;
-	BOOL fillAudio;
-	BOOL oldStyle;
-	BOOL Reserved2;
-	BOOL Reserved3;
+	Boolean doAIHACK;
+	Boolean syncAudio;
+	Boolean fillAudio;
+	Boolean oldStyle;
+	Boolean Reserved2;
+	Boolean Reserved3;
 	u32  Reserved4;
 	u32  Reserved5;
 	u32  Reserved6;

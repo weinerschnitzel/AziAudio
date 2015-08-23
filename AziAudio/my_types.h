@@ -434,4 +434,17 @@ typedef struct {
 } MIPS_type_J;
 #endif
 
+/*
+ * Saying "int" all the time for variables of true/false meaning can be sort
+ * of misleading.  (So can adding dumb features to C99, like "bool".)
+ *
+ * Boolean is a proper noun, so the correct name has a capital 'B'.
+ */
+typedef int Boolean;
+
+#if !defined(FALSE) && !defined(TRUE)
+#define FALSE           0
+#define TRUE            1
+#endif
+
 #endif
