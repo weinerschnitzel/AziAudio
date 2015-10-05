@@ -73,8 +73,8 @@ void INTERLEAVE() {
 
 void INTERL2() {
 	s16 Count = k0 & 0xFFFF;
-	WORD  Out = t9 & 0xffff;
-	WORD In = (t9 >> 16);
+	u16 Out = t9 & 0xffff;
+	u16 In  = (t9 >> 16);
 	u8* src;
 	u8* dst;
 

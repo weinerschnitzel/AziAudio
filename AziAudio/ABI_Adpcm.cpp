@@ -9,6 +9,9 @@
 *                                                                           *
 ****************************************************************************/
 
+/* memset() and memcpy() */
+#include <string.h>
+
 #include "audiohle.h"
 
 u16 adpcmtable[0x88];
@@ -175,16 +178,16 @@ void ADPCM_madd(s32* a, s16* book1, s16* book2, s16 l1, s16 l2, s16* inp)
 }
 
 void ADPCM() { // Work in progress! :)
-	BYTE Flags = (u8)((k0 >> 16) & 0xff);
-	//WORD Gain = (u16)(k0 & 0xffff);
-	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
-	WORD inPtr = 0;
+	u8 Flags = (u8)((k0 >> 16) & 0xff);
+	//u16 Gain = (u16)(k0 & 0xffff);
+	u32 Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
+	u16 inPtr = 0;
 	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
 	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
 	//u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
 	s16 count = (s16)AudioCount;
 	int vscale;
-	WORD index;
+	u16 index;
 	s32 a[8];
 	s16 b[8];
 	s16* book1;
@@ -280,16 +283,16 @@ void ADPCM() { // Work in progress! :)
 }
 
 void ADPCM2() { // Verified to be 100% Accurate...
-	BYTE Flags = (u8)((k0 >> 16) & 0xff);
-//	WORD Gain = (u16)(k0 & 0xffff);
-	DWORD Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
-	WORD inPtr = 0;
+	u8 Flags = (u8)((k0 >> 16) & 0xff);
+//	u16 Gain = (u16)(k0 & 0xffff);
+	u32 Address = (t9 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
+	u16 inPtr = 0;
 	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
 	s16 *out = (s16 *)(BufferSpace + AudioOutBuffer);
 //	u8 *in = (u8 *)(BufferSpace + AudioInBuffer);
 	s16 count = (s16)AudioCount;
 	int vscale;
-	WORD index;
+	u16 index;
 	s32 a[8];
 	s16 b[8];
 	s16* book1;
@@ -400,16 +403,16 @@ void ADPCM2() { // Verified to be 100% Accurate...
 }
 
 void ADPCM3() { // Verified to be 100% Accurate...
-	BYTE Flags = (u8)((t9 >> 0x1c) & 0xff);
-	//WORD Gain=(u16)(k0&0xffff);
-	DWORD Address = (k0 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
-	WORD inPtr = (t9 >> 12) & 0xf;
+	u8 Flags = (u8)((t9 >> 0x1c) & 0xff);
+	//u16 Gain=(u16)(k0&0xffff);
+	u32 Address = (k0 & 0xffffff);// + SEGMENTS[(t9>>24)&0xf];
+	u16 inPtr = (t9 >> 12) & 0xf;
 	//s16 *out=(s16 *)(testbuff+(AudioOutBuffer>>2));
 	s16 *out = (s16 *)(BufferSpace + (t9 & 0xfff) + 0x4f0);
-//	BYTE *in = (BYTE *)(BufferSpace + ((t9 >> 12) & 0xf) + 0x4f0);
+//	u8 *in = (u8 *)(BufferSpace + ((t9 >> 12) & 0xf) + 0x4f0);
 	s16 count = (s16)((t9 >> 16) & 0xfff);
 	int vscale;
-	WORD index;
+	u16 index;
 	s32 a[8];
 	s16 b[8];
 	s16* book1;

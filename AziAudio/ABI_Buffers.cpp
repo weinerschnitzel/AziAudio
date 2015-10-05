@@ -9,6 +9,9 @@
 *                                                                           *
 ****************************************************************************/
 
+/* memset() and memcpy() */
+#include <string.h>
+
 #include "audiohle.h"
 
 void CLEARBUFF() {
@@ -88,11 +91,11 @@ void DMEMMOVE3() { // Needs accuracy verification...
 }
 
 void DUPLICATE2() {
-	WORD Count = (k0 >> 16) & 0xff;
-	WORD In = k0 & 0xffff;
-	WORD Out = (t9 >> 16);
+	u16 Count = (k0 >> 16) & 0xff;
+	u16 In = k0 & 0xffff;
+	u16 Out = (t9 >> 16);
 
-	WORD buff[64];
+	u16 buff[64];
 
 	memcpy(buff, BufferSpace + In, 128);
 

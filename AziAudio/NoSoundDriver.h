@@ -16,6 +16,19 @@ NoSound Driver to demonstrate how to use the SoundDriver interface
 #include "common.h"
 #include "SoundDriver.h"
 
+#if !defined(_WIN32) && !defined(_XBOX)
+typedef union _LARGE_INTEGER {
+    struct {
+        u32 LowPart;
+        s32 HighPart;
+    };
+    struct {
+        u32 LowPart;
+        s32 HighPart;
+    } u;
+    s64 QuadPart;
+} LARGE_INTEGER;
+#endif
 
 class NoSoundDriver :
 	public SoundDriver
@@ -25,17 +38,16 @@ public:
 	~NoSoundDriver() {};
 
 	// Setup and Teardown Functions
-	BOOL Initialize();
+	Boolean Initialize();
 	void DeInitialize();
 
 	// Management functions
-	void AiUpdate(BOOL Wait);
+	void AiUpdate(Boolean Wait);
 	void StopAudio();
 	void StartAudio();
-	void SetFrequency(DWORD Frequency);
+	void SetFrequency(u32 Frequency);
 
 protected:
-
 	bool dllInitialized;
 	LARGE_INTEGER perfTimer;
 	LARGE_INTEGER perfFreq;

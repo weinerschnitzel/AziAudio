@@ -15,7 +15,7 @@
 #if defined (_XBOX)
 #include <xtl.h>
 #include "XBox/xbox_depp.h"
-#else
+#elif defined(_WIN32)
 #include <windows.h>
 #include <commctrl.h>
 #endif
@@ -30,7 +30,9 @@
 #endif
 
 #ifndef XAUDIO_LIBRARIES_UNAVAILABLE
+#ifdef _WIN32
 #define USE_XAUDIO2
+#endif
 #endif
 
 #include "my_types.h"
@@ -38,12 +40,12 @@
 typedef struct {
 	u16 Version;
 	u32 BufferSize;
-	BOOL doAIHACK;
-	BOOL syncAudio;
-	BOOL fillAudio;
-	BOOL oldStyle;
-	BOOL Reserved2;
-	BOOL Reserved3;
+	Boolean doAIHACK;
+	Boolean syncAudio;
+	Boolean fillAudio;
+	Boolean oldStyle;
+	Boolean Reserved2;
+	Boolean Reserved3;
 	u32  Reserved4;
 	u32  Reserved5;
 	u32  Reserved6;

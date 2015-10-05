@@ -13,16 +13,20 @@
 #include "AudioSpec.h"
 #ifdef USE_XAUDIO2
 #include "XAudio2SoundDriver.h"
-#else
+#elif defined(_WIN32)
 #include "DirectSoundDriver.h"
 #endif
 #include "NoSoundDriver.h"
 #include "audiohle.h"
 //#include "rsp/rsp.h"
-#include <stdio.h>
+
+#ifdef _WIN32
 #include <conio.h>
-#include <fcntl.h>
 #include <io.h>
+#endif
+
+#include <stdio.h>
+#include <fcntl.h>
 #include <ios>
 #include "resource.h"
 
@@ -31,16 +35,17 @@ using namespace std;
 SoundDriver *snd = NULL;
 
 // Dialog Procedures
-#if !defined(_XBOX)
+#if defined(_WIN32)
 INT_PTR CALLBACK ConfigProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
 
-// Direct Sound selection
-char DSoundDeviceName[10][100];
+// DirectSound selection
+#ifdef _WIN32
 LPGUID DSoundGUID[10];
+#endif
+char DSoundDeviceName[10][100];
 int DSoundCnt;
 int SelectedDSound;
-
 
 // RSP Test stuff
 
@@ -63,6 +68,8 @@ static bool	bAbortAiUpdate = false;
 #ifdef __GNUC__
 extern "C"
 #endif
+
+#ifdef _WIN32
 BOOL WINAPI DllMain(
   HINSTANCE hinstDLL,  // handle to DLL module
   DWORD fdwReason,     // reason for calling function
@@ -78,50 +85,64 @@ BOOL WINAPI DllMain(
 	
 	return TRUE;
 }
+#endif
 
 EXPORT void CALL DllAbout(HWND hParent) {
+#if defined(_WIN32) || defined(_XBOX)
 	MessageBoxA(hParent, "No About yet... ", "About Box", MB_OK);
+#else
+	puts(PLUGIN_VERSION);
+#endif
 }
 
 EXPORT void CALL DllConfig(HWND hParent)
 {
-#if defined(_XBOX) || 0
-	MessageBox(hParent, "We don't use config dialog... ", "", MB_OK);
-#else
+#if defined(_WIN32)
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG), hParent, ConfigProc);
+#else
+	fputs("To do:  Implement saving configuration settings.\n", stderr);
 #endif
 }
 
 EXPORT void CALL DllTest(HWND hParent) {
+#if defined(_WIN32)
 	MessageBoxA(hParent, "Nothing to test yet... ", "Test Box", MB_OK);
+#else
+	puts("DllTest");
+#endif
 }
 
 // Initialization / Deinitalization Functions
 
 // Note: We call CloseDLL just in case the audio plugin was already initialized...
 AUDIO_INFO AudioInfo;
-DWORD Dacrate = 0;
+u32 Dacrate = 0;
 
 // TODO: Instead of checking for an initialized state, we should default to a no-sound audio processing state and give a warning
-BOOL audioIsInitialized = FALSE;
+Boolean audioIsInitialized = FALSE;
 
 //TODO: Do away with these from main.cpp.  They are only needed for HLE and available in AudioInfo
 u8 * DMEM;
 u8 * IMEM;
 u8 * DRAM;
 
-EXPORT BOOL CALL InitiateAudio(AUDIO_INFO Audio_Info) {
+EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	if (snd != NULL)
 		delete snd;
-#ifdef LEGACY_SOUND_DRIVER
-#if defined(XAUDIO_LIBRARIES_UNAVAILABLE) || !defined(USE_XAUDIO2)
+
+/*
+ * To do:  We currently have no sound-playing device for Unix-based platforms.
+ */
+#if defined(_WIN32) || defined(_XBOX)
+#ifndef LEGACY_SOUND_DRIVER
+	snd = new NoSoundDriver();
+#elif !defined(USE_XAUDIO2) &&
 	snd = new DirectSoundDriver();
 #else
 	snd = new XAudio2SoundDriver();
 #endif
-#else
-	snd = new NoSoundDriver();
 #endif
+
 	//RedirectIOToConsole();
 	Dacrate = 0;
 	//CloseDLL ();
@@ -193,7 +214,7 @@ EXPORT void CALL RomClosed(void)
 }
 
 EXPORT void CALL AiDacrateChanged(int SystemType) {
-	DWORD Frequency, video_clock;
+	u32 Frequency, video_clock;
 
 	if (snd == NULL)
 		return;
@@ -211,7 +232,7 @@ EXPORT void CALL AiDacrateChanged(int SystemType) {
 		);
 #endif
 	switch (SystemType) {
-		default         :  MessageBoxA(NULL, "Invalid SystemType.", NULL, MB_ICONERROR);
+		default         :  assert(FALSE);
 		case SYSTEM_NTSC:  video_clock = 48681812; break;
 		case SYSTEM_PAL :  video_clock = 49656530; break;
 		case SYSTEM_MPAL:  video_clock = 48628316; break;
@@ -229,7 +250,7 @@ EXPORT void CALL AiLenChanged(void)
 		*AudioInfo.AI_LEN_REG & 0x3FFF8);
 }
 
-EXPORT DWORD CALL AiReadLength(void) {
+EXPORT u32 CALL AiReadLength(void) {
 	if (snd == NULL)
 		return 0;
 	if (audioIsInitialized == FALSE) return 0;
@@ -241,19 +262,26 @@ EXPORT DWORD CALL AiReadLength(void) {
 // Deprecated Functions
 
 
-EXPORT void CALL AiUpdate(BOOL Wait) {
+EXPORT void CALL AiUpdate(Boolean Wait) {
 	static int intCount = 0;
+
 	if (snd == NULL)
 	{
+#if defined(_WIN32) || defined(_XBOX)
 		Sleep(1);
+#endif
 		return;
 	}
 	if (Wait)
 	{
 		if (bAbortAiUpdate == true) 
 		{
+#if defined(_WIN32) || defined(_XBOX)
 			if (intCount > 10) 
 				ExitThread(0);
+#else
+			assert(intCount <= 10);
+#endif
 			intCount++;
 			return;
 		}
@@ -262,7 +290,7 @@ EXPORT void CALL AiUpdate(BOOL Wait) {
 	return;
 }
 
-#if !defined(_XBOX)
+#if defined(_WIN32)
 INT_PTR CALLBACK ConfigProc(
 	HWND hDlg,  // handle to dialog box
 	UINT uMsg,     // message
@@ -357,6 +385,7 @@ INT_PTR CALLBACK ConfigProc(
 #endif
 
 // TODO: I think this can safely be removed
+#ifdef _WIN32
 BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, LPVOID lpContext)
 {
 	UNREFERENCED_PARAMETER(lpszDrvName);
@@ -372,6 +401,7 @@ BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, L
 
 	return TRUE;
 }
+#endif
 
 int safe_strcpy(char* dst, size_t limit, const char* src)
 {
