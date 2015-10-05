@@ -67,6 +67,16 @@
  */
 #define N       8
 
+/*
+ * Sometimes the audio HLE code has variables named "k0", after the MIPS GPR.
+ *
+ * With some compilers (like GCC with -masm=intel), this creates assembler
+ * error messages because k0 conflicts with the assembly language syntax.
+ *
+ * Just a little bit of name-mangling should fix this collision.
+ */
+#define k0      GPR_k0
+
 //------------------------------------------------------------------------------------------
 
 // Use these functions to interface with the HLE Audio...
