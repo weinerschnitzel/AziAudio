@@ -69,8 +69,8 @@ public:
 	void DeInitialize();
 
 	// Buffer Functions for the Audio Code
-	void SetFrequency(DWORD Frequency);		// Sets the Nintendo64 Game Audio Frequency
-	DWORD AddBuffer(BYTE *start, DWORD length);	// Uploads a new buffer and returns status
+	void SetFrequency(u32 Frequency);           // Sets the Nintendo64 Game Audio Frequency
+	u32 AddBuffer(u8 *start, u32 length);       // Uploads a new buffer and returns status
 	void FillBuffer(BYTE *buff, DWORD len);
 	void SetSegmentSize(DWORD length);
 
@@ -79,7 +79,7 @@ public:
 	void StopAudio();							// Stops the Audio PlayBack (as if paused)
 	void StartAudio();							// Starts the Audio PlayBack (as if unpaused)
 
-	DWORD GetReadStatus();						// Returns the status on the read pointer
+	u32 GetReadStatus();						// Returns the status on the read pointer
 
 	void SetVolume(DWORD volume);
 
