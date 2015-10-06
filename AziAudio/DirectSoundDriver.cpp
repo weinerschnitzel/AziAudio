@@ -469,7 +469,7 @@ void DirectSoundDriver::DeInitialize() {
 // ---------BLAH--------
 
 // Buffer Functions for the Audio Code
-void DirectSoundDriver::SetFrequency(DWORD Frequency2) {
+void DirectSoundDriver::SetFrequency(u32 Frequency2) {
 
 	DWORD Frequency = Frequency2;
 	BOOL bAudioPlaying = audioIsPlaying;
@@ -516,7 +516,7 @@ void DirectSoundDriver::AiUpdate(BOOL Wait) {
 }
 
 #ifdef STREAM_DMA
-DWORD DirectSoundDriver::AddBuffer(BYTE *start, DWORD length) {
+u32 DirectSoundDriver::AddBuffer(u8 *start, u32 length) {
 	//DWORD retVal = 0;
 
 	if (length == 0) {
@@ -568,8 +568,8 @@ DWORD DirectSoundDriver::AddBuffer(BYTE *start, DWORD length) {
 	return length;
 }
 #else
-DWORD DirectSoundDriver::AddBuffer(BYTE *start, DWORD length) {
-	DWORD retVal = 0;
+u32 DirectSoundDriver::AddBuffer(u8 *start, u32 length) {
+	u32 retVal = 0;
 	DWORD max = remainingBytes + length;
 	// One DMA buffer = one interrupt
 	interruptcnt++;
@@ -700,7 +700,7 @@ void DirectSoundDriver::StartAudio() {
 	//test.BeginWaveOut("D:\\test.wav", 2, 16, SampleRate);
 }
 
-DWORD DirectSoundDriver::GetReadStatus() {
+u32 DirectSoundDriver::GetReadStatus() {
 	if (configForceSync)
 		return 0;//remainingBytes;
 	if (configAIEmulation == true) {

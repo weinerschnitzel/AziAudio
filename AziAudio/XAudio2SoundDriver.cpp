@@ -171,7 +171,7 @@ void XAudio2SoundDriver::Teardown()
 	dllInitialized = false;
 }
 
-void XAudio2SoundDriver::SetFrequency(DWORD Frequency)
+void XAudio2SoundDriver::SetFrequency(u32 Frequency)
 {
 	cacheSize = (Frequency / 25) * 4;// (((Frequency * 4) / 100) & ~0x3) * 8;
 	if (Setup() < 0) /* failed to apply a sound device */
@@ -179,7 +179,7 @@ void XAudio2SoundDriver::SetFrequency(DWORD Frequency)
 	g_source->SetSourceSampleRate(Frequency);
 }
 
-DWORD XAudio2SoundDriver::AddBuffer(BYTE *start, DWORD length)
+u32 XAudio2SoundDriver::AddBuffer(u8 *start, u32 length)
 {
 	if (length == 0 || g_source == NULL) {
 		*AudioInfo.AI_STATUS_REG = 0;
@@ -261,7 +261,7 @@ void XAudio2SoundDriver::StartAudio()
 	audioIsPlaying = true;
 }
 
-DWORD XAudio2SoundDriver::GetReadStatus()
+u32 XAudio2SoundDriver::GetReadStatus()
 {
 	XAUDIO2_VOICE_STATE xvs;
 	int retVal;
