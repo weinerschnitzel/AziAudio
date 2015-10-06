@@ -136,7 +136,7 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 #if defined(_WIN32) || defined(_XBOX)
 #ifndef LEGACY_SOUND_DRIVER
 	snd = new NoSoundDriver();
-#elif !defined(USE_XAUDIO2) &&
+#elif !defined(USE_XAUDIO2)
 	snd = new DirectSoundDriver();
 #else
 	snd = new XAudio2SoundDriver();
