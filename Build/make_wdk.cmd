@@ -1,7 +1,7 @@
 @ECHO OFF
 TITLE Windows Driver Kit 7.1.0
 
-set src=%CD%\AziAudio
+set src=%CD%\..\AziAudio
 set obj=%CD%
 
 REM set target=i386
