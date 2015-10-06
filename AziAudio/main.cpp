@@ -128,7 +128,10 @@ u8 * DRAM;
 
 EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	if (snd != NULL)
+	{
+		snd->AI_Shutdown();
 		delete snd;
+	}
 
 /*
  * To do:  We currently have no sound-playing device for Unix-based platforms.
