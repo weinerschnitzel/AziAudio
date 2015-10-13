@@ -137,6 +137,7 @@ void SoundDriver::AI_Shutdown()
 
 void SoundDriver::AI_ResetAudio()
 {
+	StopAudio();
 	if (m_audioIsInitialized) DeInitialize();
 	m_audioIsInitialized = false;
 	m_audioIsInitialized = (!Initialize() == TRUE);
