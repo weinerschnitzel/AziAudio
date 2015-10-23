@@ -97,7 +97,7 @@ EXPORT void CALL DllAbout(HWND hParent) {
 
 EXPORT void CALL DllConfig(HWND hParent)
 {
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX)
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG), hParent, ConfigProc);
 #else
 	fputs("To do:  Implement saving configuration settings.\n", stderr);
@@ -293,7 +293,7 @@ EXPORT void CALL AiUpdate(Boolean Wait) {
 	return;
 }
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX)
 INT_PTR CALLBACK ConfigProc(
 	HWND hDlg,  // handle to dialog box
 	UINT uMsg,     // message
