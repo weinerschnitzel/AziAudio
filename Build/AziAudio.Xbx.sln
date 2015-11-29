@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AziAudio.Xbx", "AziAudio\AziAudio.xbx.vcproj", "{B0A432FE-0718-47CA-8621-FF9D16FCE3E7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AziAudio.Xbx", "..\AziAudio\AziAudio.xbx.vcproj", "{B0A432FE-0718-47CA-8621-FF9D16FCE3E7}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject

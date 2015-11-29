@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Xbox"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="../bin/XBox/Debug"
+			IntermediateDirectory="../bin/XBox/Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -44,8 +44,8 @@
 		</Configuration>
 		<Configuration
 			Name="Profile|Xbox"
-			OutputDirectory="Profile"
-			IntermediateDirectory="Profile"
+			OutputDirectory="../bin/XBox/Profile"
+			IntermediateDirectory="../bin/XBox/Profile"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -78,8 +78,8 @@
 		</Configuration>
 		<Configuration
 			Name="Profile_FastCap|Xbox"
-			OutputDirectory="Profile_FastCap"
-			IntermediateDirectory="Profile_FastCap"
+			OutputDirectory="../bin/XBox/Profile_FastCap"
+			IntermediateDirectory="../bin/XBox/Profile_FastCap"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -113,8 +113,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Xbox"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="../bin/XBox/Release"
+			IntermediateDirectory="../bin/XBox/Release"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -148,8 +148,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_LTCG|Xbox"
-			OutputDirectory="Release_LTCG"
-			IntermediateDirectory="Release_LTCG"
+			OutputDirectory="../bin/XBox/Release_LTCG"
+			IntermediateDirectory="../bin/XBox/Release_LTCG"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="TRUE">
@@ -202,7 +202,7 @@
 				RelativePath=".\SoundDriver.cpp">
 			</File>
 			<File
-				RelativePath=".\XBox\xbox_depp.cpp">
+				RelativePath="..\3rd Party\XBox\xbox_depp.cpp">
 			</File>
 			<Filter
 				Name="ABI"
@@ -312,7 +312,7 @@
 				RelativePath=".\SoundDriver.h">
 			</File>
 			<File
-				RelativePath=".\XBox\xbox_depp.h">
+				RelativePath="..\3rd Party\XBox\xbox_depp.h">
 			</File>
 		</Filter>
 	</Files>
