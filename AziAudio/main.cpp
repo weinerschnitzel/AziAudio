@@ -136,14 +136,12 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 /*
  * To do:  We currently have no sound-playing device for Unix-based platforms.
  */
-#if defined(_WIN32) || defined(_XBOX)
-#ifndef LEGACY_SOUND_DRIVER
+#if !defined(LEGACY_SOUND_DRIVER) || !defined(_WIN32)
 	snd = new NoSoundDriver();
-#elif !defined(USE_XAUDIO2)
-	snd = new DirectSoundDriver();
-#else
+#elif defined(USE_XAUDIO2)
 	snd = new XAudio2SoundDriver();
-#endif
+#else
+	snd = new DirectSoundDriver();
 #endif
 
 	//RedirectIOToConsole();
