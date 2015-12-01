@@ -10,7 +10,16 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Compilation results:  GNU C/C++
+*.asm
+*.o
+*.s
+
 # Build results
+*.dll
+*.so
+
+# Build result directories:  Visual Studio
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
