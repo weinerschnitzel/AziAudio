@@ -35,11 +35,16 @@ void NoSoundDriver::AiUpdate(Boolean Wait)
 #if defined(_WIN32) || defined(_XBOX)
 	if (Wait == TRUE)
 		Sleep(1);
+#else
+	if (Wait == TRUE)
+		SDL_Delay(1);
 #endif
 	if (isPlaying == true && countsPerSample.QuadPart > 0)
 	{
 #ifdef _WIN32
 		QueryPerformanceCounter(&perfTimer);
+#else
+		// To do:  Replace this with SDL, or Linux audio won't play.
 #endif
 		sampleInterval.QuadPart = perfTimer.QuadPart - perfLast.QuadPart;
 		samples = (long)(sampleInterval.QuadPart / countsPerSample.QuadPart);
@@ -75,5 +80,7 @@ void NoSoundDriver::SetFrequency(u32 Frequency)
 	countsPerSample.QuadPart = perfFreq.QuadPart / SamplesPerSecond;
 	QueryPerformanceCounter(&perfTimer);
 	perfLast.QuadPart = perfTimer.QuadPart;
+#else
+	// To do:  Replace this with SDL, or Linux audio won't play.
 #endif
 }

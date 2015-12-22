@@ -11,12 +11,16 @@
 
 #include "common.h"
 #include "AudioSpec.h"
+
 #ifdef USE_XAUDIO2
 #include "XAudio2SoundDriver.h"
 #elif defined(_WIN32)
 #include "DirectSoundDriver.h"
+#else
+#include "SDLSoundDriver.h"
 #endif
 #include "NoSoundDriver.h"
+
 #include "audiohle.h"
 //#include "rsp/rsp.h"
 

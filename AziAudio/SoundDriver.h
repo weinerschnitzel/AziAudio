@@ -11,6 +11,12 @@
 
 #pragma once
 
+#if defined(_WIN32)
+#include <windows.h>
+#else
+#include <SDL/SDL.h>
+#endif
+
 /* strcpy() */
 #include <string.h>
 
@@ -19,7 +25,11 @@
 
 #define SND_IS_NOT_EMPTY 0x4000000
 #define SND_IS_FULL		 0x8000000
+
+/* deprecated AI functions -- to be removed */
+#if 1 && defined(_WIN32)
 #define LEGACY_SOUND_DRIVER
+#endif
 
 #if !defined(_WIN32) && !defined(_XBOX)
 #define UNREFERENCED_PARAMETER(msg)     msg

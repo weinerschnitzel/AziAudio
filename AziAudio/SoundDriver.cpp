@@ -28,7 +28,11 @@ void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 	int targetDMABuffer;
 	int numFullBuffers = 0;
 
+#ifdef _WIN32
 	WaitForSingleObject(m_hMutex, INFINITE);
+#else
+	puts("[AI_LenChanged] To do:  Working non-Win32 mutex timing.");
+#endif
 	targetDMABuffer = m_AI_CurrentDMABuffer; // Target register
 	if (m_AI_DMARemaining[targetDMABuffer] > 0)
 	{
@@ -38,10 +42,16 @@ void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 			// FIFO is full.  We either need to ditch this buffer or wait
 			if (configSyncAudio == true)
 			{
+#ifdef _WIN32
 				ReleaseMutex(m_hMutex);
 				while (m_AI_DMARemaining[targetDMABuffer] > 0)
 					Sleep(1);
 				WaitForSingleObject(m_hMutex, INFINITE);
+#else
+			//	To do:  Working non-Win32 mutex timing.
+				while (m_AI_DMARemaining[targetDMABuffer] > 0)
+					SDL_Delay(1);
+#endif
 				m_AI_DMABuffer[targetDMABuffer] = start;
 				m_AI_DMARemaining[targetDMABuffer] = length;
 			}
@@ -68,7 +78,9 @@ void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 
 	if (numFullBuffers > 0) *AudioInfo.AI_STATUS_REG |= AI_STATUS_DMA_BUSY;
 	if (numFullBuffers > 1) *AudioInfo.AI_STATUS_REG |= AI_STATUS_FIFO_FULL;
+#ifdef _WIN32
 	ReleaseMutex(m_hMutex);
+#endif
 #endif
 }
 
@@ -88,12 +100,17 @@ u32 SoundDriver::AI_ReadLength()
 	if (m_audioIsInitialized == false) return 0;
 	return GetReadStatus();
 #else
-	DWORD retVal;
+	u32 retVal;
 
+#ifdef _WIN32
 	WaitForSingleObject(m_hMutex, INFINITE);
 	retVal = m_AI_DMARemaining[m_AI_CurrentDMABuffer];
 	ReleaseMutex(m_hMutex);
-	return retVal;
+#else
+	puts("[AI_ReadLength] To do:  working non-Win32 AI timing.");
+	retVal = 0;
+#endif
+	return (retVal);
 #endif
 }
 
@@ -110,10 +127,15 @@ void SoundDriver::AI_Startup()
 	m_MaxBufferSize = MAX_SIZE;
 	m_CurrentReadLoc = m_CurrentWriteLoc = m_BufferRemaining = 0;
 	m_DMAEnabled = false;
+
+#ifdef _WIN32
 	if (m_hMutex == NULL)
 	{
 		m_hMutex = CreateMutex(NULL, FALSE, NULL);
 	}
+#else
+	// to do
+#endif
 	StartAudio();
 #endif
 }
@@ -127,11 +149,15 @@ void SoundDriver::AI_Shutdown()
 #else
 	StopAudio();
 	DeInitialize();
+#ifdef _WIN32
 	if (m_hMutex != NULL)
 	{
 		CloseHandle(m_hMutex);
 		m_hMutex = NULL;
 	}
+#else
+	// to do
+#endif
 #endif
 }
 
@@ -187,7 +213,11 @@ u32 SoundDriver::LoadAiBuffer(u8 *start, u32 length)
 		bytesToMove -= 4;
 	}
 
+#ifdef _WIN32
 	WaitForSingleObject(m_hMutex, INFINITE);
+#else
+	puts("[LoadAIBuffer] To do:  non-Win32 m_hMutex");
+#endif
 	// Move any streamed audio samples
 	while (bytesToMove > 0 && m_AI_DMARemaining[m_AI_CurrentDMABuffer] > 0)
 	{
@@ -226,7 +256,11 @@ u32 SoundDriver::LoadAiBuffer(u8 *start, u32 length)
 		}
 	}
 	*/
+#ifdef _WIN32
 	ReleaseMutex(m_hMutex);
+#else
+	// to do
+#endif
 
 	if (bytesToMove > 0)
 	{
