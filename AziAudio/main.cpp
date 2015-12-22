@@ -258,8 +258,8 @@ EXPORT void CALL AiLenChanged(void)
 EXPORT u32 CALL AiReadLength(void) {
 	if (snd == NULL)
 		return 0;
-	if (audioIsInitialized == FALSE) return 0;
-	*AudioInfo.AI_LEN_REG = snd->AI_ReadLength();
+	if (audioIsInitialized == TRUE) 
+		*AudioInfo.AI_LEN_REG = snd->AI_ReadLength();
 	return *AudioInfo.AI_LEN_REG;
 
 }
