@@ -123,7 +123,7 @@ AUDIO_INFO AudioInfo;
 u32 Dacrate = 0;
 
 // TODO: Instead of checking for an initialized state, we should default to a no-sound audio processing state and give a warning
-Boolean audioIsInitialized = FALSE;
+// Boolean audioIsInitialized = FALSE;
 
 //TODO: Do away with these from main.cpp.  They are only needed for HLE and available in AudioInfo
 u8 * DMEM;
@@ -258,8 +258,7 @@ EXPORT void CALL AiLenChanged(void)
 EXPORT u32 CALL AiReadLength(void) {
 	if (snd == NULL)
 		return 0;
-	if (audioIsInitialized == TRUE) 
-		*AudioInfo.AI_LEN_REG = snd->AI_ReadLength();
+	*AudioInfo.AI_LEN_REG = snd->AI_ReadLength();
 	return *AudioInfo.AI_LEN_REG;
 
 }
