@@ -7,10 +7,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PropertySheets", "PropertySheets", "{CC1EBB98-29E0-40BA-AF5D-299B6E03B756}"
 	ProjectSection(SolutionItems) = preProject
 		PropertySheets\Debug.props = PropertySheets\Debug.props
+		PropertySheets\PlatformBase.props = PropertySheets\PlatformBase.props
 		PropertySheets\Release.props = PropertySheets\Release.props
 		PropertySheets\Win32.Debug.props = PropertySheets\Win32.Debug.props
 		PropertySheets\Win32.props = PropertySheets\Win32.props
 		PropertySheets\Win32.Release.props = PropertySheets\Win32.Release.props
+		PropertySheets\x64.Debug.props = PropertySheets\x64.Debug.props
+		PropertySheets\x64.props = PropertySheets\x64.props
+		PropertySheets\x64.Release.props = PropertySheets\x64.Release.props
 	EndProjectSection
 EndProject
 Global

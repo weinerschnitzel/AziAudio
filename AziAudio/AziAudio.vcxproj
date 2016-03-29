@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -18,29 +19,32 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+
   <PropertyGroup Label="Globals">
     <ProjectGuid>{835979AC-BC6A-45B7-A513-8EEE79B443DE}</ProjectGuid>
     <RootNamespace>AziAudio</RootNamespace>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset Condition="'$(DefaultPlatformToolset)'!=''">$(DefaultPlatformToolset)_xp</PlatformToolset>
   </PropertyGroup>
+
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Release'">
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(SolutionDir)PropertySheets\Win32.$(Configuration).props" />
+    <Import Project="$(SolutionDir)PropertySheets\$(Platform).$(Configuration).props" />
   </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
+
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -57,6 +61,7 @@
       <AdditionalDependencies>dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+
   <ItemGroup>
     <ClInclude Include="audiohle.h" />
     <ClInclude Include="AudioSpec.h" />
@@ -113,12 +118,11 @@
   <ItemGroup>
     <Text Include="readme.txt" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties RESOURCE_FILE="resource.rc" />
     </VisualStudio>
   </ProjectExtensions>
+
 </Project>
