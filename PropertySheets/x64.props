@@ -15,9 +15,6 @@
   </PropertyGroup>
 
   <ItemDefinitionGroup>
-    <ClCompile>
-      <!--<PreprocessorDefinitions>WIN32;_WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>-->
-    </ClCompile>
     <Link>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>

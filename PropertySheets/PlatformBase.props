@@ -18,16 +18,6 @@
   </PropertyGroup>
 
   <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>WIN32;_WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
-    </Link>
-  </ItemDefinitionGroup>
-
-  <ItemDefinitionGroup>
     <BuildLog>
       <Path>$(IntDir)BuildLog.htm</Path>
     </BuildLog>
@@ -36,7 +26,7 @@
       <OutputFile>$(OutDir)$(ProjectName).bsc</OutputFile>
     </Bscmake>
     <ClCompile>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -94,6 +84,8 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <Link>
+      <SubSystem>Windows</SubSystem>
+      <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
       <RegisterOutput>false</RegisterOutput>
       <PerUserRedirection>false</PerUserRedirection>
       <AdditionalOptions>/IGNORE:4199 /OPT:ICF=3 %(AdditionalOptions)</AdditionalOptions>
@@ -135,9 +127,10 @@
       <CLRImageType>Default</CLRImageType>
       <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
       <CLRUnmanagedCodeCheck>false</CLRUnmanagedCodeCheck>
+      <ProfileGuidedDatabase />
     </Link>
     <Midl>
-      <AdditionalIncludeDirectories>.;$(SRC);$(SRC)\3rd Party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\3rd Party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <MkTypLibCompatible>false</MkTypLibCompatible>
       <WarningLevel>3</WarningLevel>
