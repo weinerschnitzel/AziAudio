@@ -18,7 +18,7 @@
  * Some combination of RSP LWC2 pack-type operations and vector multiply-
  * accumulate going on here, doing some fancy matrix math from data memory.
  */
-static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
+static void packed_multiply_accumulate(i32 * acc_in, i16 * vs, i16 * vt)
 {
 	i32 pre_buffer[8];
 	i32 result;
@@ -39,7 +39,7 @@ static void packed_multiply_accumulate(i32 * acc, i16 * vs, i16 * vt)
 	for (i = 0; i < 8; i++)
 		result += pre_buffer[i];
 #endif
-	*(acc) = result;
+	*(acc_in) = result;
 	return;
 }
 

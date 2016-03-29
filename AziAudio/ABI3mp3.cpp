@@ -210,7 +210,7 @@ s32 CalcDeWindow(u32 addptr, u32 offset)
 // ** Store v[vIndex] -> (mp3DataIndex)**
 static void rsp_SH(int rt, s16 offset, u32 base)
 {
-    u8 * DMEM;
+    u8 * localDMEM;
     u32 address;
 
     address = base + offset; /* u32 base == GPR[base] */
@@ -218,11 +218,11 @@ static void rsp_SH(int rt, s16 offset, u32 base)
     assert((address & ~0xFFFul) == 0);
 #endif
 
-    DMEM = &mp3data[0]; /* mp3data[] has exactly 4096 bytes allocated. */
+    localDMEM = &mp3data[0]; /* mp3data[] has exactly 4096 bytes allocated. */
 #if 0
     assert((address & 1) == 0);
 #endif
-    *(s16 *)(DMEM + address) = (s16)(v[rt] & 0x0000FFFFul);
+    *(s16 *)(localDMEM + address) = (s16)(v[rt] & 0x0000FFFFul);
 }
 
 void InnerLoop ();
