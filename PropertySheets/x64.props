@@ -15,6 +15,9 @@
   </PropertyGroup>
 
   <ItemDefinitionGroup>
+    <ClCompile>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+    </ClCompile>
     <Link>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
