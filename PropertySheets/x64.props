@@ -2,24 +2,24 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <ImportGroup Label="PropertySheets">
-    <Import Project="PlatformBase.props"/>
+    <Import Project="PlatformBase.props" />
   </ImportGroup>
 
   <PropertyGroup>
-    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)build\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)64\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Configuration)64\$(ProjectName)\</IntDir>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(ConfigurationType)'=='StaticLibrary'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)\lib\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)64\lib\</OutDir>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <TargetMachine>MachineX86</TargetMachine>
+      <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
 
