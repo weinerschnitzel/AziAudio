@@ -31,7 +31,8 @@
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
-    <Import Project="$(SolutionDir)PropertySheets\$(Platform).$(Configuration).props" />
+    <Import Project="$(SolutionDir)PropertySheets\$(Platform).props" />
+    <Import Project="$(SolutionDir)PropertySheets\$(Configuration).props" />
   </ImportGroup>
   <PropertyGroup Label="Configuration">
     <IntDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</IntDir>

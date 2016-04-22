@@ -176,4 +176,10 @@
     </Xdcmake>
   </ItemDefinitionGroup>
 
+  <!--Dummy Microsoft Common targets-->
+  <Target Name="_ConvertPdbFiles" />
+  <Target Name="_CollectPdbFiles" />
+  <Target Name="_CollectMdbFiles" />
+  <Target Name="_CopyMdbFiles" />
+
 </Project>
