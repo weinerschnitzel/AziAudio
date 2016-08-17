@@ -116,4 +116,16 @@
     </VisualStudio>
   </ProjectExtensions>
 
+  <ItemGroup>
+    <FilesToDeploy Include="$(OutDir)AziAudio.dll" />
+  </ItemGroup>
+
+  <!--Set Pj64Install as an environment variable or as an MSBuild command-line property.-->
+  <Target Name="Publish">
+    <Message Text="Deploying to [$(Pj64Install)]" />
+    <Message Text="Files to move: [@(FilesToDeploy)]" />
+    <Copy SourceFiles="@(FilesToDeploy)" DestinationFolder="$(Pj64Install)\Plugin\$(PluginType)" Condition="'$(Platform)'=='Win32'" />
+    <Copy SourceFiles="@(FilesToDeploy)" DestinationFolder="$(Pj64Install)\Plugin64\$(PluginType)" Condition="'$(Platform)'=='x64'" />
+  </Target>
+
 </Project>
