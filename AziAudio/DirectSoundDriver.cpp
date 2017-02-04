@@ -382,6 +382,7 @@ BOOL DirectSoundDriver::Initialize() {
 	HRESULT             hr;
 
 	DeInitialize(); // Release just in case...
+	SampleRate = 0;
 
 	dprintf("Initialize()\n");
 	hMutex = CreateMutex(NULL, FALSE, NULL);
