@@ -109,13 +109,9 @@ protected:
 
 	SoundDriver(){
 		m_audioIsInitialized = false;
-		configAIEmulation = true;
-		configSyncAudio = true;
-		configForceSync = false;
 		configMute = false;
 		configHLE = true;
 		configRSP = true;
-		configVolume = 0;
 		m_hMutex = NULL;
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS) && !defined(_XBOX)
 		strcpy_s(configAudioLogFolder, 500, "D:\\");
