@@ -125,7 +125,8 @@ BOOL XAudio2SoundDriver::Setup()
 	}
 
 	g_source->Start();
-	
+	SetVolume(configVolume);
+
 	return FALSE;
 }
 void XAudio2SoundDriver::DeInitialize()
@@ -285,7 +286,7 @@ u32 XAudio2SoundDriver::GetReadStatus()
 }
 
 // 100 - Mute to 0 - Full Volume
-void XAudio2SoundDriver::SetVolume(DWORD volume)
+void XAudio2SoundDriver::SetVolume(u32 volume)
 {
 	float xaVolume = 1.0f - ((float)volume / 100.0f);
 	if (g_source != NULL) g_source->SetVolume(xaVolume);
