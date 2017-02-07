@@ -206,16 +206,12 @@ EXPORT void CALL RomOpen(void)
 {
 	if (snd == NULL)
 		return;
-	Dacrate = 0;
-	snd->AI_ResetAudio();
 }
 
 EXPORT void CALL RomClosed(void) 
 {
 	if (snd == NULL)
 		return;
-	Dacrate = 0;
-	snd->AI_ResetAudio();
 }
 
 EXPORT void CALL AiDacrateChanged(int SystemType) {
