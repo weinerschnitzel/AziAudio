@@ -171,27 +171,30 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	int size;
 	unsigned char *azicfg;
 	FILE *file;
-	file = fopen("Config/AziCfg.bin", "ab+");
-	fseek(file, 0, SEEK_END);
-	size = ftell(file);
-	if (size == 0)
+	file = fopen("Config/AziCfg.bin", "rb");
+	if (file == NULL)
 	{
-		fprintf(file, "%c", 1); // snd->configSyncAudio
-		fprintf(file, "%c", 0); // snd->configForceSync
-		fprintf(file, "%c", 1); // snd->configAIEmulation
-		fprintf(file, "%c", 0); // snd->configVolume
+		snd->configSyncAudio = true;
+		snd->configForceSync = false;
+		snd->configAIEmulation = true;
+		snd->configVolume = 0;
 	}
-	fseek(file, 0, SEEK_SET);
-	azicfg = (unsigned char*)malloc(size);
-	fread(azicfg, size, 1, file);
-	fclose(file);
+	else
+	{
+		fseek(file, 0, SEEK_END);
+		size = ftell(file);
+		fseek(file, 0, SEEK_SET);
+		azicfg = (unsigned char*)malloc(size);
+		fread(azicfg, size, 1, file);
+		fclose(file);
 
-	snd->configSyncAudio = azicfg[0] ? true : false;
-	snd->configForceSync = azicfg[1] ? true : false;
-	snd->configAIEmulation = azicfg[2] ? true : false;
-	snd->configVolume = azicfg[3];
-	free(azicfg);
-
+		snd->configSyncAudio = azicfg[0] ? true : false;
+		snd->configForceSync = azicfg[1] ? true : false;
+		snd->configAIEmulation = azicfg[2] ? true : false;
+		snd->configVolume = azicfg[3];
+		free(azicfg);
+	}
+	
 	snd->AI_Startup();
 
 	return TRUE;
@@ -354,12 +357,14 @@ INT_PTR CALLBACK ConfigProc(
 
 			FILE *file;
 			file = fopen("Config/AziCfg.bin", "wb");
-			fprintf(file, "%c", snd->configSyncAudio);
-			fprintf(file, "%c", snd->configForceSync);
-			fprintf(file, "%c", snd->configAIEmulation);
-			fprintf(file, "%c", snd->configVolume);
-			fclose(file);
-
+			if (file != NULL)
+			{
+				fprintf(file, "%c", snd->configSyncAudio);
+				fprintf(file, "%c", snd->configForceSync);
+				fprintf(file, "%c", snd->configAIEmulation);
+				fprintf(file, "%c", snd->configVolume);
+				fclose(file);
+			}
 			break;
 		case IDCANCEL:
 			EndDialog(hDlg, 0);
