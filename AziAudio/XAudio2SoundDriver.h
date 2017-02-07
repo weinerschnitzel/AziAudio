@@ -73,7 +73,7 @@ public:
 
 	u32 GetReadStatus();						// Returns the status on the read pointer
 
-	void SetVolume(DWORD volume);
+	void SetVolume(u32 volume);
 
 protected:
 
