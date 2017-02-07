@@ -328,6 +328,8 @@ INT_PTR CALLBACK ConfigProc(
 			snd->configRSP = SendMessage(GetDlgItem(hDlg, IDC_RSP), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
 			SelectedDSound = (int)SendMessage(GetDlgItem(hDlg, IDC_DEVICE), CB_GETCURSEL, 0, 0);
 			safe_strcpy(snd->configDevice, 99, DSoundDeviceName[SelectedDSound]);
+			snd->configVolume = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
+			snd->SetVolume(snd->configVolume);
 			EndDialog(hDlg, 0);
 			break;
 		case IDCANCEL:
