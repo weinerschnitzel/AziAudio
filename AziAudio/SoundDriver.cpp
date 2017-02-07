@@ -118,6 +118,7 @@ void SoundDriver::AI_Startup()
 {
 #ifdef LEGACY_SOUND_DRIVER	
 	if (m_audioIsInitialized == true) DeInitialize();
+	m_audioIsInitialized = false;
 	m_audioIsInitialized = (!Initialize() == TRUE);
 	if (m_audioIsInitialized == true) SetVolume(configVolume);
 #else
@@ -136,18 +137,18 @@ void SoundDriver::AI_Startup()
 #else
 	// to do
 #endif
-	StartAudio();
 #endif
+	StartAudio();
 }
 
 void SoundDriver::AI_Shutdown()
 {
+	StopAudio();
 #ifdef LEGACY_SOUND_DRIVER
 	if (m_audioIsInitialized == true) DeInitialize();
 	m_audioIsInitialized = false;
 	//DeInitialize();
 #else
-	StopAudio();
 	DeInitialize();
 #ifdef _WIN32
 	if (m_hMutex != NULL)
@@ -164,7 +165,7 @@ void SoundDriver::AI_Shutdown()
 void SoundDriver::AI_ResetAudio()
 {
 	StopAudio();
-	if (m_audioIsInitialized) DeInitialize();
+	if (m_audioIsInitialized == true) DeInitialize();
 	m_audioIsInitialized = false;
 	m_audioIsInitialized = (!Initialize() == TRUE);
 	StartAudio();
