@@ -174,7 +174,7 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	file = fopen("Config/AziCfg.bin", "ab+");
 	fseek(file, 0, SEEK_END);
 	size = ftell(file);
-	if (size != 4)
+	if (size == 0)
 	{
 		fprintf(file, "%c", 1); // snd->configSyncAudio
 		fprintf(file, "%c", 0); // snd->configForceSync
