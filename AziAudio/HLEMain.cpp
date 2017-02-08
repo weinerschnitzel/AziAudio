@@ -25,6 +25,10 @@ u32 t9, k0;
 u64 ProfileStartTimes[30];
 u64 ProfileTimes[30];
 
+u8 * DMEM;
+u8 * IMEM;
+u8 * DRAM;
+
 // Variables needed for ABI HLE
 u8 BufferSpace[0x10000];
 short hleMixerWorkArea[256];

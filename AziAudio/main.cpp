@@ -125,11 +125,6 @@ u32 Dacrate = 0;
 // TODO: Instead of checking for an initialized state, we should default to a no-sound audio processing state and give a warning
 // Boolean audioIsInitialized = FALSE;
 
-//TODO: Do away with these from main.cpp.  They are only needed for HLE and available in AudioInfo
-u8 * DMEM;
-u8 * IMEM;
-u8 * DRAM;
-
 EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	if (snd != NULL)
 	{
