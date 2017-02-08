@@ -195,9 +195,9 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	snd->configSyncAudio   = (azicfg[0] != 0x00) ? true : false;
 	snd->configForceSync   = (azicfg[1] != 0x00) ? true : false;
 	snd->configAIEmulation = (azicfg[2] != 0x00) ? true : false;
-	snd->configVolume      = azicfg[3];
-	snd->AI_Startup();
+	snd->configVolume      = (azicfg[3] > 100) ? 100 : azicfg[3];
 
+	snd->AI_Startup();
 	return TRUE;
 }
 
