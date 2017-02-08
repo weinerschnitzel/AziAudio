@@ -168,33 +168,34 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	DMEM = Audio_Info.DMEM;
 	IMEM = Audio_Info.IMEM;
 
-	int size;
-	unsigned char *azicfg;
+	size_t file_size;
+	int character;
+	unsigned char azicfg[4];
 	FILE *file;
 	file = fopen("Config/AziCfg.bin", "rb");
 	if (file == NULL)
 	{
-		snd->configSyncAudio = true;
-		snd->configForceSync = false;
-		snd->configAIEmulation = true;
-		snd->configVolume = 0;
+		azicfg[0] = TRUE;
+		azicfg[1] = FALSE;
+		azicfg[2] = TRUE;
+		azicfg[3] = 0; /* 0:  max volume; 100:  min volume */
 	}
 	else
 	{
-		fseek(file, 0, SEEK_END);
-		size = ftell(file);
-		fseek(file, 0, SEEK_SET);
-		azicfg = (unsigned char*)malloc(size);
-		fread(azicfg, size, 1, file);
-		fclose(file);
-
-		snd->configSyncAudio = azicfg[0] ? true : false;
-		snd->configForceSync = azicfg[1] ? true : false;
-		snd->configAIEmulation = azicfg[2] ? true : false;
-		snd->configVolume = azicfg[3];
-		free(azicfg);
+		for (file_size = 0; file_size < sizeof(azicfg); file_size++) {
+			const int character = fgetc(file);
+			if (character < 0 || character > 255)
+				break; /* hit EOF or a disk read error */
+			azicfg[file_size] = (unsigned char)(character);
+		}
+		if (fclose(file) != 0)
+			fputs("Failed to close config file stream.\n", stderr);
 	}
-	
+
+	snd->configSyncAudio   = (azicfg[0] != 0x00) ? true : false;
+	snd->configForceSync   = (azicfg[1] != 0x00) ? true : false;
+	snd->configAIEmulation = (azicfg[2] != 0x00) ? true : false;
+	snd->configVolume      = azicfg[3];
 	snd->AI_Startup();
 
 	return TRUE;
