@@ -164,7 +164,6 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	IMEM = Audio_Info.IMEM;
 
 	size_t file_size;
-	int character;
 	unsigned char azicfg[4];
 	FILE *file;
 	file = fopen("Config/AziCfg.bin", "rb");

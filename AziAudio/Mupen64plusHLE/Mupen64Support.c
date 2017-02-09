@@ -11,7 +11,9 @@ void HleWarnMessage(void* user_defined, const char *message, ...)
 {
 	va_list args;
 	va_start(args, message);
-	//DebugMessage(M64MSG_WARNING, message, args);
+#if 0
+	DebugMessage(M64MSG_WARNING, message, args);
+#endif
 	va_end(args);
 
 	if (user_defined == NULL)
@@ -24,7 +26,9 @@ void HleVerboseMessage(void* user_defined, const char *message, ...)
 {
 	va_list args;
 	va_start(args, message);
-	//DebugMessage(M64MSG_VERBOSE, message, args);
+#if 0
+	DebugMessage(M64MSG_VERBOSE, message, args);
+#endif
 	va_end(args);
 
 	if (user_defined == NULL)

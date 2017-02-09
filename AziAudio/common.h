@@ -23,7 +23,9 @@
 #include <stdio.h>
 #include <assert.h>
 
-//#define ENABLEPROFILING
+#if 0
+#define ENABLEPROFILING
+#endif
 
 #if defined(_MSC_VER)
 #define SEH_SUPPORTED

@@ -17,7 +17,9 @@ the plugin.
 
 #include "common.h"
 #include "my_types.h"
-//#include "Audio #1.1EXT.h"
+#if 0
+#include "Audio #1.1EXT.h"
+#endif
 
 #if defined(__cplusplus)
 extern "C" {
@@ -58,12 +60,12 @@ typedef struct {
 	HWND hwnd;
 	HINSTANCE hinst;
 
-	Boolean MemoryBswaped; // If this is set to TRUE, then the memory has been pre
-	                       //   bswap on a dword (32 bits) boundary 
-						   //	eg. the first 8 bytes are stored like this:
-	                       //        4 3 2 1   8 7 6 5
-	u8 * HEADER;	// This is the rom header (first 40h bytes of the rom
-					// This will be in the same memory format as the rest of the memory.
+	Boolean MemoryBswaped; /* If this is set to TRUE, then the memory has been pre
+	                        *   bswap on a dword (32 bits) boundary 
+				*	eg. the first 8 bytes are stored like this:
+				*	4 3 2 1   8 7 6 5 */
+	u8 * HEADER;    /* This is the rom header (first 40h bytes of the rom
+			 * This will be in the same memory format as the rest of the memory. */
 	u8 * RDRAM;
 	u8 * DMEM;
 	u8 * IMEM;
@@ -212,7 +214,7 @@ EXPORT void CALL AiCallBack(void);
 extern AUDIO_INFO AudioInfo;
 
 void HLEStart ();
-void ChangeABI (int type); // type 0 = SafeMode
+void ChangeABI (int type); /* type 0 = SafeMode */
 
 #define AI_STATUS_FIFO_FULL	0x80000000		/* Bit 31: full */
 #define AI_STATUS_DMA_BUSY	0x40000000		/* Bit 30: busy */
