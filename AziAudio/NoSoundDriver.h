@@ -18,10 +18,12 @@ NoSound Driver to demonstrate how to use the SoundDriver interface
 
 #if !defined(_WIN32) && !defined(_XBOX)
 typedef union _LARGE_INTEGER {
+#if defined(ANONYMOUS_STRUCTS_ARE_NOT_ALLOWED)
     struct {
         u32 LowPart;
         s32 HighPart;
-    };
+    }; /* ...but Microsoft uses them anyway. */
+#endif
     struct {
         u32 LowPart;
         s32 HighPart;
