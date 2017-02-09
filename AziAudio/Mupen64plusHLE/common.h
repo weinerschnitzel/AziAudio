@@ -34,6 +34,8 @@
 /* macro for inline keyword */
 #ifdef _MSC_VER
 #define inline __inline
+#elif defined(__GNUC_GNU_INLINE__)
+#define inline
 #endif
 
 /*

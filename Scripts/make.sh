@@ -10,6 +10,7 @@ FLAGS_x86="\
  -masm=intel\
  -msse2\
  -mstackrealign\
+ -ansi\
 "
 C_FLAGS=$FLAGS_x86
 
