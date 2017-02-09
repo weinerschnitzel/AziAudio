@@ -11,6 +11,7 @@ FLAGS_x86="\
  -msse2\
  -mstackrealign\
  -ansi\
+ -pedantic\
 "
 C_FLAGS=$FLAGS_x86
 
