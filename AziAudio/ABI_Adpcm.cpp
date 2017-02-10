@@ -306,11 +306,12 @@ void ADPCM2() { // Verified to be 100% Accurate...
 
 	memset(out, 0, 32);
 
-	if (!(Flags & 0x1))
+	if (!(Flags & 0x1)) {
 		if (Flags & 0x2)
 			memcpy(out, &DRAM[loopval], 32);
 		else
 			memcpy(out, &DRAM[Address], 32);
+	}
 	if (Flags & 0x4) { // Tricky lil Zelda MM and ABI2!!! hahaha I know your secrets! :DDD
 		srange = 0xE;
 		inpinc = 0x5;
@@ -420,11 +421,12 @@ void ADPCM3() { // Verified to be 100% Accurate...
 
 	memset(out, 0, 32);
 
-	if (!(Flags & 0x1))
+	if (!(Flags & 0x1)) {
 		if (Flags & 0x2)
 			memcpy(out, &DRAM[loopval], 32);
 		else
 			memcpy(out, &DRAM[Address], 32);
+	}
 
 	s16 l1 = out[15];
 	s16 l2 = out[14];
