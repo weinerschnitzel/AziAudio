@@ -119,7 +119,7 @@ void SoundDriver::AI_Startup()
 #ifdef LEGACY_SOUND_DRIVER	
 	if (m_audioIsInitialized == true) DeInitialize();
 	m_audioIsInitialized = false;
-	m_audioIsInitialized = (Initialize() != FALSE) ? true : false;
+	m_audioIsInitialized = (Initialize() != FALSE);
 	if (m_audioIsInitialized == true) SetVolume(configVolume);
 #else
 	Initialize();
