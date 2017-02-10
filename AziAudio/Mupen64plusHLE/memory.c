@@ -20,8 +20,36 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <string.h>
+#include <assert.h>
 
-#include "memory.h"
+#include "common.h"
+
+/*
+ * 2017.02.09:  helpers taken from "memory.h"
+ *
+ * We're not including "memory.h" itself because it's full of static function
+ * definitions--all but 3 of which are never used here--which causes tens of
+ * unused function warnings from unclean practice.  We could try for a more
+ * modular design, but the below 3 functions are straightforward to paste in.
+ */
+
+static uint8_t* pt_u8(const unsigned char* buffer, unsigned address)
+{
+    return (uint8_t *)(buffer + (address ^ ENDIAN_SWAP_BYTE));
+}
+
+static uint16_t* pt_u16(const unsigned char* buffer, unsigned address)
+{
+    assert((address & 1) == 0);
+    return (uint16_t *)(buffer + (address ^ ENDIAN_SWAP_HALF));
+}
+
+static uint32_t* pt_u32(const unsigned char* buffer, unsigned address)
+{
+    assert((address & 3) == 0);
+    return (uint32_t *)(buffer + address);
+}
+
 
 /* Global functions */
 void load_u8(uint8_t* dst, const unsigned char* buffer, unsigned address, size_t count)
