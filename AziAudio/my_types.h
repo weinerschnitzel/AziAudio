@@ -443,8 +443,10 @@ typedef struct {
 typedef int Boolean;
 
 #if !defined(FALSE) && !defined(TRUE)
-#define FALSE           0
-#define TRUE            1
+enum {
+    FALSE = 0,
+    TRUE = 1
+};
 #endif
 
 #endif
