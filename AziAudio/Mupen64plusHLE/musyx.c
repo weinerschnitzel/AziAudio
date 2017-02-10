@@ -845,7 +845,11 @@ static void sfx_stage(struct hle_t* hle, mix_sfx_with_main_subframes_t mix_sfx_w
     mix_fir4(musyx->e50, buffer + 1, fir4_hgain, fir4_hcoeffs);
     dram_store_u16(hle, (uint16_t *)musyx->e50, cbuffer_ptr + pos * 2, SUBFRAME_SIZE);
 }
+
+#if defined(_MSC_VER)
 #pragma warning(disable : 4100)
+#endif
+
 static void mix_sfx_with_main_subframes_v1(musyx_t *musyx, const int16_t *subframe,
                                            const uint16_t* UNUSED(gains))
 {
@@ -857,7 +861,11 @@ static void mix_sfx_with_main_subframes_v1(musyx_t *musyx, const int16_t *subfra
         musyx->right[i] = clamp_s16(musyx->right[i] + v);
     }
 }
+
+#if defined(_MSC_VER)
 #pragma warning(default : 4100)
+#endif
+
 static void mix_sfx_with_main_subframes_v2(musyx_t *musyx, const int16_t *subframe,
                                            const uint16_t* gains)
 {
