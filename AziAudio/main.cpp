@@ -151,7 +151,6 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 //	if ( (DirectSoundEnumerate(DSEnumProc, NULL)) != DS_OK ) { printf("Unable to enumerate DirectSound devices\n"); }
 
 	// TODO: Move from SoundDriver to a configuration class
-	snd->configMute		  = false;
 	snd->configHLE		  = true;
 	snd->configRSP		  = true;
 	safe_strcpy(snd->configAudioLogFolder, 499, "D:\\");
@@ -354,7 +353,6 @@ INT_PTR CALLBACK ConfigProc(
 			safe_strcpy(snd->configDevice, 99, DSoundDeviceName[SelectedDSound]);
 			snd->configVolume = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
 			snd->SetVolume(snd->configVolume);
-			EndDialog(hDlg, 0);
 
 			FILE *file;
 			file = fopen("Config/AziCfg.bin", "wb");
@@ -366,6 +364,7 @@ INT_PTR CALLBACK ConfigProc(
 				fprintf(file, "%c", snd->configVolume);
 				fclose(file);
 			}
+			EndDialog(hDlg, 0);
 			break;
 		case IDCANCEL:
 			EndDialog(hDlg, 0);
