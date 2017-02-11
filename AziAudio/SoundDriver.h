@@ -43,7 +43,6 @@ public:
 	bool configAIEmulation;
 	bool configSyncAudio;
 	bool configForceSync;
-	bool configMute;
 	bool configHLE;
 	bool configRSP;
 	unsigned long configVolume;
@@ -109,7 +108,6 @@ protected:
 
 	SoundDriver(){
 		m_audioIsInitialized = false;
-		configMute = false;
 		configHLE = true;
 		configRSP = true;
 		m_hMutex = NULL;
