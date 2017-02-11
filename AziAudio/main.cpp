@@ -151,8 +151,6 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 //	if ( (DirectSoundEnumerate(DSEnumProc, NULL)) != DS_OK ) { printf("Unable to enumerate DirectSound devices\n"); }
 
 	// TODO: Move from SoundDriver to a configuration class
-	snd->configHLE		  = true;
-	snd->configRSP		  = true;
 	safe_strcpy(snd->configAudioLogFolder, 499, "D:\\");
 
 	//snd->configDevice = 0;
@@ -213,10 +211,7 @@ EXPORT void CALL GetDllInfo(PLUGIN_INFO * PluginInfo) {
 EXPORT void CALL ProcessAList(void) {
 	if (snd == NULL)
 		return;
-	if (snd->configHLE) 
-	{
-		HLEStart ();
-	}
+	HLEStart ();
 }
 
 EXPORT void CALL RomOpen(void) 
@@ -338,8 +333,6 @@ INT_PTR CALLBACK ConfigProc(
 		{
 			SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, BST_UNCHECKED, 0);
 		}
-		SendMessage(GetDlgItem(hDlg, IDC_HLE), BM_SETCHECK, snd->configHLE ? BST_CHECKED : BST_UNCHECKED, 0);
-		SendMessage(GetDlgItem(hDlg, IDC_RSP), BM_SETCHECK, snd->configRSP ? BST_CHECKED : BST_UNCHECKED, 0);
 		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
@@ -347,8 +340,6 @@ INT_PTR CALLBACK ConfigProc(
 			snd->configForceSync = SendMessage(GetDlgItem(hDlg, IDC_OLDSYNC), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
 			snd->configSyncAudio = SendMessage(GetDlgItem(hDlg, IDC_AUDIOSYNC), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
 			snd->configAIEmulation = SendMessage(GetDlgItem(hDlg, IDC_AI), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
-			snd->configHLE = SendMessage(GetDlgItem(hDlg, IDC_HLE), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
-			snd->configRSP = SendMessage(GetDlgItem(hDlg, IDC_RSP), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
 			SelectedDSound = (int)SendMessage(GetDlgItem(hDlg, IDC_DEVICE), CB_GETCURSEL, 0, 0);
 			safe_strcpy(snd->configDevice, 99, DSoundDeviceName[SelectedDSound]);
 			snd->configVolume = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);

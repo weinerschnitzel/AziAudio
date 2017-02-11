@@ -43,8 +43,6 @@ public:
 	bool configAIEmulation;
 	bool configSyncAudio;
 	bool configForceSync;
-	bool configHLE;
-	bool configRSP;
 	unsigned long configVolume;
 	char configAudioLogFolder[500];
 	char configDevice[100];
@@ -108,8 +106,6 @@ protected:
 
 	SoundDriver(){
 		m_audioIsInitialized = false;
-		configHLE = true;
-		configRSP = true;
 		m_hMutex = NULL;
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS) && !defined(_XBOX)
 		strcpy_s(configAudioLogFolder, 500, "D:\\");
