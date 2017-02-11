@@ -151,7 +151,6 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 //	if ( (DirectSoundEnumerate(DSEnumProc, NULL)) != DS_OK ) { printf("Unable to enumerate DirectSound devices\n"); }
 
 	// TODO: Move from SoundDriver to a configuration class
-	snd->configMute		  = false;
 	safe_strcpy(snd->configAudioLogFolder, 499, "D:\\");
 
 	//snd->configDevice = 0;
@@ -322,12 +321,18 @@ INT_PTR CALLBACK ConfigProc(
 		SendMessage(GetDlgItem(hDlg, IDC_OLDSYNC), BM_SETCHECK, snd->configForceSync ? BST_CHECKED : BST_UNCHECKED, 0);
 		SendMessage(GetDlgItem(hDlg, IDC_AUDIOSYNC), BM_SETCHECK, snd->configSyncAudio ? BST_CHECKED : BST_UNCHECKED, 0);
 		SendMessage(GetDlgItem(hDlg, IDC_AI), BM_SETCHECK, snd->configAIEmulation ? BST_CHECKED : BST_UNCHECKED, 0);
+		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, TRUE, snd->configVolume);
+		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETTICFREQ, 20, 0);
 		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETRANGEMIN, FALSE, 0);
 		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETRANGEMAX, FALSE, 100);
-		SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, snd->configMute ? BST_CHECKED : BST_UNCHECKED, 0);
-		if (snd->configMute) SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, FALSE, 100);
-		else SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, FALSE, snd->configVolume);
-		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETTICFREQ, 20, 0);
+		if (snd->configVolume == 100)
+		{
+			SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, BST_CHECKED, 0);
+		}
+		else
+		{
+			SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, BST_UNCHECKED, 0);
+		}
 		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
@@ -339,7 +344,6 @@ INT_PTR CALLBACK ConfigProc(
 			safe_strcpy(snd->configDevice, 99, DSoundDeviceName[SelectedDSound]);
 			snd->configVolume = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
 			snd->SetVolume(snd->configVolume);
-			EndDialog(hDlg, 0);
 
 			FILE *file;
 			file = fopen("Config/AziCfg.bin", "wb");
@@ -351,6 +355,7 @@ INT_PTR CALLBACK ConfigProc(
 				fprintf(file, "%c", snd->configVolume);
 				fclose(file);
 			}
+			EndDialog(hDlg, 0);
 			break;
 		case IDCANCEL:
 			EndDialog(hDlg, 0);
@@ -358,14 +363,12 @@ INT_PTR CALLBACK ConfigProc(
 		case IDC_MUTE:
 			if (IsDlgButtonChecked(hDlg, IDC_MUTE))
 			{
-				snd->SetVolume(100);
-				snd->configMute = true;
 				SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, TRUE, 100);
+				snd->SetVolume(100);
 			}
 			else {
-				snd->SetVolume(snd->configVolume);
-				snd->configMute = false;
 				SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, TRUE, snd->configVolume);
+				snd->SetVolume(snd->configVolume);
 			}
 			break;
 		}
@@ -376,27 +379,17 @@ INT_PTR CALLBACK ConfigProc(
 		short int userReq = LOWORD(wParam);
 		if (userReq == TB_ENDTRACK || userReq == TB_THUMBTRACK)
 		{
-			LRESULT position;
-			DWORD dwPosition;
-
-			position = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
-			dwPosition = (position > 100) ? 100 : (DWORD)position;
-			snd->SetVolume(dwPosition);
-			if (!snd->configMute)
-			{
-				snd->configVolume = dwPosition;
-			}
-			else if (dwPosition != 100)
-			{
-				SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, BST_UNCHECKED, 0);
-				snd->configMute = false;
-				snd->configVolume = dwPosition;
-			}
+			int dwPosition = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
 			if (dwPosition == 100)
 			{
 				SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, BST_CHECKED, 0);
-				snd->configMute = true;
 			}
+			else
+			{
+				SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, BST_UNCHECKED, 0);
+			}
+			snd->configVolume = dwPosition;
+			snd->SetVolume(dwPosition);
 		}
 		break;
 	}
