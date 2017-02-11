@@ -219,7 +219,8 @@ void HLEStart() {
 
 	ListLen = ListLen >> 2;
 
-	/*if (*(u32*)(rdram+UCData+0x30) == 0x0B396696) {
+#if 0
+	if (*(u32*)(rdram + UCData + 0x30) == 0x0B396696) {
 		//printf ("MusyX Detected\n");
 		void smDetect();
 		if (ABI[0] != ABI5[0])
@@ -229,8 +230,8 @@ void HLEStart() {
 		//*RSPInfo.SP_PC_REG = 0x1000;
 		//DoRspCycles(100);
 		return;
-	}*/
-
+	}
+#endif
 
 	for (u32 x = 0; x < ListLen; x += 2) {
 		unsigned char command;
