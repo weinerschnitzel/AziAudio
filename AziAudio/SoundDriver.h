@@ -32,7 +32,7 @@
 #endif
 
 #if !defined(_WIN32) && !defined(_XBOX)
-#define UNREFERENCED_PARAMETER(msg)     msg
+#define UNREFERENCED_PARAMETER(msg)
 #endif
 
 class SoundDriver
