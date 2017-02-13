@@ -518,7 +518,7 @@ void ENVMIXER3() {
 	s16 Wet, Dry;
 	s16 LTrg, RTrg;
 
-	Vol_Right = (s16)((k0 >> 16) & 0x0000FFFF);
+	Vol_Right = (s16)(k0 & 0x0000FFFF);
 
 	if (flags & A_INIT) {
 		LAdder = VolRamp_Left / 8;
@@ -635,12 +635,12 @@ void SETVOL() {
 	{
 		if (flags & A_LEFT)  // Set the Ramping values Target, Ramp 
 		{
-			VolTrg_Left = (s16)((k0 >> 16) & 0x0000FFFF);
+			VolTrg_Left = (s16)(k0 & 0x0000FFFF);
 			VolRamp_Left = *(s32 *)&t9;
 		}
 		else // A_RIGHT
 		{
-			VolTrg_Right = (s16)((k0 >> 16) & 0x0000FFFF);
+			VolTrg_Right = (s16)(k0 & 0x0000FFFF);
 			VolRamp_Right = *(s32 *)&t9;
 		}
 	}
@@ -650,18 +650,18 @@ void SETVOL3() {
 	u8 Flags = (u8)((k0 >> 0x10) & 0xFF);
 	if (Flags & 0x4) { // 288
 		if (Flags & 0x2) { // 290
-			Vol_Left = (s16)((k0 >> 16) & 0x0000FFFF); // 0x50
+			Vol_Left = (s16)(k0 & 0x0000FFFF); // 0x50
 			Env_Dry = (s16)(*(s32*)&t9 >> 0x10); // 0x4E
-			Env_Wet = (s16)((t9 >> 16) & 0x0000FFFF); // 0x4C
+			Env_Wet = (s16)(t9 & 0x0000FFFF); // 0x4C
 		}
 		else {
-			VolTrg_Right = (s16)((k0 >> 16) & 0x0000FFFF); // 0x46
+			VolTrg_Right = (s16)(k0 & 0x0000FFFF); // 0x46
 			//VolRamp_Right = (u16)(t9 >> 0x10) | (s32)(s16)(t9 << 0x10);
 			VolRamp_Right = *(s32*)&t9; // 0x48/0x4A
 		}
 	}
 	else {
-		VolTrg_Left = (s16)((k0 >> 16) & 0x0000FFFF); // 0x40
+		VolTrg_Left = (s16)(k0 & 0x0000FFFF); // 0x40
 		VolRamp_Left = *(s32*)&t9; // 0x42/0x44
 	}
 }
