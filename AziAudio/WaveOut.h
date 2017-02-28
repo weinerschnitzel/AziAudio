@@ -42,6 +42,7 @@ protected:
 	FILE *waveoutput;
 	DWORD datasize;
 public:
+	WaveOut();
 	void BeginWaveOut(char *filename, WORD channels, WORD bitsPerSample, DWORD sampleRate);
 	void EndWaveOut();
 	void WriteData (unsigned char*data, DWORD size);

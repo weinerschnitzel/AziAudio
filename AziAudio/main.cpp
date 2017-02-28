@@ -51,23 +51,15 @@ char DSoundDeviceName[10][100];
 int DSoundCnt;
 int SelectedDSound;
 
-// RSP Test stuff
-
-//RSP_INFO RSPInfo;
-
-
-void RedirectIOToConsole();
-
-// New Plugin Specification
+bool bLockAddrRegister = false;
+u32 LockAddrRegisterValue = 0;
 
 
-// Old Plugin Specification
-
-
-// Dialogs
+#ifdef USE_PRINTF
+  void RedirectIOToConsole();
+#endif
 
 HINSTANCE hInstance;
-static bool	bAbortAiUpdate = false;
 
 #ifdef __GNUC__
 extern "C"
@@ -80,13 +72,8 @@ BOOL WINAPI DllMain(
   LPVOID lpvReserved   // reserved
   ) {
 	UNREFERENCED_PARAMETER(lpvReserved);
+	UNREFERENCED_PARAMETER(fdwReason);
 	hInstance = hinstDLL;
-	if (fdwReason == DLL_PROCESS_DETACH)
-	{ 
-		bAbortAiUpdate = true;
-		Sleep(100);
-	}
-	
 	return TRUE;
 }
 #endif
@@ -136,14 +123,22 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
  * To do:  We currently have no sound-playing device for Unix-based platforms.
  */
 #if !defined(LEGACY_SOUND_DRIVER) || !defined(_WIN32)
-	snd = new NoSoundDriver();
+#if defined(USE_XAUDIO2)
+	snd = new XAudio2SoundDriver();
+#else
+	snd = new DirectSoundDriver();
+	//snd = new NoSoundDriver();
+#endif
 #elif defined(USE_XAUDIO2)
 	snd = new XAudio2SoundDriver();
 #else
 	snd = new DirectSoundDriver();
 #endif
 
-	//RedirectIOToConsole();
+#ifdef USE_PRINTF
+	RedirectIOToConsole();
+	dprintf("Logging to console enabled...\n");
+#endif
 	Dacrate = 0;
 	//CloseDLL ();
 	DSoundCnt = 0;
@@ -189,14 +184,27 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	snd->configVolume      = (azicfg[3] > 100) ? 100 : azicfg[3];
 
 	snd->AI_Startup();
+	bLockAddrRegister = false;
+	if (*(u64*)(AudioInfo.HEADER + 0x10) == 0x117daa80bbc99d32 &&
+		*(u8*)(AudioInfo.HEADER + 0x3D) == 0x45)
+		bLockAddrRegister = true;
+	if (*(u64*)(AudioInfo.HEADER + 0x10) == 0xB14B3F18E688A5B8 &&
+		*(u8*)(AudioInfo.HEADER + 0x3D) == 0x50)
+		bLockAddrRegister = true;
+	if (*(u64*)(AudioInfo.HEADER + 0x10) == 0xEB7584E8519EA4E1 &&
+		*(u8*)(AudioInfo.HEADER + 0x3D) == 0x4A)
+		bLockAddrRegister = true;
+	LockAddrRegisterValue = 0;
 	return TRUE;
 }
 
 EXPORT void CALL CloseDLL(void) {
+	dprintf("Call: CloseDLL()\n");
 	if (snd != NULL)
 	{
 		snd->AI_Shutdown();
 		delete snd;
+		snd = NULL;
 	}
 }
 
@@ -216,19 +224,25 @@ EXPORT void CALL ProcessAList(void) {
 
 EXPORT void CALL RomOpen(void) 
 {
+	dprintf("Call: RomOpen()\n");
 	if (snd == NULL)
 		return;
+	Dacrate = 0; // Forces a revisit to initialize audio
+	snd->AI_ResetAudio();
 }
 
 EXPORT void CALL RomClosed(void) 
 {
+	dprintf("Call: RomClosed()\n");
 	if (snd == NULL)
 		return;
+	snd->StopAudio();
 }
 
 EXPORT void CALL AiDacrateChanged(int SystemType) {
 	u32 Frequency, video_clock;
 
+	dprintf("Call: AiDacrateChanged()\n");
 	if (snd == NULL)
 		return;
 	if (Dacrate == *AudioInfo.AI_DACRATE_REG)
@@ -258,9 +272,20 @@ EXPORT void CALL AiLenChanged(void)
 {
 	if (snd == NULL)
 		return;
-	snd->AI_LenChanged(
-		(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0x00FFFFF8)), 
-		*AudioInfo.AI_LEN_REG & 0x3FFF8);
+	if (bLockAddrRegister == true)
+	{
+		if (LockAddrRegisterValue == 0)
+			LockAddrRegisterValue = *AudioInfo.AI_DRAM_ADDR_REG;
+		snd->AI_LenChanged(
+			(AudioInfo.RDRAM + (LockAddrRegisterValue & 0x00FFFFF8)),
+			*AudioInfo.AI_LEN_REG & 0x3FFF8);
+	}
+	else
+	{
+		snd->AI_LenChanged(
+			(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0x00FFFFF8)),
+			*AudioInfo.AI_LEN_REG & 0x3FFF8);
+	}
 }
 
 EXPORT u32 CALL AiReadLength(void) {
@@ -268,11 +293,7 @@ EXPORT u32 CALL AiReadLength(void) {
 		return 0;
 	*AudioInfo.AI_LEN_REG = snd->AI_ReadLength();
 	return *AudioInfo.AI_LEN_REG;
-
 }
-
-// Deprecated Functions
-
 
 EXPORT void CALL AiUpdate(Boolean Wait) {
 	static int intCount = 0;
@@ -284,23 +305,10 @@ EXPORT void CALL AiUpdate(Boolean Wait) {
 #endif
 		return;
 	}
-	if (Wait)
-	{
-		if (bAbortAiUpdate == true) 
-		{
-#if defined(_WIN32) || defined(_XBOX)
-			if (intCount > 10) 
-				ExitThread(0);
-#else
-			assert(intCount <= 10);
-#endif
-			intCount++;
-			return;
-		}
-		snd->AI_Update(Wait);
-	}
+	snd->AI_Update(Wait);
 	return;
 }
+
 
 #if defined(_WIN32) && !defined(_XBOX)
 INT_PTR CALLBACK ConfigProc(
@@ -441,3 +449,45 @@ int safe_strcpy(char* dst, size_t limit, const char* src)
     return (failure);
 #endif
 }
+
+#ifdef USE_PRINTF
+static const WORD MAX_CONSOLE_LINES = 500;
+void RedirectIOToConsole() {
+#if !defined(_XBOX)
+	int hConHandle;
+	long lStdHandle;
+	CONSOLE_SCREEN_BUFFER_INFO coninfo;
+	FILE *fp;
+	// allocate a console for this app
+	FreeConsole();
+	if (!AllocConsole())
+		return;
+	// set the screen buffer to be big enough to let us scroll text
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
+	coninfo.dwSize.Y = MAX_CONSOLE_LINES;
+	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
+	// redirect unbuffered STDOUT to the console
+	lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "w");
+	*stdout = *fp;
+	setvbuf(stdout, NULL, _IONBF, 0);
+	// redirect unbuffered STDIN to the console
+	lStdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "r");
+	*stdin = *fp;
+	setvbuf(stdin, NULL, _IONBF, 0);
+	// redirect unbuffered STDERR to the console
+	lStdHandle = (long)GetStdHandle(STD_ERROR_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "w");
+	*stderr = *fp;
+	setvbuf(stderr, NULL, _IONBF, 0);
+	// make cout, wcout, cin, wcin, wcerr, cerr, wclog and clog 
+	// point to console as well
+	ios::sync_with_stdio();
+#endif
+}
+
+#endif

@@ -50,7 +50,7 @@ public:
 
 class XAudio2SoundDriver :
 	public SoundDriver
-{
+{	
 public:
 	XAudio2SoundDriver();
 	~XAudio2SoundDriver();
@@ -64,20 +64,38 @@ public:
 
 	// Buffer Functions for the Audio Code
 	void SetFrequency(u32 Frequency);           // Sets the Nintendo64 Game Audio Frequency
+#ifdef LEGACY_SOUND_DRIVER
 	u32 AddBuffer(u8 *start, u32 length);       // Uploads a new buffer and returns status
+#else
+	void LoadSample();
+#endif
 
 	// Management functions
 	void AiUpdate(BOOL Wait);
 	void StopAudio();							// Stops the Audio PlayBack (as if paused)
 	void StartAudio();							// Starts the Audio PlayBack (as if unpaused)
-
+#ifndef LEGACY_SOUND_DRIVER
+	void StopAudioThread();
+	void StartAudioThread();
+#endif
+#ifdef LEGACY_SOUND_DRIVER
 	u32 GetReadStatus();						// Returns the status on the read pointer
+#endif
 
 	void SetVolume(u32 volume);
+
+	//void PlayBuffer(int bufferNumber, u8* bufferData, int bufferSize);
 
 protected:
 
 	bool dllInitialized;
+	static DWORD WINAPI AudioThreadProc(LPVOID lpParameter);
+
+private:
+#ifndef LEGACY_SOUND_DRIVER
+	HANDLE hAudioThread;
+	bool   bStopAudioThread;
+#endif
 };
 
 /*

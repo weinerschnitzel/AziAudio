@@ -25,59 +25,53 @@ void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 		AddBuffer(start, length);
 	}
 #else
-	int targetDMABuffer;
-	int numFullBuffers = 0;
+	// Bleed off some of this buffer to smooth out audio
+	if (length < m_MaxBufferSize && configSyncAudio == true)
+	{
+		while ((m_BufferRemaining) == m_MaxBufferSize)// ((m_MaxBufferSize / 3) * 2))
+		{
+#ifdef _WIN32
+			Sleep(1);
+#else
+			// TODO: We need to support non-windows in another way
+			assert(0);
+#endif
+		}
+	}
 
 #ifdef _WIN32
 	WaitForSingleObject(m_hMutex, INFINITE);
 #else
 	puts("[AI_LenChanged] To do:  Working non-Win32 mutex timing.");
 #endif
-	targetDMABuffer = m_AI_CurrentDMABuffer; // Target register
-	if (m_AI_DMARemaining[targetDMABuffer] > 0)
+	BufferAudio();
+	if (m_AI_DMASecondaryBytes > 0)
 	{
-		targetDMABuffer = m_AI_CurrentDMABuffer ^ 1; // Set new target
-		if (m_AI_DMARemaining[targetDMABuffer] > 0)
-		{
-			// FIFO is full.  We either need to ditch this buffer or wait
-			if (configSyncAudio == true)
-			{
-#ifdef _WIN32
-				ReleaseMutex(m_hMutex);
-				while (m_AI_DMARemaining[targetDMABuffer] > 0)
-					Sleep(1);
-				WaitForSingleObject(m_hMutex, INFINITE);
-#else
-			//	To do:  Working non-Win32 mutex timing.
-				while (m_AI_DMARemaining[targetDMABuffer] > 0)
-					SDL_Delay(1);
-#endif
-				m_AI_DMABuffer[targetDMABuffer] = start;
-				m_AI_DMARemaining[targetDMABuffer] = length;
-			}
-			numFullBuffers = 2;
-			// TODO: How do we handle interrupts if we end up having to skip a buffer -- chances are if this occurs we 
-			// are using FAT and an overflow occurred.  In that case we wouldn't need to handle the AI emulation in the
-			// first place so we will skip it
-		}
-		else
-		{
-			// Fill last buffer
-			m_AI_DMABuffer[targetDMABuffer] = start;
-			m_AI_DMARemaining[targetDMABuffer] = length;
-			numFullBuffers = 2;
-		}
-	}
-	else
-	{
-		// Fill first buffer
-		m_AI_DMABuffer[targetDMABuffer] = start;
-		m_AI_DMARemaining[targetDMABuffer] = length;
-		numFullBuffers = 1;
+		// FIFO is full.  We either need to ditch this buffer or wait
+		dprintf("X");
+		// TODO: How do we handle interrupts if we end up having to skip a buffer -- chances are if this occurs we 
+		// are using FAT and an overflow occurred.  In that case we wouldn't need to handle the AI emulation in the
+		// first place so we will skip it
 	}
 
-	if (numFullBuffers > 0) *AudioInfo.AI_STATUS_REG |= AI_STATUS_DMA_BUSY;
-	if (numFullBuffers > 1) *AudioInfo.AI_STATUS_REG |= AI_STATUS_FIFO_FULL;
+	m_AI_DMASecondaryBuffer = start;
+	m_AI_DMASecondaryBytes = length;
+	if (m_AI_DMAPrimaryBytes == 0)
+	{
+		m_AI_DMAPrimaryBuffer = m_AI_DMASecondaryBuffer; m_AI_DMASecondaryBuffer = NULL;
+		m_AI_DMAPrimaryBytes = m_AI_DMASecondaryBytes; m_AI_DMASecondaryBytes = 0; 
+	}
+
+	if (configAIEmulation == true)
+	{
+		*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
+		if (m_AI_DMAPrimaryBytes > 0 && m_AI_DMASecondaryBytes > 0)
+		{
+			*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY | AI_STATUS_FIFO_FULL;
+		}
+	}
+	BufferAudio();
+
 #ifdef _WIN32
 	ReleaseMutex(m_hMutex);
 #endif
@@ -86,11 +80,14 @@ void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 
 void SoundDriver::AI_SetFrequency(u32 Frequency)
 {
+	m_SamplesPerSecond = Frequency;
 #ifdef LEGACY_SOUND_DRIVER
 	if (m_audioIsInitialized == true) SetFrequency(Frequency);
 #else
 	SetFrequency(Frequency);
-	m_MaxBufferSize = ((Frequency * 4) / 10) & 0xFFFFFFF8; // 8 byte aligned
+	m_MaxBufferSize = (u32)((Frequency/90)) * 4 * 2; // TODO: Make this configurable
+	m_BufferRemaining = 0;
+	m_CurrentReadLoc = m_CurrentWriteLoc = m_BufferRemaining = 0;
 #endif
 }
 
@@ -104,13 +101,12 @@ u32 SoundDriver::AI_ReadLength()
 
 #ifdef _WIN32
 	WaitForSingleObject(m_hMutex, INFINITE);
-	retVal = m_AI_DMARemaining[m_AI_CurrentDMABuffer];
-	ReleaseMutex(m_hMutex);
-#else
-	puts("[AI_ReadLength] To do:  working non-Win32 AI timing.");
-	retVal = 0;
 #endif
-	return (retVal);
+	retVal = m_AI_DMAPrimaryBytes;
+#ifdef _WIN32
+	ReleaseMutex(m_hMutex);
+#endif
+	return (retVal & ~0x3);
 #endif
 }
 
@@ -123,8 +119,9 @@ void SoundDriver::AI_Startup()
 	if (m_audioIsInitialized == true) SetVolume(configVolume);
 #else
 	Initialize();
-	m_AI_CurrentDMABuffer = 0;
-	m_AI_DMARemaining[0] = m_AI_DMARemaining[1] = 0;
+	m_AI_DMAPrimaryBytes = m_AI_DMASecondaryBytes = 0;
+	m_AI_DMAPrimaryBuffer = m_AI_DMASecondaryBuffer = NULL;
+
 	m_MaxBufferSize = MAX_SIZE;
 	m_CurrentReadLoc = m_CurrentWriteLoc = m_BufferRemaining = 0;
 	m_DMAEnabled = false;
@@ -150,6 +147,7 @@ void SoundDriver::AI_Shutdown()
 	//DeInitialize();
 #else
 	DeInitialize();
+	m_BufferRemaining = 0;
 #ifdef _WIN32
 	if (m_hMutex != NULL)
 	{
@@ -164,9 +162,13 @@ void SoundDriver::AI_Shutdown()
 
 void SoundDriver::AI_ResetAudio()
 {
-	StopAudio();
-	if (m_audioIsInitialized == true) DeInitialize();
+#ifndef LEGACY_SOUND_DRIVER
+	m_BufferRemaining = 0;
+#endif
+	if (m_audioIsInitialized == true) AI_Shutdown();
+	DeInitialize();
 	m_audioIsInitialized = false;
+	AI_Startup();
 	m_audioIsInitialized = (Initialize() == FALSE);
 	StartAudio();
 }
@@ -176,42 +178,62 @@ void SoundDriver::AI_Update(Boolean Wait)
 	AiUpdate(Wait);
 }
 
+#ifndef LEGACY_SOUND_DRIVER
+void SoundDriver::BufferAudio()
+{
+	while ((m_BufferRemaining < m_MaxBufferSize) && (m_AI_DMAPrimaryBytes > 0 || m_AI_DMASecondaryBytes > 0))
+	{
+		*(u16 *)(m_Buffer + m_CurrentWriteLoc) = *(u16 *)(m_AI_DMAPrimaryBuffer+2);
+		*(u16 *)(m_Buffer + m_CurrentWriteLoc+2) = *(u16 *)m_AI_DMAPrimaryBuffer;
+		m_CurrentWriteLoc += 4;
+		m_AI_DMAPrimaryBuffer += 4;
+		m_CurrentWriteLoc %= m_MaxBufferSize;
+		assert(m_BufferRemaining <= m_MaxBufferSize);
+		m_BufferRemaining += 4;
+		assert(m_BufferRemaining <= m_MaxBufferSize);
+		m_AI_DMAPrimaryBytes -= 4;
+		if (m_AI_DMAPrimaryBytes == 0)
+		{
+			m_AI_DMAPrimaryBytes = m_AI_DMASecondaryBytes; m_AI_DMAPrimaryBuffer = m_AI_DMASecondaryBuffer; // Switch
+			m_AI_DMASecondaryBytes = 0; m_AI_DMASecondaryBuffer = NULL;
+			if (configAIEmulation == true)
+			{
+				*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
+				*AudioInfo.AI_STATUS_REG &= ~AI_STATUS_FIFO_FULL;
+				*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
+				AudioInfo.CheckInterrupts();
+				if (m_AI_DMAPrimaryBytes == 0) *AudioInfo.AI_STATUS_REG = 0;
+			}
+		}
+	}
+}
+
 // Copies data to the audio playback buffer
 u32 SoundDriver::LoadAiBuffer(u8 *start, u32 length)
 {
-	u32 bytesToMove = length & 0xFFFFFFF8;
-#ifndef LEGACY_SOUND_DRIVER
+	u32 bytesToMove = length;// &0xFFFFFFFC;
 	u8 *ptrStart = start;
 	u8 nullBuff[MAX_SIZE];
+	u32 writePtr = 0;
 	if (start == NULL)
 		ptrStart = nullBuff;
 
-	assert((length & 0x3) == 0); // TODO: 4 or 8 byte alignment??
+	assert((length & 0x3) == 0);
+	assert(bytesToMove <= m_MaxBufferSize);  // We shouldn't be asking for more.
 
 	m_DMAEnabled = (*AudioInfo.AI_CONTROL_REG & AI_CONTROL_DMA_ON) == AI_CONTROL_DMA_ON;
 
-	if (bytesToMove > MAX_SIZE)
+	if (bytesToMove > m_MaxBufferSize)
 	{
 		memset(ptrStart, 0, 100);
 		return length;
 	}
 
+	// Return silence -- DMA is disabled
 	if (m_DMAEnabled == false)
 	{
 		memset(ptrStart, 0, length);
 		return length;
-	}
-
-	// Deplete stored buffer first
-	while (bytesToMove > 0 && m_BufferRemaining > 0)
-	{
-		*(u32 *)(ptrStart) = *(u32 *)(m_Buffer + m_CurrentReadLoc);
-		m_CurrentReadLoc += 4;
-		ptrStart += 4;
-		if (m_CurrentReadLoc > m_MaxBufferSize)
-			m_CurrentReadLoc = 0;
-		m_BufferRemaining -= 4;
-		bytesToMove -= 4;
 	}
 
 #ifdef _WIN32
@@ -219,59 +241,47 @@ u32 SoundDriver::LoadAiBuffer(u8 *start, u32 length)
 #else
 	puts("[LoadAIBuffer] To do:  non-Win32 m_hMutex");
 #endif
-	// Move any streamed audio samples
-	while (bytesToMove > 0 && m_AI_DMARemaining[m_AI_CurrentDMABuffer] > 0)
-	{
-		*(u32 *)(ptrStart) = *(u32 *)(m_AI_DMABuffer[m_AI_CurrentDMABuffer]);
-		m_AI_DMABuffer[m_AI_CurrentDMABuffer] += 4;
-		ptrStart += 4;
-		m_AI_DMARemaining[m_AI_CurrentDMABuffer] -= 4;
-		bytesToMove -= 4;
 
-		if (m_AI_DMARemaining[m_AI_CurrentDMABuffer] == 0)
-		{
-			m_AI_CurrentDMABuffer ^= 1; // Switch
-			*AudioInfo.AI_STATUS_REG &= ~AI_STATUS_FIFO_FULL;
-			if (m_AI_DMARemaining[m_AI_CurrentDMABuffer] == 0) *AudioInfo.AI_STATUS_REG &= ~AI_STATUS_DMA_BUSY;
-			*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
-			AudioInfo.CheckInterrupts();
-		}
-	}
-	/*
-	// Refill buffer
-	while (m_BufferRemaining < m_MaxBufferSize && m_AI_DMARemaining[m_AI_CurrentDMABuffer] > 0)
-	{
-		*(u32 *)(m_Buffer + m_CurrentWriteLoc) = *(u32 *)(m_AI_DMABuffer[m_AI_CurrentDMABuffer]);
-		m_CurrentWriteLoc += 4;
-		m_AI_DMABuffer[m_AI_CurrentDMABuffer] += 4;
-		m_AI_DMARemaining[m_AI_CurrentDMABuffer] -= 4;
-		m_BufferRemaining += 4;
+	// Step 0: Replace depleted stored buffer for next run
+	BufferAudio();
 
-		if (m_AI_DMARemaining[m_AI_CurrentDMABuffer] == 0)
+	// Step 1: Deplete stored buffer (should equal length size)
+	if (bytesToMove <= m_BufferRemaining)
+	{
+		while (bytesToMove > 0 && m_BufferRemaining > 0)
 		{
-			m_AI_CurrentDMABuffer ^= 1; // Switch
-			*AudioInfo.AI_STATUS_REG &= ~AI_STATUS_FIFO_FULL;
-			if (m_AI_DMARemaining[m_AI_CurrentDMABuffer] == 0) *AudioInfo.AI_STATUS_REG &= ~AI_STATUS_DMA_BUSY;
-			*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
-			AudioInfo.CheckInterrupts();
+			*(u32 *)(ptrStart+writePtr) = *(u32 *)(m_Buffer + m_CurrentReadLoc);
+			m_CurrentReadLoc += 4;
+			writePtr += 4;
+			m_CurrentReadLoc %= m_MaxBufferSize;
+			assert(m_BufferRemaining <= m_MaxBufferSize);
+			m_BufferRemaining -= 4;
+			assert(m_BufferRemaining <= m_MaxBufferSize);
+			bytesToMove -= 4;
 		}
+		assert(writePtr == length);
 	}
-	*/
+
+	// Step 2: Fill bytesToMove with silence
+	if (bytesToMove == length)
+		dprintf("S");
+
+	while (bytesToMove > 0)
+	{
+		*(u8 *)(ptrStart + writePtr) = 0;
+		writePtr += 1;
+		bytesToMove -= 1;
+	}
+
+	// Step 3: Replace depleted stored buffer for next run
+	BufferAudio();
+
 #ifdef _WIN32
 	ReleaseMutex(m_hMutex);
 #else
 	// to do
 #endif
-
-	if (bytesToMove > 0)
-	{
-		memset(ptrStart, 0, bytesToMove);
-		bytesToMove = 0;
-	}
-#else
-	void *junk;
-	junk = start;
-
-#endif
+	assert(bytesToMove == 0);
 	return (length - bytesToMove);
 }
+#endif

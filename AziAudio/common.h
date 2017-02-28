@@ -31,11 +31,29 @@
 #define SEH_SUPPORTED
 #endif
 
+// Configure the plugin to use XAudio2 -- default DirectSound
 #ifndef XAUDIO_LIBRARIES_UNAVAILABLE
 #ifdef _WIN32
 #define USE_XAUDIO2
 #endif
 #endif
+
+// Configure the plugin to use "Stream" DMA -- default fully buffered - DirectSound8 Legacy only - To Be Removed
+#define STREAM_DMA
+
+// Configure the plugin to have a console window for informational output -- should be used for debugging only
+//#define USE_PRINTF
+
+
+
+#ifdef USE_PRINTF
+#define dprintf printf
+#else
+#define dprintf //
+#endif
+
+
+
 
 #include "my_types.h"
 
@@ -80,14 +98,14 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #endif
 #else
 #ifdef _DEBUG
-#define PLUGIN_DEBUG " (Debug)"
+#define PLUGIN_DEBUG " (r12)"
 #else
 #define PLUGIN_DEBUG ""
 #endif
 #endif
 
 #define PLUGIN_RELEASE " v0.70 "
-#define PLUGIN_BUILD "WIP 6" \
+#define PLUGIN_BUILD "WIP 7" \
 	   PLUGIN_DEBUG 
 
 #define PLUGIN_VERSION \

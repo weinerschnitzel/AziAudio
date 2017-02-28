@@ -22,7 +22,7 @@
 static DWORD sLOCK_SIZE;
 
 #define DS_SEGMENTS     4
-#define LOCK_SIZE 0x800
+#define LOCK_SIZE sLOCK_SIZE
 // 0x600
 //sLOCK_SIZE
 //0x700
@@ -60,7 +60,7 @@ public:
 
 	friend DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac);
 
-	DirectSoundDriver() { lpdsbuf = NULL; lpds = NULL; audioIsDone = false; hMutex = NULL; handleAudioThread = NULL; audioIsPlaying = FALSE; readLoc = writeLoc = remainingBytes = 0; };
+	DirectSoundDriver() { lpdsbuf = NULL; lpds = NULL; audioIsDone = false; hMutex = NULL; handleAudioThread = NULL; audioIsPlaying = FALSE; readLoc = writeLoc = remainingBytes = 0; SampleRate = 0; };
 	//DirectSoundDriver() {};
 	~DirectSoundDriver() { };
 
@@ -70,8 +70,10 @@ public:
 
 	// Buffer Functions for the Audio Code
 	void SetFrequency(u32 Frequency);           // Sets the Nintendo64 Game Audio Frequency
+#ifdef LEGACY_SOUND_DRIVER
 	u32 AddBuffer(u8 *start, u32 length);       // Uploads a new buffer and returns status
 	void FillBuffer(BYTE *buff, DWORD len);
+#endif
 	void SetSegmentSize(DWORD length);
 
 	// Management functions
@@ -79,7 +81,9 @@ public:
 	void StopAudio();							// Stops the Audio PlayBack (as if paused)
 	void StartAudio();							// Starts the Audio PlayBack (as if unpaused)
 
+#ifdef LEGACY_SOUND_DRIVER
 	u32 GetReadStatus();						// Returns the status on the read pointer
+#endif
 
 	void SetVolume(u32 volume);
 

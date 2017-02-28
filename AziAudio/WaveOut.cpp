@@ -13,6 +13,9 @@
 #include <stdio.h>
 #include "WaveOut.h"	
 
+WaveOut::WaveOut() : waveoutput(NULL) {
+	waveoutput = NULL;
+};
 void WaveOut::BeginWaveOut(char *filename, WORD channels, WORD bitsPerSample, DWORD sampleRate)
 {
 	if (waveoutput != NULL) return;
