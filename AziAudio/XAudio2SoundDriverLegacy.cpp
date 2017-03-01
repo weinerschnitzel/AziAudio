@@ -10,7 +10,7 @@
 ****************************************************************************/
 
 #include "common.h"
-#include "XAudio2SoundDriver.h"
+#include "XAudio2SoundDriverLegacy.h"
 #include "AudioSpec.h"
 #include <stdio.h>
 
@@ -21,7 +21,9 @@ static IXAudio2MasteringVoice* g_master;
 static bool audioIsPlaying = false;
 static bool canPlay = false;
 
-static u8 bufferData[4][44100 * 4];
+static u8 bufferData[10][44100 * 4];
+static u8* bufferLocation[10];
+static int bufferLength[10];
 static int writeBuffer = 0;
 static int readBuffer = 0;
 static int filledBuffers;
@@ -30,21 +32,18 @@ static int lastLength = 1;
 
 static int cacheSize = 0;
 static int interrupts = 0;
-static VoiceCallback voiceCallback;
-
-XAudio2SoundDriver::XAudio2SoundDriver()
+static VoiceCallbackLegacy voiceCallback;
+XAudio2SoundDriverLegacy::XAudio2SoundDriverLegacy()
 {
 	g_engine = NULL;
 	g_source = NULL;
 	g_master = NULL;
 	dllInitialized = false;
-	bStopAudioThread = false;
-	hAudioThread = NULL;
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 }
 
 
-XAudio2SoundDriver::~XAudio2SoundDriver()
+XAudio2SoundDriverLegacy::~XAudio2SoundDriverLegacy()
 {
 	DeInitialize();
 	//Teardown();
@@ -53,12 +52,14 @@ XAudio2SoundDriver::~XAudio2SoundDriver()
 static HANDLE hMutex;
 
 
-BOOL XAudio2SoundDriver::Initialize()
+BOOL XAudio2SoundDriverLegacy::Initialize()
 {
 	if (g_source != NULL)
 	{
 		g_source->Start();
 	}
+	bufferLength[0] = bufferLength[1] = bufferLength[2] = bufferLength[3] = bufferLength[4] = bufferLength[5] = 0;
+	bufferLength[6] = bufferLength[7] = bufferLength[8] = bufferLength[9] = 0;
 	audioIsPlaying = false;
 	writeBuffer = 0;
 	readBuffer = 0;
@@ -71,11 +72,12 @@ BOOL XAudio2SoundDriver::Initialize()
 	return false;
 }
 
-BOOL XAudio2SoundDriver::Setup()
+BOOL XAudio2SoundDriverLegacy::Setup()
 {
 	if (dllInitialized == true) return true;
 	dllInitialized = true;
-	hAudioThread = NULL;
+	bufferLength[0] = bufferLength[1] = bufferLength[2] = bufferLength[3] = bufferLength[4] = bufferLength[5] = 0;
+	bufferLength[6] = bufferLength[7] = bufferLength[8] = bufferLength[9] = 0;
 	audioIsPlaying = false;
 	writeBuffer = 0;
 	readBuffer = 0;
@@ -127,16 +129,15 @@ BOOL XAudio2SoundDriver::Setup()
 
 	return FALSE;
 }
-void XAudio2SoundDriver::DeInitialize()
+void XAudio2SoundDriverLegacy::DeInitialize()
 {
 	Teardown();
 }
 
-void XAudio2SoundDriver::Teardown()
+void XAudio2SoundDriverLegacy::Teardown()
 {
 	if (dllInitialized == false) return;
 	canPlay = false;
-	StopAudioThread();
 	if (hMutex != NULL)
 		WaitForSingleObject(hMutex, INFINITE);
 	if (g_source != NULL)
@@ -165,8 +166,46 @@ void XAudio2SoundDriver::Teardown()
 	canPlay = false;
 }
 
-void XAudio2SoundDriver::PlayBuffer(u8* bufferData, int bufferSize)
+void XAudio2SoundDriverLegacy::SetFrequency(u32 Frequency)
 {
+	if (Setup() < 0) /* failed to apply a sound device */
+		return;
+	cacheSize = (Frequency / 25) * 4;// (((Frequency * 4) / 100) & ~0x3) * 8;
+	g_source->FlushSourceBuffers();
+	g_source->SetSourceSampleRate(Frequency);
+}
+
+u32 XAudio2SoundDriverLegacy::AddBuffer(u8 *start, u32 length)
+{
+	if (length == 0 || g_source == NULL) {
+		*AudioInfo.AI_STATUS_REG = 0;
+		*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
+		AudioInfo.CheckInterrupts();
+		return 0;
+	}
+	lastLength = length;
+
+	// Gracefully waiting for filled buffers to deplete
+	if (Configuration::configSyncAudio == true || Configuration::configForceSync == true)
+		while (filledBuffers == 10) Sleep(1);
+	else 
+		if (filledBuffers == 10) return 0;
+		
+	WaitForSingleObject(hMutex, INFINITE);
+	for (DWORD x = 0; x < length; x += 4)
+	{
+		bufferData[writeBuffer][x] = start[x + 2];
+		bufferData[writeBuffer][x+1] = start[x + 3];
+		bufferData[writeBuffer][x+2] = start[x];
+		bufferData[writeBuffer][x+3] = start[x + 1];
+	}
+	// TODO: HatCat suggestion to get the compiler to optimize it rather than unrolling the loop.
+	//for (size_t x = 0; x < length; x++)
+	//	bufferData[writeBuffer][x] = start[x ^ 2];
+	bufferLength[writeBuffer] = length;
+	bufferBytes += length;
+	filledBuffers++;
+
 	XAUDIO2_BUFFER xa2buff;
 
 	xa2buff.Flags = XAUDIO2_END_OF_STREAM; // Suppress XAudio2 warnings
@@ -175,102 +214,42 @@ void XAudio2SoundDriver::PlayBuffer(u8* bufferData, int bufferSize)
 	xa2buff.LoopBegin = 0;
 	xa2buff.LoopLength = 0;
 	xa2buff.LoopCount = 0;
-	xa2buff.pContext = NULL;
-	xa2buff.AudioBytes = bufferSize;
-	xa2buff.pAudioData = bufferData;
+	xa2buff.pContext = &bufferLength[writeBuffer];
+	xa2buff.AudioBytes = length;
+	xa2buff.pAudioData = bufferData[writeBuffer];
 	if (canPlay)
 		g_source->SubmitSourceBuffer(&xa2buff);
 
-	XAUDIO2_VOICE_STATE xvs;
-	g_source->GetState(&xvs);
+	++writeBuffer;
+	writeBuffer %= 10;
 
-	assert(xvs.BuffersQueued < 4);
-
+	if (bufferBytes < cacheSize || Configuration::configForceSync == true)
+	{
+		*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
+		*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
+		AudioInfo.CheckInterrupts();
+	}
+	else
+	{
+		if (filledBuffers >= 2)
+			*AudioInfo.AI_STATUS_REG |= AI_STATUS_FIFO_FULL;
+		interrupts++;
+	}
+	ReleaseMutex(hMutex);
+	
+	return 0;
 }
 
-void XAudio2SoundDriver::SetFrequency(u32 Frequency)
-{
-	if (Setup() < 0) /* failed to apply a sound device */
-		return;
-	cacheSize = (u32)((Frequency / 90)) * 4;
-	g_source->FlushSourceBuffers();
-	g_source->SetSourceSampleRate(Frequency);
-
-	StartAudioThread();
-}
-
-void XAudio2SoundDriver::AiUpdate(BOOL Wait)
+void XAudio2SoundDriverLegacy::AiUpdate(BOOL Wait)
 {
 	if (Wait)
 		WaitMessage();
 }
 
-DWORD WINAPI XAudio2SoundDriver::AudioThreadProc(LPVOID lpParameter)
-{
-	XAudio2SoundDriver* driver = (XAudio2SoundDriver*)lpParameter;
-	static int idx = 0;  // TODO: This needs to be moved...
-
-	while (driver->bStopAudioThread == false)
-	{
-		if (g_source != NULL)
-		{
-			XAUDIO2_VOICE_STATE xvs;
-			g_source->GetState(&xvs);
-			// # of BuffersQueued is a knob we can turn for latency vs buffering
-			// 2 is minimum.  Maximum is the size of bufferData which is still TBD (Current 5)
-			// It is always possible to new a buffer prior to submission then free it on completion.  Worth it?
-			while (xvs.BuffersQueued < 2) 
-			{
-				u32 len = driver->LoadAiBuffer(bufferData[idx], cacheSize);
-				if (len > 0)
-				{
-					driver->PlayBuffer(bufferData[idx], len);
-					idx = (idx + 1) % 4;
-				}
-				else
-				{
-					Sleep(1);
-				}
-				g_source->GetState(&xvs);
-			}
-		}
-		Sleep(1);
-	}
-	return 0;
-}
-
-void XAudio2SoundDriver::StartAudioThread()
-{
-	if (hAudioThread == NULL && dllInitialized == true)
-	{
-		dprintf("Audio Thread created\n");
-		bStopAudioThread = false;
-		hAudioThread = CreateThread(NULL, 0, AudioThreadProc, this, 0, NULL);
-		assert(hAudioThread != NULL);
-	}
-}
-
-void XAudio2SoundDriver::StopAudioThread()
-{
-	if (hAudioThread != NULL)
-	{
-		bStopAudioThread = true;
-		DWORD result = WaitForSingleObject(hAudioThread, 5000);
-		if (result != WAIT_OBJECT_0)
-		{
-			TerminateThread(hAudioThread, 0);
-		}
-	}
-	dprintf("Audio Thread terminated\n");
-	hAudioThread = NULL;
-	bStopAudioThread = false;
-}
-
-void XAudio2SoundDriver::StopAudio()
+void XAudio2SoundDriverLegacy::StopAudio()
 {
 	
 	audioIsPlaying = false;
-	StopAudioThread();
 	if (g_source != NULL)
 	{
 		g_source->Stop();
@@ -279,14 +258,33 @@ void XAudio2SoundDriver::StopAudio()
 		
 }
 
-void XAudio2SoundDriver::StartAudio()
+void XAudio2SoundDriverLegacy::StartAudio()
 {
 	audioIsPlaying = true;
-	StartAudioThread();
+}
+
+u32 XAudio2SoundDriverLegacy::GetReadStatus()
+{
+	XAUDIO2_VOICE_STATE xvs;
+	int retVal;
+
+	if (canPlay)
+		g_source->GetState(&xvs);
+	else
+		return 0;
+
+	if (xvs.BuffersQueued == 0 || Configuration::configForceSync == true) return 0;
+
+	if (bufferBytes + lastLength < cacheSize)
+		return 0;
+	else
+		retVal = (lastLength - xvs.SamplesPlayed * 4) & ~0x7;
+
+	if (retVal < 0) return 0; else return retVal % lastLength;
 }
 
 // 100 - Mute to 0 - Full Volume
-void XAudio2SoundDriver::SetVolume(u32 volume)
+void XAudio2SoundDriverLegacy::SetVolume(u32 volume)
 {
 	float xaVolume = 1.0f - ((float)volume / 100.0f);
 	if (g_source != NULL) g_source->SetVolume(xaVolume);
@@ -294,12 +292,35 @@ void XAudio2SoundDriver::SetVolume(u32 volume)
 }
 
 
-void __stdcall VoiceCallback::OnBufferEnd(void * pBufferContext)
+void __stdcall VoiceCallbackLegacy::OnBufferEnd(void * pBufferContext)
 {
 	UNREFERENCED_PARAMETER(pBufferContext);
+	WaitForSingleObject(hMutex, INFINITE);
+#ifdef SEH_SUPPORTED
+	__try // PJ64 likes to close objects before it shuts down the DLLs completely...
+	{
+#endif
+		*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
+		if (interrupts > 0)
+		{
+			interrupts--;
+			*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
+			AudioInfo.CheckInterrupts();
+		}
+#ifdef SEH_SUPPORTED
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER)
+	{
+	}
+#endif
+	bufferBytes -= *(int *)(pBufferContext);
+	filledBuffers--;
+	ReleaseMutex(hMutex);
 }
 
-void __stdcall VoiceCallback::OnVoiceProcessingPassStart(UINT32 SamplesRequired) 
+void __stdcall VoiceCallbackLegacy::OnVoiceProcessingPassStart(UINT32 SamplesRequired) 
 {
 	UNREFERENCED_PARAMETER(SamplesRequired);
+	//if (SamplesRequired > 0)
+	//	dprintf("SR: %i FB: %i BB: %i  CS:%i\n", SamplesRequired, filledBuffers, bufferBytes, cacheSize);
 }

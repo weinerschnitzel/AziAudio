@@ -15,7 +15,6 @@ NoSound Driver to demonstrate how to use the SoundDriver interface
 #pragma once
 #include "common.h"
 #include "SoundDriver.h"
-#ifndef LEGACY_SOUND_DRIVER
 
 #if !defined(_WIN32) && !defined(_XBOX)
 typedef union _LARGE_INTEGER {
@@ -60,4 +59,3 @@ protected:
 	*/
 	bool isPlaying;
 };
-#endif

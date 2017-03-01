@@ -15,15 +15,15 @@
 #include <Windows.h>
 #endif
 
-#include "SoundDriver.h"
+#include "SoundDriverLegacy.h"
 #include <xaudio2.h>
 
-class VoiceCallback : public IXAudio2VoiceCallback
+class VoiceCallbackLegacy : public IXAudio2VoiceCallback
 {
 public:
 	//HANDLE hBufferEndEvent;
-	VoiceCallback() /*: hBufferEndEvent(CreateEvent(NULL, FALSE, FALSE, NULL))*/{}
-	~VoiceCallback(){/* CloseHandle(hBufferEndEvent); */}
+	VoiceCallbackLegacy() /*: hBufferEndEvent(CreateEvent(NULL, FALSE, FALSE, NULL))*/{}
+	~VoiceCallbackLegacy(){/* CloseHandle(hBufferEndEvent); */}
 
 	//Called when the voice has just finished playing a contiguous audio stream.
 	void __stdcall OnStreamEnd() {/* SetEvent(hBufferEndEvent); */}
@@ -48,12 +48,12 @@ public:
 	*/
 };
 
-class XAudio2SoundDriver :
-	public SoundDriver
+class XAudio2SoundDriverLegacy :
+	public SoundDriverLegacy
 {	
 public:
-	XAudio2SoundDriver();
-	~XAudio2SoundDriver();
+	XAudio2SoundDriverLegacy();
+	~XAudio2SoundDriverLegacy();
 	
 	// Setup and Teardown Functions
 	BOOL Initialize();
@@ -64,16 +64,17 @@ public:
 
 	// Buffer Functions for the Audio Code
 	void SetFrequency(u32 Frequency);           // Sets the Nintendo64 Game Audio Frequency
-	void PlayBuffer(u8* bufferData, int bufferSize);
+	u32 AddBuffer(u8 *start, u32 length);       // Uploads a new buffer and returns status
 
 	// Management functions
 	void AiUpdate(BOOL Wait);
 	void StopAudio();							// Stops the Audio PlayBack (as if paused)
 	void StartAudio();							// Starts the Audio PlayBack (as if unpaused)
-	void StopAudioThread();
-	void StartAudioThread();
+	u32 GetReadStatus();						// Returns the status on the read pointer
 
 	void SetVolume(u32 volume);
+
+	//void PlayBuffer(int bufferNumber, u8* bufferData, int bufferSize);
 
 protected:
 

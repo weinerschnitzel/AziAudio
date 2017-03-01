@@ -11,14 +11,11 @@
 
 //************ Configuration Section ************** (to be moved to compile time defines)
 // Configure the plugin to use XAudio2 -- default DirectSound
-#ifndef XAUDIO_LIBRARIES_UNAVAILABLE
-#ifdef _WIN32
-#define USE_XAUDIO2
-#endif
-#endif
-
-// Configure the plugin to use "Stream" DMA -- default fully buffered - DirectSound8 Legacy only - To Be Removed
-#define STREAM_DMA
+//#ifndef XAUDIO_LIBRARIES_UNAVAILABLE
+//#ifdef _WIN32
+//#define USE_XAUDIO2
+//#endif
+//#endif
 
 // Configure the plugin to have a console window for informational output -- should be used for debugging only
 //#define USE_PRINTF
@@ -80,11 +77,7 @@ extern rSettings RegSettings;
 
 unsigned long GenerateCRC (unsigned char *data, int size);
 
-#ifdef USE_XAUDIO2
-#define PLUGIN_NAME     "XA2 Audio"
-#else
-#define PLUGIN_NAME     "DS8 Audio"
-#endif
+#define PLUGIN_NAME     "Audio"
 
 #ifdef DEVBUILD
 #ifdef __GNUC__
@@ -99,7 +92,7 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #endif
 #else
 #ifdef _DEBUG
-#define PLUGIN_DEBUG " (r13)"
+#define PLUGIN_DEBUG " (Debug r14)"
 #else
 #define PLUGIN_DEBUG ""
 #endif

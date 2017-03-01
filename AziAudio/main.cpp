@@ -12,14 +12,8 @@
 #include "common.h"
 #include "AudioSpec.h"
 
-#ifdef USE_XAUDIO2
-#include "XAudio2SoundDriver.h"
-#elif defined(_WIN32)
-#include "DirectSoundDriver.h"
-#else
-#include "SDLSoundDriver.h"
-#endif
-#include "NoSoundDriver.h"
+#include "SoundDriverInterface.h"
+#include "SoundDriverFactory.h"
 
 #include "audiohle.h"
 //#include "rsp/rsp.h"
@@ -119,20 +113,7 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 		delete snd;
 	}
 
-/*
- * To do:  We currently have no sound-playing device for Unix-based platforms.
- */
-#if !defined(LEGACY_SOUND_DRIVER) || !defined(_WIN32)
-#if defined(USE_XAUDIO2)
-	snd = new XAudio2SoundDriver();
-#else
-	snd = new DirectSoundDriver();
-#endif
-#elif defined(USE_XAUDIO2)
-	snd = new XAudio2SoundDriver();
-#else
-	snd = new DirectSoundDriver();
-#endif
+	snd = SoundDriverFactory::CreateSoundDriver(SoundDriverType::SND_DRIVER_XA2);
 
 #ifdef USE_PRINTF
 	RedirectIOToConsole();

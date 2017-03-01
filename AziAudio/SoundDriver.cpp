@@ -14,17 +14,6 @@
 // Load the buffer from the AI interface to our emulated buffer
 void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 {
-#ifdef LEGACY_SOUND_DRIVER
-	if (m_audioIsInitialized == false)
-	{
-		*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
-		*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
-	}
-	else
-	{
-		AddBuffer(start, length);
-	}
-#else
 	// Bleed off some of this buffer to smooth out audio
 	if (length < m_MaxBufferSize && Configuration::configSyncAudio == true)
 	{
@@ -75,28 +64,19 @@ void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 #ifdef _WIN32
 	ReleaseMutex(m_hMutex);
 #endif
-#endif
 }
 
 void SoundDriver::AI_SetFrequency(u32 Frequency)
 {
 	m_SamplesPerSecond = Frequency;
-#ifdef LEGACY_SOUND_DRIVER
-	if (m_audioIsInitialized == true) SetFrequency(Frequency);
-#else
 	SetFrequency(Frequency);
 	m_MaxBufferSize = (u32)((Frequency/90)) * 4 * 2; // TODO: Make this configurable
 	m_BufferRemaining = 0;
 	m_CurrentReadLoc = m_CurrentWriteLoc = m_BufferRemaining = 0;
-#endif
 }
 
 u32 SoundDriver::AI_ReadLength()
 {
-#ifdef LEGACY_SOUND_DRIVER
-	if (m_audioIsInitialized == false) return 0;
-	return GetReadStatus();
-#else
 	u32 retVal;
 
 #ifdef _WIN32
@@ -107,17 +87,10 @@ u32 SoundDriver::AI_ReadLength()
 	ReleaseMutex(m_hMutex);
 #endif
 	return (retVal & ~0x3);
-#endif
 }
 
 void SoundDriver::AI_Startup()
 {
-#ifdef LEGACY_SOUND_DRIVER	
-	if (m_audioIsInitialized == true) DeInitialize();
-	m_audioIsInitialized = false;
-	m_audioIsInitialized = (Initialize() == FALSE);
-	if (m_audioIsInitialized == true) SetVolume(configVolume);
-#else
 	Initialize();
 	m_AI_DMAPrimaryBytes = m_AI_DMASecondaryBytes = 0;
 	m_AI_DMAPrimaryBuffer = m_AI_DMASecondaryBuffer = NULL;
@@ -134,18 +107,12 @@ void SoundDriver::AI_Startup()
 #else
 	// to do
 #endif
-#endif
 	StartAudio();
 }
 
 void SoundDriver::AI_Shutdown()
 {
 	StopAudio();
-#ifdef LEGACY_SOUND_DRIVER
-	if (m_audioIsInitialized == true) DeInitialize();
-	m_audioIsInitialized = false;
-	//DeInitialize();
-#else
 	DeInitialize();
 	m_BufferRemaining = 0;
 #ifdef _WIN32
@@ -157,14 +124,11 @@ void SoundDriver::AI_Shutdown()
 #else
 	// to do
 #endif
-#endif
 }
 
 void SoundDriver::AI_ResetAudio()
 {
-#ifndef LEGACY_SOUND_DRIVER
 	m_BufferRemaining = 0;
-#endif
 	if (m_audioIsInitialized == true) AI_Shutdown();
 	DeInitialize();
 	m_audioIsInitialized = false;
@@ -178,7 +142,6 @@ void SoundDriver::AI_Update(Boolean Wait)
 	AiUpdate(Wait);
 }
 
-#ifndef LEGACY_SOUND_DRIVER
 void SoundDriver::BufferAudio()
 {
 	while ((m_BufferRemaining < m_MaxBufferSize) && (m_AI_DMAPrimaryBytes > 0 || m_AI_DMASecondaryBytes > 0))
@@ -284,4 +247,3 @@ u32 SoundDriver::LoadAiBuffer(u8 *start, u32 length)
 	assert(bytesToMove == 0);
 	return (length - bytesToMove);
 }
-#endif
