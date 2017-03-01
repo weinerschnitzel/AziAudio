@@ -33,20 +33,20 @@
 #define UNREFERENCED_PARAMETER(msg)
 #endif
 
-class SoundDriver :
+class SoundDriverLegacy :
 	public SoundDriverInterface
 {
 public:
 
-	// Buffer Management methods
-	u32 LoadAiBuffer(u8 *start, u32 length); // Reads in length amount of audio bytes
-	void BufferAudio();
+	// Deprecated
+	virtual u32 GetReadStatus() = 0;                  // Returns the status on the read pointer
+	virtual u32 AddBuffer(u8 *start, u32 length) = 0; // Uploads a new buffer and returns status
 
 	// Sound Driver Factory method
-	static SoundDriver* SoundDriverFactory();
+	static SoundDriverLegacy* SoundDriverFactory();
 
 	virtual void SetVolume(u32 volume) { UNREFERENCED_PARAMETER(volume); }; // We could potentially do this ourselves within the buffer copy method
-	virtual ~SoundDriver() {};
+	virtual ~SoundDriverLegacy() {};
 
 	void AI_SetFrequency(u32 Frequency);
 	void AI_LenChanged(u8 *start, u32 length);
@@ -67,24 +67,9 @@ protected:
 	pthread_mutex_t m_Mutex;
 #endif
 
-	// Variables for AI DMA emulation
-	//int m_AI_CurrentDMABuffer; // Currently playing AI Buffer
-	//int m_AI_WriteDMABuffer;   // Which set of registers will be written to
-	u8 *m_AI_DMAPrimaryBuffer, *m_AI_DMASecondaryBuffer;
-	u32 m_AI_DMAPrimaryBytes, m_AI_DMASecondaryBytes;
-
-	// Variables for Buffering audio samples from AI DMA
-	static const int MAX_SIZE = 44100 * 2 * 2; // Max Buffer Size (44100Hz * 16bit * Stereo)
-	//static const int NUM_BUFFERS = 4; // Number of emulated buffers
-	u32 m_MaxBufferSize;   // Variable size determined by Playback rate
-	u32 m_CurrentReadLoc;   // Currently playing Buffer
-	u32 m_CurrentWriteLoc;  // Currently writing Buffer
-	u8 m_Buffer[MAX_SIZE]; // Emulated buffers
-	u32 m_BufferRemaining; // Buffer remaining
-	bool m_DMAEnabled;  // Sets to true when DMA is enabled
 	u32 m_SamplesPerSecond;
 
-	SoundDriver(){
+	SoundDriverLegacy(){
 		m_audioIsInitialized = false;
 #ifdef _WIN32
 		m_hMutex = NULL;

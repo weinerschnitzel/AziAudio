@@ -2,7 +2,6 @@
 	NoSound Driver to demonstrate how to use the SoundDriver interface
 */
 #include "NoSoundDriver.h"
-#ifndef LEGACY_SOUND_DRIVER
 
 Boolean NoSoundDriver::Initialize()
 {
@@ -98,4 +97,3 @@ void NoSoundDriver::SetFrequency(u32 Frequency)
 	// To do:  Replace this with SDL, or Linux audio won't play.
 #endif
 }
-#endif

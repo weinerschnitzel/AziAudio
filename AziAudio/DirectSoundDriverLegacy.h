@@ -16,7 +16,7 @@
 #include <mmreg.h>
 #endif
 #include <dsound.h>
-#include "SoundDriver.h"
+#include "SoundDriverLegacy.h"
 #include "SoundDriverInterface.h"
 
 #define DS_SEGMENTS     4
@@ -35,8 +35,8 @@
 
 #define BUFFSIZE (writeLoc-readLoc)
 
-class DirectSoundDriver :
-	public SoundDriver
+class DirectSoundDriverLegacy :
+	public SoundDriverLegacy
 {
 protected:
 	DWORD dwFreqTarget; // Frequency of the Nintendo64 Game Audio
@@ -58,11 +58,11 @@ protected:
 
 public:
 
-	friend DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac);
+	friend DWORD WINAPI AudioThreadProc(DirectSoundDriverLegacy *ac);
 
-	DirectSoundDriver() { lpdsbuf = NULL; lpds = NULL; audioIsDone = false; hMutex = NULL; handleAudioThread = NULL; audioIsPlaying = FALSE; readLoc = writeLoc = remainingBytes = 0; SampleRate = 0; };
-	//DirectSoundDriver() {};
-	~DirectSoundDriver() { };
+	DirectSoundDriverLegacy() { lpdsbuf = NULL; lpds = NULL; audioIsDone = false; hMutex = NULL; handleAudioThread = NULL; audioIsPlaying = FALSE; readLoc = writeLoc = remainingBytes = 0; SampleRate = 0; };
+	//DirectSoundDriverLegacy() {};
+	~DirectSoundDriverLegacy() { };
 
 	// Setup and Teardown Functions
 	BOOL Initialize();
@@ -70,12 +70,16 @@ public:
 
 	// Buffer Functions for the Audio Code
 	void SetFrequency(u32 Frequency);           // Sets the Nintendo64 Game Audio Frequency
+	u32 AddBuffer(u8 *start, u32 length);       // Uploads a new buffer and returns status
+	void FillBuffer(BYTE *buff, DWORD len);
 	void SetSegmentSize(DWORD length);
 
 	// Management functions
 	void AiUpdate(BOOL Wait);
 	void StopAudio();							// Stops the Audio PlayBack (as if paused)
 	void StartAudio();							// Starts the Audio PlayBack (as if unpaused)
+
+	u32 GetReadStatus();						// Returns the status on the read pointer
 
 	void SetVolume(u32 volume);
 
