@@ -24,6 +24,7 @@
 
 #include "common.h"
 #include "AudioSpec.h"
+#include "SoundDriverInterface.h"
 
 #define SND_IS_NOT_EMPTY 0x4000000
 #define SND_IS_FULL		 0x8000000
@@ -39,27 +40,10 @@
 #define UNREFERENCED_PARAMETER(msg)
 #endif
 
-class SoundDriver
+class SoundDriver :
+	public SoundDriverInterface
 {
 public:
-	// Configuration variables
-	// TODO: these may need to go elsewhere
-	bool configAIEmulation;
-	bool configSyncAudio;
-	bool configForceSync;
-	unsigned long configVolume;
-	char configAudioLogFolder[500];
-	char configDevice[100];
-
-	// Setup and Teardown Functions
-	virtual Boolean Initialize() = 0;
-	virtual void DeInitialize() = 0;
-
-	// Management functions
-	virtual void AiUpdate(Boolean Wait) { UNREFERENCED_PARAMETER(Wait); }; // Optional
-	virtual void StopAudio() = 0;							// Stops the Audio PlayBack (as if paused)
-	virtual void StartAudio() = 0;							// Starts the Audio PlayBack (as if unpaused)
-	virtual void SetFrequency(u32 Frequency) = 0; // Sets the Nintendo64 Game Audio Frequency
 
 	// Deprecated
 #ifdef LEGACY_SOUND_DRIVER
@@ -71,7 +55,12 @@ public:
 	void BufferAudio();
 #endif
 
-	// Audio Spec interface methods (new)
+	// Sound Driver Factory method
+	static SoundDriver* SoundDriverFactory();
+
+	virtual void SetVolume(u32 volume) { UNREFERENCED_PARAMETER(volume); }; // We could potentially do this ourselves within the buffer copy method
+	virtual ~SoundDriver() {};
+
 	void AI_SetFrequency(u32 Frequency);
 	void AI_LenChanged(u8 *start, u32 length);
 	u32 AI_ReadLength();
@@ -79,12 +68,6 @@ public:
 	void AI_Shutdown();
 	void AI_ResetAudio();
 	void AI_Update(Boolean Wait);
-
-	// Sound Driver Factory method
-	static SoundDriver* SoundDriverFactory();
-
-	virtual void SetVolume(u32 volume) { UNREFERENCED_PARAMETER(volume); }; // We could potentially do this ourselves within the buffer copy method
-	virtual ~SoundDriver() {};
 
 protected:
 	// Temporary (to allow for incremental development)
@@ -122,13 +105,6 @@ protected:
 		m_hMutex = NULL;
 #else
 		m_Mutex = NULL;
-#endif
-#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS) && !defined(_XBOX)
-		strcpy_s(configAudioLogFolder, 500, "D:\\");
-		strcpy_s(configDevice, 100, "");
-#else
-		strcpy(configAudioLogFolder, "D:\\");
-		strcpy(configDevice, "");
 #endif
 	}
 };

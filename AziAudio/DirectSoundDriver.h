@@ -18,6 +18,7 @@
 #include "common.h"
 #include <dsound.h>
 #include "SoundDriver.h"
+#include "SoundDriverInterface.h"
 
 static DWORD sLOCK_SIZE;
 
@@ -37,7 +38,9 @@ static DWORD sLOCK_SIZE;
 
 #define BUFFSIZE (writeLoc-readLoc)
 
-class DirectSoundDriver : public SoundDriver {
+class DirectSoundDriver :
+	public SoundDriver
+{
 protected:
 	DWORD dwFreqTarget; // Frequency of the Nintendo64 Game Audio
 	void(*CallBack)(DWORD);

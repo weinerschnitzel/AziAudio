@@ -148,6 +148,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Configuration.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DirectSoundDriver.cpp"
 				>
 			</File>
@@ -161,6 +165,14 @@
 			</File>
 			<File
 				RelativePath=".\SoundDriver.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundDriverFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundDriverInterface.cpp"
 				>
 			</File>
 			<File
@@ -258,6 +270,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Configuration.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DirectSoundDriver.h"
 				>
 			</File>
@@ -275,6 +291,14 @@
 			</File>
 			<File
 				RelativePath=".\SoundDriver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundDriverFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundDriverInterface.h"
 				>
 			</File>
 			<File

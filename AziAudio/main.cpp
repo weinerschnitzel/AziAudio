@@ -24,19 +24,19 @@
 #include "audiohle.h"
 //#include "rsp/rsp.h"
 
-#ifdef _WIN32
-#include <conio.h>
-#include <io.h>
+#include <stdio.h> // needed for configuration
+
+#ifdef USE_PRINTF
+	#include <io.h>
+	#include <fcntl.h>
+	#include <ios>
 #endif
 
-#include <stdio.h>
-#include <fcntl.h>
-#include <ios>
 #include "resource.h"
 
 using namespace std;
 
-SoundDriver *snd = NULL;
+SoundDriverInterface *snd = NULL;
 
 // Dialog Procedures
 #if defined(_WIN32)
@@ -127,7 +127,6 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	snd = new XAudio2SoundDriver();
 #else
 	snd = new DirectSoundDriver();
-	//snd = new NoSoundDriver();
 #endif
 #elif defined(USE_XAUDIO2)
 	snd = new XAudio2SoundDriver();
@@ -146,14 +145,25 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 //	if ( (DirectSoundEnumerate(DSEnumProc, NULL)) != DS_OK ) { printf("Unable to enumerate DirectSound devices\n"); }
 
 	// TODO: Move from SoundDriver to a configuration class
-	safe_strcpy(snd->configAudioLogFolder, 499, "D:\\");
+	safe_strcpy(Configuration::configAudioLogFolder, 499, "D:\\");
 
-	//snd->configDevice = 0;
+	//Configuration::configDevice = 0;
 
 	memcpy(&AudioInfo, &Audio_Info, sizeof(AUDIO_INFO));
 	DRAM = Audio_Info.RDRAM;
 	DMEM = Audio_Info.DMEM;
 	IMEM = Audio_Info.IMEM;
+
+	// Defaults:
+
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS) && !defined(_XBOX)
+	strcpy_s(Configuration::configAudioLogFolder, 500, "D:\\");
+	strcpy_s(Configuration::configDevice, 100, "");
+#else
+	strcpy(Configuration::configAudioLogFolder, "D:\\");
+	strcpy(Configuration::configDevice, "");
+#endif
+
 
 	size_t file_size;
 	unsigned char azicfg[4];
@@ -178,10 +188,10 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 			fputs("Failed to close config file stream.\n", stderr);
 	}
 
-	snd->configSyncAudio   = (azicfg[0] != 0x00) ? true : false;
-	snd->configForceSync   = (azicfg[1] != 0x00) ? true : false;
-	snd->configAIEmulation = (azicfg[2] != 0x00) ? true : false;
-	snd->configVolume      = (azicfg[3] > 100) ? 100 : azicfg[3];
+	Configuration::configSyncAudio   = (azicfg[0] != 0x00) ? true : false;
+	Configuration::configForceSync   = (azicfg[1] != 0x00) ? true : false;
+	Configuration::configAIEmulation = (azicfg[2] != 0x00) ? true : false;
+	Configuration::configVolume      = (azicfg[3] > 100) ? 100 : azicfg[3];
 
 	snd->AI_Startup();
 	bLockAddrRegister = false;
@@ -326,14 +336,14 @@ INT_PTR CALLBACK ConfigProc(
 			SendMessage(GetDlgItem(hDlg, IDC_DEVICE), CB_ADDSTRING, 0, (long)DSoundDeviceName[x]);
 		}
 		SendMessage(GetDlgItem(hDlg, IDC_DEVICE), CB_SETCURSEL, SelectedDSound, 0);
-		SendMessage(GetDlgItem(hDlg, IDC_OLDSYNC), BM_SETCHECK, snd->configForceSync ? BST_CHECKED : BST_UNCHECKED, 0);
-		SendMessage(GetDlgItem(hDlg, IDC_AUDIOSYNC), BM_SETCHECK, snd->configSyncAudio ? BST_CHECKED : BST_UNCHECKED, 0);
-		SendMessage(GetDlgItem(hDlg, IDC_AI), BM_SETCHECK, snd->configAIEmulation ? BST_CHECKED : BST_UNCHECKED, 0);
-		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, TRUE, snd->configVolume);
+		SendMessage(GetDlgItem(hDlg, IDC_OLDSYNC), BM_SETCHECK, Configuration::configForceSync ? BST_CHECKED : BST_UNCHECKED, 0);
+		SendMessage(GetDlgItem(hDlg, IDC_AUDIOSYNC), BM_SETCHECK, Configuration::configSyncAudio ? BST_CHECKED : BST_UNCHECKED, 0);
+		SendMessage(GetDlgItem(hDlg, IDC_AI), BM_SETCHECK, Configuration::configAIEmulation ? BST_CHECKED : BST_UNCHECKED, 0);
+		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, TRUE, Configuration::configVolume);
 		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETTICFREQ, 20, 0);
 		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETRANGEMIN, FALSE, 0);
 		SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETRANGEMAX, FALSE, 100);
-		if (snd->configVolume == 100)
+		if (Configuration::configVolume == 100)
 		{
 			SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, BST_CHECKED, 0);
 		}
@@ -345,22 +355,22 @@ INT_PTR CALLBACK ConfigProc(
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDOK:
-			snd->configForceSync = SendMessage(GetDlgItem(hDlg, IDC_OLDSYNC), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
-			snd->configSyncAudio = SendMessage(GetDlgItem(hDlg, IDC_AUDIOSYNC), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
-			snd->configAIEmulation = SendMessage(GetDlgItem(hDlg, IDC_AI), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
+			Configuration::configForceSync = SendMessage(GetDlgItem(hDlg, IDC_OLDSYNC), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
+			Configuration::configSyncAudio = SendMessage(GetDlgItem(hDlg, IDC_AUDIOSYNC), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
+			Configuration::configAIEmulation = SendMessage(GetDlgItem(hDlg, IDC_AI), BM_GETSTATE, 0, 0) == BST_CHECKED ? true : false;
 			SelectedDSound = (int)SendMessage(GetDlgItem(hDlg, IDC_DEVICE), CB_GETCURSEL, 0, 0);
-			safe_strcpy(snd->configDevice, 99, DSoundDeviceName[SelectedDSound]);
-			snd->configVolume = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
-			snd->SetVolume(snd->configVolume);
+			safe_strcpy(Configuration::configDevice, 99, DSoundDeviceName[SelectedDSound]);
+			Configuration::configVolume = SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_GETPOS, 0, 0);
+			snd->SetVolume(Configuration::configVolume);
 
 			FILE *file;
 			file = fopen("Config/AziCfg.bin", "wb");
 			if (file != NULL)
 			{
-				fprintf(file, "%c", snd->configSyncAudio);
-				fprintf(file, "%c", snd->configForceSync);
-				fprintf(file, "%c", snd->configAIEmulation);
-				fprintf(file, "%c", snd->configVolume);
+				fprintf(file, "%c", Configuration::configSyncAudio);
+				fprintf(file, "%c", Configuration::configForceSync);
+				fprintf(file, "%c", Configuration::configAIEmulation);
+				fprintf(file, "%c", Configuration::configVolume);
 				fclose(file);
 			}
 			EndDialog(hDlg, 0);
@@ -375,8 +385,8 @@ INT_PTR CALLBACK ConfigProc(
 				snd->SetVolume(100);
 			}
 			else {
-				SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, TRUE, snd->configVolume);
-				snd->SetVolume(snd->configVolume);
+				SendMessage(GetDlgItem(hDlg, IDC_VOLUME), TBM_SETPOS, TRUE, Configuration::configVolume);
+				snd->SetVolume(Configuration::configVolume);
 			}
 			break;
 		}
@@ -396,7 +406,7 @@ INT_PTR CALLBACK ConfigProc(
 			{
 				SendMessage(GetDlgItem(hDlg, IDC_MUTE), BM_SETCHECK, BST_UNCHECKED, 0);
 			}
-			snd->configVolume = dwPosition;
+			Configuration::configVolume = dwPosition;
 			snd->SetVolume(dwPosition);
 		}
 		break;
@@ -416,7 +426,7 @@ BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, L
 	//HWND hDlg = (HWND)lpContext;
 	safe_strcpy(DSoundDeviceName[DSoundCnt], 99, lpszDesc);
 	DSoundGUID[DSoundCnt] = lpGUID;
-	if (strcmp(lpszDesc, snd->configDevice) == 0)
+	if (strcmp(lpszDesc, Configuration::configDevice) == 0)
 	{
 		SelectedDSound = DSoundCnt;
 	}

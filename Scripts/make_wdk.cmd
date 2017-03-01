@@ -26,9 +26,12 @@ set files=%src%\main.cpp^
  %src%\ABI2.cpp^
  %src%\ABI3.cpp^
  %src%\ABI3mp3.cpp^
+ %src%\Configuration.cpp^
  %src%\DirectSoundDriver.cpp^
  %src%\HLEMain.cpp^
  %src%\SoundDriver.cpp^
+ %src%\SoundDriverFactory.cpp^
+ %src%\SoundDriverInterface.cpp^
  %src%\NoSoundDriver.cpp^
  %src%\WaveOut.cpp^
  %src%\XAudio2SoundDriver.cpp^

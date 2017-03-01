@@ -9,28 +9,7 @@
 *                                                                           *
 ****************************************************************************/
 
-#ifndef _COMMON_DOT_H_
-#define _COMMON_DOT_H_
-
-#if defined (_XBOX)
-#include <xtl.h>
-#include "../3rd Party/XBox/xbox_depp.h"
-#elif defined(_WIN32)
-#include <windows.h>
-#include <commctrl.h>
-#endif
-
-#include <stdio.h>
-#include <assert.h>
-
-#if 0
-#define ENABLEPROFILING
-#endif
-
-#if defined(_MSC_VER)
-#define SEH_SUPPORTED
-#endif
-
+//************ Configuration Section ************** (to be moved to compile time defines)
 // Configure the plugin to use XAudio2 -- default DirectSound
 #ifndef XAUDIO_LIBRARIES_UNAVAILABLE
 #ifdef _WIN32
@@ -44,7 +23,29 @@
 // Configure the plugin to have a console window for informational output -- should be used for debugging only
 //#define USE_PRINTF
 
+#ifndef _COMMON_DOT_H_
+#define _COMMON_DOT_H_
 
+#if defined (_XBOX)
+#include <xtl.h>
+#include "../3rd Party/XBox/xbox_depp.h"
+#elif defined(_WIN32)
+#include <windows.h>
+#include <commctrl.h>
+#endif
+
+#ifdef USE_PRINTF
+#include <stdio.h>
+#endif
+#include <assert.h>
+
+#if 0
+#define ENABLEPROFILING
+#endif
+
+#if defined(_MSC_VER)
+#define SEH_SUPPORTED
+#endif
 
 #ifdef USE_PRINTF
 #define dprintf printf
@@ -98,7 +99,7 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #endif
 #else
 #ifdef _DEBUG
-#define PLUGIN_DEBUG " (r12)"
+#define PLUGIN_DEBUG " (r13)"
 #else
 #define PLUGIN_DEBUG ""
 #endif

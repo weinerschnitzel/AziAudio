@@ -139,7 +139,10 @@ CALL:mkdir %BUILDDIR%
 ECHO Compiling Sources...
 CALL:gppcust HLEMain ALL
 CALL:gppcust main ALL
+CALL:gppcust Configuration ALL
 CALL:gppcust SoundDriver ALL
+CALL:gppcust SoundDriverFactory ALL
+CALL:gppcust SoundDriverInterface ALL
 CALL:gppcust NoSoundDriver ALL
 CALL:gppcust XAudio2SoundDriver XA
 CALL:gppcust DirectSoundDriver DS

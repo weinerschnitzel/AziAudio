@@ -34,7 +34,10 @@ g++ -o $obj/ABI_Resample.asm          -x c++ $src/ABI_Resample.cpp          -S $
 g++ -o $obj/HLEMain.asm               -x c++ $src/HLEMain.cpp               -S $C_FLAGS -Os
 
 g++ -o $obj/main.asm                  -x c++ $src/main.cpp                  -S $C_FLAGS -Os
+g++ -o $obj/Configuration.asm         -x c++ $src/Configuration.cpp         -S $C_FLAGS -Os
 g++ -o $obj/SoundDriver.asm           -x c++ $src/SoundDriver.cpp           -S $C_FLAGS -Os
+g++ -o $obj/SoundDriverFactory.asm    -x c++ $src/SoundDriverFactory.cpp    -S $C_FLAGS -Os
+g++ -o $obj/SoundDriverInterface.asm  -x c++ $src/SoundDriverInterface.cpp  -S $C_FLAGS -Os
 g++ -o $obj/NoSoundDriver.asm         -x c++ $src/NoSoundDriver.cpp         -S $C_FLAGS -Os
 # To do:  We currently don't have any sound-playing drivers for this plugin on Linux.
 
@@ -50,6 +53,7 @@ as -o $obj/ABI_Filters.o                   $obj/ABI_Filters.asm
 as -o $obj/ABI_MixerInterleave.o           $obj/ABI_MixerInterleave.asm
 as -o $obj/ABI_Resample.o                  $obj/ABI_Resample.asm
 as -o $obj/HLEMain.o                       $obj/HLEMain.asm
+as -o $obj/Configuration.o                 $obj/Configuration.asm
 as -o $obj/main.o                          $obj/main.asm
 
 as -o $obj/Mupen64plusHLE/audio.o          $obj/Mupen64plusHLE/audio.asm
@@ -58,6 +62,8 @@ as -o $obj/Mupen64plusHLE/Mupen64Support.o $obj/Mupen64plusHLE/Mupen64Support.as
 as -o $obj/Mupen64plusHLE/musyx.o          $obj/Mupen64plusHLE/musyx.asm
 
 as -o $obj/SoundDriver.o                   $obj/SoundDriver.asm
+as -o $obj/SoundDriverFactory.o            $obj/SoundDriverFactory.asm
+as -o $obj/SoundDriverInterface.o          $obj/SoundDriverInterface.asm
 as -o $obj/NoSoundDriver.o                 $obj/NoSoundDriver.asm
 
 OBJ_LIST="\
@@ -72,13 +78,16 @@ $obj/ABI_Filters.o \
 $obj/ABI_MixerInterleave.o \
 $obj/ABI_Resample.o \
 $obj/HLEMain.o \
+$obj/Configuration.o \
 $obj/main.o \
 $obj/Mupen64plusHLE/audio.o \
 $obj/Mupen64plusHLE/memory.o \
 $obj/Mupen64plusHLE/Mupen64Support.o \
 $obj/Mupen64plusHLE/musyx.o \
 $obj/NoSoundDriver.o \
-$obj/SoundDriver.o"
+$obj/SoundDriver.o \
+$obj/SoundDriverFactory.o \
+$obj/SoundDriverInterface.o"
 
 echo Linking assembled objects...
 g++ -o $obj/AziAudio.so $OBJ_LIST -s -shared

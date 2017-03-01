@@ -81,6 +81,15 @@
     <ClInclude Include="NoSoundDriver.h">
       <Filter>Source Files\Sound Driver</Filter>
     </ClInclude>
+    <ClInclude Include="SoundDriverFactory.h">
+      <Filter>Source Files\Sound Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundDriverInterface.h">
+      <Filter>Source Files\Sound Driver</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectSoundDriver.cpp">
@@ -145,6 +154,15 @@
     </ClCompile>
     <ClCompile Include="NoSoundDriver.cpp">
       <Filter>Source Files\Sound Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundDriverFactory.cpp">
+      <Filter>Source Files\Sound Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundDriverInterface.cpp">
+      <Filter>Source Files\Sound Driver</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
