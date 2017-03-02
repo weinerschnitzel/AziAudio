@@ -18,6 +18,7 @@
 #include "audiohle.h"
 //#include "rsp/rsp.h"
 
+#include <string.h> // memcpy(), strcpy()
 #include <stdio.h> // needed for configuration
 
 #ifdef USE_PRINTF
