@@ -29,10 +29,6 @@
 #define SND_IS_NOT_EMPTY 0x4000000
 #define SND_IS_FULL		 0x8000000
 
-#if !defined(_WIN32) && !defined(_XBOX)
-#define UNREFERENCED_PARAMETER(msg)
-#endif
-
 class SoundDriverLegacy :
 	public SoundDriverInterface
 {
