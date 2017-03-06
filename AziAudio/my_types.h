@@ -449,4 +449,10 @@ enum {
 };
 #endif
 
+#ifndef UNREFERENCED_PARAMETER
+#if !defined(_WIN32) && !defined(_XBOX)
+#define UNREFERENCED_PARAMETER(msg)
+#endif
+#endif
+
 #endif
