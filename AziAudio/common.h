@@ -23,6 +23,8 @@
 #ifndef _COMMON_DOT_H_
 #define _COMMON_DOT_H_
 
+#include <stddef.h> // size_t definition
+
 #if defined (_XBOX)
 #include <xtl.h>
 #include "../3rd Party/XBox/xbox_depp.h"
