@@ -260,8 +260,8 @@ void XAudio2SoundDriver::StopAudioThread()
 		{
 			TerminateThread(hAudioThread, 0);
 		}
+		DEBUG_OUTPUT("Audio Thread terminated\n");
 	}
-	DEBUG_OUTPUT("Audio Thread terminated\n");
 	hAudioThread = NULL;
 	bStopAudioThread = false;
 }

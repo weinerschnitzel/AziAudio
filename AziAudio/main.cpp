@@ -212,16 +212,17 @@ EXPORT void CALL RomOpen(void)
 	DEBUG_OUTPUT("Call: RomOpen()\n");
 	if (snd == NULL)
 		return;
-	Dacrate = 0; // Forces a revisit to initialize audio
-	snd->AI_ResetAudio();
+	//snd->AI_ResetAudio();
 }
 
 EXPORT void CALL RomClosed(void) 
 {
 	DEBUG_OUTPUT("Call: RomClosed()\n");
+	Dacrate = 0; // Forces a revisit to initialize audio
 	if (snd == NULL)
 		return;
 	snd->StopAudio();
+	snd->AI_ResetAudio();
 }
 
 EXPORT void CALL AiDacrateChanged(int SystemType) {
