@@ -47,9 +47,9 @@
 #endif
 
 #ifdef USE_PRINTF
-#define dprintf printf
+#define DEBUG_OUTPUT printf
 #else
-#define dprintf //
+#define DEBUG_OUTPUT //
 #endif
 
 
@@ -94,7 +94,7 @@ unsigned long GenerateCRC (unsigned char *data, int size);
 #endif
 #else
 #ifdef _DEBUG
-#define PLUGIN_DEBUG " (Debug r14)"
+#define PLUGIN_DEBUG " (Debug r15)"
 #else
 #define PLUGIN_DEBUG ""
 #endif

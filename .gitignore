@@ -212,4 +212,8 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 *.tlog
+
+# Remove unnecessary folders and files
 AziAudio/Todo.txt
+[Tt]arget/
+[Cc]onfig/

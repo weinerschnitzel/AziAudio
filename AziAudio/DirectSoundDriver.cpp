@@ -47,7 +47,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 
 	while (lpdsbuff == NULL)
 		Sleep(10);
-	dprintf("DS8: Audio Thread Started...\n");
+	DEBUG_OUTPUT("DS8: Audio Thread Started...\n");
 	IDirectSoundBuffer_GetStatus(lpdsbuff, &dwStatus);
 	if ((dwStatus & DSBSTATUS_PLAYING) == 0) {
 		IDirectSoundBuffer_Play(lpdsbuff, 0, 0, 0);
@@ -103,7 +103,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 				if (DMALen[0] + DMALen[1] < LOCK_SIZE)
 				{
 					//*AudioInfo.AI_STATUS_REG &= ~0x80000001;
-					//dprintf(";");
+					//DEBUG_OUTPUT(";");
 				}
 				if (ac->remainingBytes < (MAXBUFFER - LOCK_SIZE))
 				{
@@ -146,7 +146,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 				}
 
 				/*
-				if (writeCnt != writeOut) dprintf("#");
+				if (writeCnt != writeOut) DEBUG_OUTPUT("#");
 				while (writeCnt != writeOut)
 				{
 				ac->SoundBuffer[ac->writeLoc++] = 0;
@@ -159,7 +159,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 				ac->writeLoc = 0;
 				}*/
 				if (ac->remainingBytes > MAXBUFFER)
-					dprintf("M");
+					DEBUG_OUTPUT("M");
 				//ReleaseMutex(ac->hMutex);
 			}
 			else
@@ -176,7 +176,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 		}
 		// This means we had a buffer segment skipped skip
 		if (next_pos != write_pos) {
-			dprintf("A");
+			DEBUG_OUTPUT("A");
 		}
 
 		// Store our last position
@@ -198,7 +198,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 		}
 		// Fills dwBytes to the Sound Buffer
 		ac->LoadAiBuffer((BYTE *)lpvPtr1, dwBytes1);
-		if (dwBytes2) { ac->LoadAiBuffer((BYTE *)lpvPtr2, dwBytes2); dprintf("P"); }
+		if (dwBytes2) { ac->LoadAiBuffer((BYTE *)lpvPtr2, dwBytes2); DEBUG_OUTPUT("P"); }
 		//
 		if FAILED(lpdsbuff->Unlock(lpvPtr1, dwBytes1, lpvPtr2, dwBytes2)) {
 			MessageBox(NULL, "Error unlocking sound buffer", PLUGIN_VERSION, MB_OK | MB_ICONSTOP);
@@ -210,7 +210,7 @@ DWORD WINAPI AudioThreadProc(DirectSoundDriver *ac) {
 	}
 
 _exit_:
-	dprintf("DS8: Audio Thread Terminated...\n");
+	DEBUG_OUTPUT("DS8: Audio Thread Terminated...\n");
 	ReleaseMutex(ac->hMutex);
 	//ac->handleAudioThread = NULL;
 	ExitThread(0);
@@ -275,7 +275,7 @@ BOOL DirectSoundDriver::Initialize() {
 	DeInitialize(); // Release just in case...
 	//SampleRate = 0; // -- Disabled due to reset bug
 
-	dprintf("DS8: Initialize()\n");
+	DEBUG_OUTPUT("DS8: Initialize()\n");
 	hMutex = CreateMutex(NULL, FALSE, NULL);
 
 	WaitForSingleObject(hMutex, INFINITE);
@@ -288,12 +288,12 @@ BOOL DirectSoundDriver::Initialize() {
 //	assert(!FAILED(hr)); // This happens if there is no sound device.
 	if (FAILED(hr))
 	{
-		dprintf("DS8: Unable to DirectSoundCreate\n");
+		DEBUG_OUTPUT("DS8: Unable to DirectSoundCreate\n");
 		return -2;
 	}
 
 	if (FAILED(hr = IDirectSound_SetCooperativeLevel(lpds, AudioInfo.hwnd, DSSCL_PRIORITY))) {
-		dprintf("DS8: Failed to SetCooperativeLevel\n");
+		DEBUG_OUTPUT("DS8: Failed to SetCooperativeLevel\n");
 		return -1;
 	}
 
@@ -331,7 +331,7 @@ BOOL DirectSoundDriver::Initialize() {
 
 	SetSegmentSize(LOCK_SIZE);
 
-	dprintf("DS8: Init Success...\n");
+	DEBUG_OUTPUT("DS8: Init Success...\n");
 
 	DMALen[0] = DMALen[1] = 0;
 	DMAData[0] = DMAData[1] = NULL;
@@ -340,7 +340,7 @@ BOOL DirectSoundDriver::Initialize() {
 
 void DirectSoundDriver::DeInitialize() {
 
-	dprintf("DS8: DeInitialize()\n");
+	DEBUG_OUTPUT("DS8: DeInitialize()\n");
 	audioIsDone = true;
 	StopAudio();
 	if (lpdsbuf) {
@@ -360,7 +360,7 @@ void DirectSoundDriver::DeInitialize() {
 	lpdsbuf = NULL; lpds = NULL; audioIsDone = false; hMutex = NULL; audioIsPlaying = FALSE; readLoc = writeLoc = remainingBytes = 0;
 	DMALen[0] = DMALen[0] = 0;
 	DMAData[0] = DMAData[0] = NULL;
-	dprintf("DS8: DeInitialize() complete\n");
+	DEBUG_OUTPUT("DS8: DeInitialize() complete\n");
 }
 
 // ---------BLAH--------
@@ -387,7 +387,7 @@ void DirectSoundDriver::SetFrequency(u32 Frequency2) {
 	//DMAData[0] = DMAData[1] = NULL;
 	//DMALen[0] = DMALen[1] = NULL;
 	StartAudio();
-	dprintf("DS8: SetFrequency() Complete\n");
+	DEBUG_OUTPUT("DS8: SetFrequency() Complete\n");
 }
 
 void DirectSoundDriver::AiUpdate(BOOL Wait) {
@@ -401,7 +401,7 @@ void DirectSoundDriver::AiUpdate(BOOL Wait) {
 // TODO: For silent emulation... the Audio should still be "processed" somehow...
 void DirectSoundDriver::StopAudio() {
 	if (!audioIsPlaying) return;
-	dprintf("DS8: StopAudio()\n");
+	DEBUG_OUTPUT("DS8: StopAudio()\n");
 	//test.EndWaveOut();
 	if (lpdsbuf != NULL)
 	{
@@ -412,12 +412,12 @@ void DirectSoundDriver::StopAudio() {
 	Sleep(100);
 	TerminateThread(this->handleAudioThread, 0);
 	this->handleAudioThread = NULL;
-	dprintf("DS8: StopAudio() complete\n");
+	DEBUG_OUTPUT("DS8: StopAudio() complete\n");
 }
 
 void DirectSoundDriver::StartAudio() {
 	if (audioIsPlaying) return;
-	dprintf("DS8: StartAudio()\n");
+	DEBUG_OUTPUT("DS8: StartAudio()\n");
 	audioIsPlaying = TRUE;
 	audioIsDone = false;
 	writeLoc = 0x0000;
@@ -425,7 +425,7 @@ void DirectSoundDriver::StartAudio() {
 	remainingBytes = 0;
 	if (this->handleAudioThread != NULL)
 	{
-		dprintf("Audiothread != NULL");
+		DEBUG_OUTPUT("Audiothread != NULL");
 		assert(0);
 	}
 	else
@@ -437,7 +437,7 @@ void DirectSoundDriver::StartAudio() {
 	{
 		IDirectSoundBuffer_Play(lpdsbuf, 0, 0, DSBPLAY_LOOPING);
 	}
-	dprintf("DS8: StartAudio() Complete\n");
+	DEBUG_OUTPUT("DS8: StartAudio() Complete\n");
 }
 
 void DirectSoundDriver::SetVolume(u32 volume) {

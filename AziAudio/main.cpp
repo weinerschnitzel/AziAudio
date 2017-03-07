@@ -118,7 +118,7 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 
 #ifdef USE_PRINTF
 	RedirectIOToConsole();
-	dprintf("Logging to console enabled...\n");
+	DEBUG_OUTPUT("Logging to console enabled...\n");
 #endif
 	Dacrate = 0;
 	//CloseDLL ();
@@ -191,7 +191,7 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 }
 
 EXPORT void CALL CloseDLL(void) {
-	dprintf("Call: CloseDLL()\n");
+	DEBUG_OUTPUT("Call: CloseDLL()\n");
 	if (snd != NULL)
 	{
 		snd->AI_Shutdown();
@@ -216,7 +216,7 @@ EXPORT void CALL ProcessAList(void) {
 
 EXPORT void CALL RomOpen(void) 
 {
-	dprintf("Call: RomOpen()\n");
+	DEBUG_OUTPUT("Call: RomOpen()\n");
 	if (snd == NULL)
 		return;
 	Dacrate = 0; // Forces a revisit to initialize audio
@@ -225,7 +225,7 @@ EXPORT void CALL RomOpen(void)
 
 EXPORT void CALL RomClosed(void) 
 {
-	dprintf("Call: RomClosed()\n");
+	DEBUG_OUTPUT("Call: RomClosed()\n");
 	if (snd == NULL)
 		return;
 	snd->StopAudio();
@@ -234,7 +234,7 @@ EXPORT void CALL RomClosed(void)
 EXPORT void CALL AiDacrateChanged(int SystemType) {
 	u32 Frequency, video_clock;
 
-	dprintf("Call: AiDacrateChanged()\n");
+	DEBUG_OUTPUT("Call: AiDacrateChanged()\n");
 	if (snd == NULL)
 		return;
 	if (Dacrate == *AudioInfo.AI_DACRATE_REG)

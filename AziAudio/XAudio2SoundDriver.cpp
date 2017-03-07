@@ -243,7 +243,7 @@ void XAudio2SoundDriver::StartAudioThread()
 {
 	if (hAudioThread == NULL && dllInitialized == true)
 	{
-		dprintf("Audio Thread created\n");
+		DEBUG_OUTPUT("Audio Thread created\n");
 		bStopAudioThread = false;
 		hAudioThread = CreateThread(NULL, 0, AudioThreadProc, this, 0, NULL);
 		assert(hAudioThread != NULL);
@@ -261,7 +261,7 @@ void XAudio2SoundDriver::StopAudioThread()
 			TerminateThread(hAudioThread, 0);
 		}
 	}
-	dprintf("Audio Thread terminated\n");
+	DEBUG_OUTPUT("Audio Thread terminated\n");
 	hAudioThread = NULL;
 	bStopAudioThread = false;
 }

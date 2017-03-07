@@ -37,7 +37,7 @@ void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 	if (m_AI_DMASecondaryBytes > 0)
 	{
 		// FIFO is full.  We either need to ditch this buffer or wait
-		dprintf("X");
+		DEBUG_OUTPUT("X");
 		// TODO: How do we handle interrupts if we end up having to skip a buffer -- chances are if this occurs we 
 		// are using FAT and an overflow occurred.  In that case we wouldn't need to handle the AI emulation in the
 		// first place so we will skip it
@@ -227,7 +227,7 @@ u32 SoundDriver::LoadAiBuffer(u8 *start, u32 length)
 
 	// Step 2: Fill bytesToMove with silence
 	if (bytesToMove == length)
-		dprintf("S");
+		DEBUG_OUTPUT("S");
 
 	while (bytesToMove > 0)
 	{

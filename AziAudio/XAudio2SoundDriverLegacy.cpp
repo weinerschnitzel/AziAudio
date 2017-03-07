@@ -322,5 +322,5 @@ void __stdcall VoiceCallbackLegacy::OnVoiceProcessingPassStart(UINT32 SamplesReq
 {
 	UNREFERENCED_PARAMETER(SamplesRequired);
 	//if (SamplesRequired > 0)
-	//	dprintf("SR: %i FB: %i BB: %i  CS:%i\n", SamplesRequired, filledBuffers, bufferBytes, cacheSize);
+	//	DEBUG_OUTPUT("SR: %i FB: %i BB: %i  CS:%i\n", SamplesRequired, filledBuffers, bufferBytes, cacheSize);
 }
