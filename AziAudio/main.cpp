@@ -104,9 +104,6 @@ EXPORT void CALL DllTest(HWND hParent) {
 AUDIO_INFO AudioInfo;
 u32 Dacrate = 0;
 
-// TODO: Instead of checking for an initialized state, we should default to a no-sound audio processing state and give a warning
-// Boolean audioIsInitialized = FALSE;
-
 EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	if (snd != NULL)
 	{
@@ -126,7 +123,6 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 	SelectedDSound = 0;
 //	if ( (DirectSoundEnumerate(DSEnumProc, NULL)) != DS_OK ) { printf("Unable to enumerate DirectSound devices\n"); }
 
-	// TODO: Move from SoundDriver to a configuration class
 	safe_strcpy(Configuration::configAudioLogFolder, 499, "D:\\");
 
 	//Configuration::configDevice = 0;
@@ -393,6 +389,7 @@ INT_PTR CALLBACK ConfigProc(
 }
 #endif
 
+#if 0
 // TODO: I think this can safely be removed
 #ifdef _WIN32
 BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, LPVOID lpContext)
@@ -411,7 +408,7 @@ BOOL CALLBACK DSEnumProc(LPGUID lpGUID, LPCTSTR lpszDesc, LPCTSTR lpszDrvName, L
 	return TRUE;
 }
 #endif
-
+#endif
 int safe_strcpy(char* dst, size_t limit, const char* src)
 {
 #if defined(_MSC_VER) && !defined(_XBOX)
