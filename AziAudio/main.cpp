@@ -177,14 +177,7 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 
 	snd->AI_Startup();
 	bLockAddrRegister = false;
-	if (*(u64*)(AudioInfo.HEADER + 0x10) == 0x117daa80bbc99d32 &&
-		*(u8*)(AudioInfo.HEADER + 0x3D) == 0x45)
-		bLockAddrRegister = true;
-	if (*(u64*)(AudioInfo.HEADER + 0x10) == 0xB14B3F18E688A5B8 &&
-		*(u8*)(AudioInfo.HEADER + 0x3D) == 0x50)
-		bLockAddrRegister = true;
-	if (*(u64*)(AudioInfo.HEADER + 0x10) == 0xEB7584E8519EA4E1 &&
-		*(u8*)(AudioInfo.HEADER + 0x3D) == 0x4A)
+	if (*(u16*)(AudioInfo.HEADER + 0x3E) == 0x5342)
 		bLockAddrRegister = true;
 	LockAddrRegisterValue = 0;
 	return TRUE;
