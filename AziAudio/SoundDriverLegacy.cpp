@@ -42,7 +42,7 @@ void SoundDriverLegacy::AI_Startup()
 	if (m_audioIsInitialized == true) DeInitialize();
 	m_audioIsInitialized = false;
 	m_audioIsInitialized = (Initialize() == FALSE);
-	if (m_audioIsInitialized == true) SetVolume(Configuration::configVolume);
+	if (m_audioIsInitialized == true) SetVolume(Configuration::getVolume());
 	StartAudio();
 }
 

@@ -125,7 +125,7 @@ BOOL XAudio2SoundDriverLegacy::Setup()
 	}
 
 	g_source->Start();
-	SetVolume(Configuration::configVolume);
+	SetVolume(Configuration::getVolume());
 
 	return FALSE;
 }
@@ -186,7 +186,7 @@ u32 XAudio2SoundDriverLegacy::AddBuffer(u8 *start, u32 length)
 	lastLength = length;
 
 	// Gracefully waiting for filled buffers to deplete
-	if (Configuration::configSyncAudio == true || Configuration::configForceSync == true)
+	if (Configuration::getSyncAudio() == true || Configuration::getForceSync() == true)
 		while (filledBuffers == 10) Sleep(1);
 	else 
 		if (filledBuffers == 10) return 0;
@@ -223,7 +223,7 @@ u32 XAudio2SoundDriverLegacy::AddBuffer(u8 *start, u32 length)
 	++writeBuffer;
 	writeBuffer %= 10;
 
-	if (bufferBytes < cacheSize || Configuration::configForceSync == true)
+	if (bufferBytes < cacheSize || Configuration::getForceSync() == true)
 	{
 		*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
 		*AudioInfo.MI_INTR_REG |= MI_INTR_AI;
@@ -273,7 +273,7 @@ u32 XAudio2SoundDriverLegacy::GetReadStatus()
 	else
 		return 0;
 
-	if (xvs.BuffersQueued == 0 || Configuration::configForceSync == true) return 0;
+	if (xvs.BuffersQueued == 0 || Configuration::getForceSync() == true) return 0;
 
 	if (bufferBytes + lastLength < cacheSize)
 		return 0;

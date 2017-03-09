@@ -375,7 +375,7 @@ void DirectSoundDriver::SetFrequency(u32 Frequency2) {
 	// 
 	StopAudio();
 
-	sLOCK_SIZE = (u32)((Frequency / 90)) * 4; //(Frequency / 80) * 4;// 0x600;// (22050 / 30) * 4;// 0x4000;// (Frequency / 60) * 4;
+	sLOCK_SIZE = (u32)((Frequency / Configuration::getBufferFPS())) * 4; //(Frequency / 80) * 4;// 0x600;// (22050 / 30) * 4;// 0x4000;// (Frequency / 60) * 4;
 	SampleRate = Frequency;
 	SegmentSize = 0; // Trash it... we need to redo the Frequency anyway...
 	SetSegmentSize(LOCK_SIZE);

@@ -714,9 +714,9 @@ void DirectSoundDriverLegacy::StartAudio() {
 	DEBUG_OUTPUT("DS8L: StartAudio() Complete\n");
 }
 u32 DirectSoundDriverLegacy::GetReadStatus() {
-	if (Configuration::configForceSync)
+	if (Configuration::getForceSync())
 		return 0;//remainingBytes;
-	if (Configuration::configAIEmulation == true) {
+	if (Configuration::getAIEmulation() == true) {
 #ifdef STREAM_DMA
 		return DMALen[0] & ~7;
 	//	if (remainingBytes < LOCK_SIZE)

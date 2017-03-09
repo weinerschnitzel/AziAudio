@@ -123,7 +123,7 @@ BOOL XAudio2SoundDriver::Setup()
 	}
 
 	g_source->Start();
-	SetVolume(Configuration::configVolume);
+	SetVolume(Configuration::getVolume());
 
 	return FALSE;
 }
@@ -192,7 +192,7 @@ void XAudio2SoundDriver::SetFrequency(u32 Frequency)
 {
 	if (Setup() < 0) /* failed to apply a sound device */
 		return;
-	cacheSize = (u32)((Frequency / 90)) * 4;
+	cacheSize = (u32)((Frequency / Configuration::getBackendFPS())) * 4;
 	g_source->FlushSourceBuffers();
 	g_source->SetSourceSampleRate(Frequency);
 

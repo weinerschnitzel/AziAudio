@@ -74,10 +74,7 @@ EXPORT void CALL DllAbout(HWND hParent) {
 EXPORT void CALL DllConfig(HWND hParent)
 {
 #if defined(_WIN32) && !defined(_XBOX)
-	unsigned long currentVolume = Configuration::configVolume;
 	Configuration::ConfigDialog(hParent);
-	if (currentVolume != Configuration::configVolume)
-		snd->SetVolume(Configuration::configVolume);
 #else
 	fputs("To do:  Implement saving configuration settings.\n", stderr);
 #endif

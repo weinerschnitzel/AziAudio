@@ -15,7 +15,7 @@
 void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 {
 	// Bleed off some of this buffer to smooth out audio
-	if (length < m_MaxBufferSize && Configuration::configSyncAudio == true)
+	if (length < m_MaxBufferSize && Configuration::getSyncAudio() == true)
 	{
 		while ((m_BufferRemaining) == m_MaxBufferSize)// ((m_MaxBufferSize / 3) * 2))
 		{
@@ -51,7 +51,7 @@ void SoundDriver::AI_LenChanged(u8 *start, u32 length)
 		m_AI_DMAPrimaryBytes = m_AI_DMASecondaryBytes; m_AI_DMASecondaryBytes = 0; 
 	}
 
-	if (Configuration::configAIEmulation == true)
+	if (Configuration::getAIEmulation() == true)
 	{
 		*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
 		if (m_AI_DMAPrimaryBytes > 0 && m_AI_DMASecondaryBytes > 0)
@@ -70,7 +70,7 @@ void SoundDriver::AI_SetFrequency(u32 Frequency)
 {
 	m_SamplesPerSecond = Frequency;
 	SetFrequency(Frequency);
-	m_MaxBufferSize = (u32)((Frequency/90)) * 4 * 2; // TODO: Make this configurable
+	m_MaxBufferSize = (u32)((Frequency / Configuration::getBufferFPS())) * 4 * Configuration::getBufferLevel(); // TODO: Make this configurable
 	m_BufferRemaining = 0;
 	m_CurrentReadLoc = m_CurrentWriteLoc = m_BufferRemaining = 0;
 }
@@ -159,7 +159,7 @@ void SoundDriver::BufferAudio()
 		{
 			m_AI_DMAPrimaryBytes = m_AI_DMASecondaryBytes; m_AI_DMAPrimaryBuffer = m_AI_DMASecondaryBuffer; // Switch
 			m_AI_DMASecondaryBytes = 0; m_AI_DMASecondaryBuffer = NULL;
-			if (Configuration::configAIEmulation == true)
+			if (Configuration::getAIEmulation() == true)
 			{
 				*AudioInfo.AI_STATUS_REG = AI_STATUS_DMA_BUSY;
 				*AudioInfo.AI_STATUS_REG &= ~AI_STATUS_FIFO_FULL;
