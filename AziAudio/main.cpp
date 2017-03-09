@@ -104,7 +104,7 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 		delete snd;
 	}
 
-	snd = SoundDriverFactory::CreateSoundDriver(SoundDriverType::SND_DRIVER_DS8);
+	snd = SoundDriverFactory::CreateSoundDriver(SoundDriverType::SND_DRIVER_XA2L);
 
 #ifdef USE_PRINTF
 	RedirectIOToConsole();
