@@ -1,6 +1,4 @@
 #include "Configuration.h"
-#include "common.h"
-#include <Windows.h>
 #include <stdio.h>
 #include "resource.h"
 #include "SoundDriverInterface.h"
@@ -114,7 +112,7 @@ void Configuration::LoadDefaults()
 	configBackendFPS = 90;  // NewAudio only - How much data to frame per second
 	LoadSettings();	
 }
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_XBOX)
 void Configuration::ConfigDialog(HWND hParent)
 {
 	DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG), hParent, ConfigProc);

@@ -11,9 +11,7 @@
 
 #pragma once
 
-#if defined(_WIN32)
-#include <windows.h>
-#else
+#if !defined(_WIN32)
 #include <SDL/SDL.h>
 #include <pthread.h>
 #include <unistd.h>

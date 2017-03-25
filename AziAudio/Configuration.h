@@ -1,9 +1,6 @@
 #pragma once
 
-//#include "common.h"
-#ifdef _WIN32
-#include <Windows.h>
-#endif
+#include "common.h"
 
 class Configuration
 {
