@@ -190,22 +190,31 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\Configuration.cpp">
+			</File>
+			<File
 				RelativePath=".\DirectSoundDriver.cpp">
 			</File>
 			<File
-				RelativePath=".\HLEMain.cpp">
+				RelativePath=".\DirectSoundDriverLegacy.cpp">
 			</File>
 			<File
 				RelativePath=".\main.cpp">
 			</File>
 			<File
+				RelativePath=".\NoSoundDriver.cpp">
+			</File>
+			<File
 				RelativePath=".\SoundDriver.cpp">
 			</File>
 			<File
-				RelativePath="..\3rd Party\XBox\xbox_depp.cpp">
+				RelativePath=".\SoundDriverFactoryXBox.cpp">
+			</File>
+			<File
+				RelativePath=".\SoundDriverInterface.cpp">
 			</File>
 			<Filter
-				Name="ABI"
+				Name="HLE"
 				Filter="">
 				<File
 					RelativePath=".\ABI1.cpp">
@@ -237,51 +246,23 @@
 				<File
 					RelativePath=".\ABI_Resample.cpp">
 				</File>
-			</Filter>
-			<Filter
-				Name="BSmilesRSP"
-				Filter="">
 				<File
-					RelativePath=".\Mupen64plusHLE\audio.c">
-				</File>
-				<File
-					RelativePath=".\Mupen64plusHLE\memory.c">
-				</File>
-				<File
-					RelativePath=".\Mupen64plusHLE\Mupen64Support.c">
-				</File>
-				<File
-					RelativePath=".\Mupen64plusHLE\musyx.c">
+					RelativePath=".\HLEMain.cpp">
 				</File>
 				<Filter
-					Name="Headers"
+					Name="Mupen64Plus"
 					Filter="">
 					<File
-						RelativePath=".\Mupen64plusHLE\alist.h">
+						RelativePath=".\Mupen64plusHLE\audio.c">
 					</File>
 					<File
-						RelativePath=".\Mupen64plusHLE\arithmetics.h">
+						RelativePath=".\Mupen64plusHLE\memory.c">
 					</File>
 					<File
-						RelativePath=".\Mupen64plusHLE\audio.h">
+						RelativePath=".\Mupen64plusHLE\Mupen64Support.c">
 					</File>
 					<File
-						RelativePath=".\Mupen64plusHLE\common.h">
-					</File>
-					<File
-						RelativePath=".\Mupen64plusHLE\hle.h">
-					</File>
-					<File
-						RelativePath=".\Mupen64plusHLE\hle_external.h">
-					</File>
-					<File
-						RelativePath=".\Mupen64plusHLE\hle_internal.h">
-					</File>
-					<File
-						RelativePath=".\Mupen64plusHLE\memory.h">
-					</File>
-					<File
-						RelativePath=".\Mupen64plusHLE\ucodes.h">
+						RelativePath=".\Mupen64plusHLE\musyx.c">
 					</File>
 				</Filter>
 			</Filter>
@@ -300,16 +281,69 @@
 				RelativePath=".\common.h">
 			</File>
 			<File
+				RelativePath=".\Configuration.h">
+			</File>
+			<File
 				RelativePath=".\DirectSoundDriver.h">
 			</File>
 			<File
+				RelativePath=".\DirectSoundDriverLegacy.h">
+			</File>
+			<File
 				RelativePath=".\my_types.h">
+			</File>
+			<File
+				RelativePath=".\NoSoundDriver.h">
 			</File>
 			<File
 				RelativePath=".\resource.h">
 			</File>
 			<File
 				RelativePath=".\SoundDriver.h">
+			</File>
+			<File
+				RelativePath=".\SoundDriverFactory.h">
+			</File>
+			<File
+				RelativePath=".\SoundDriverInterface.h">
+			</File>
+			<Filter
+				Name="Mupen64plusHLE headers"
+				Filter="">
+				<File
+					RelativePath=".\Mupen64plusHLE\alist.h">
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\arithmetics.h">
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\audio.h">
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\common.h">
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\hle.h">
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\hle_external.h">
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\hle_internal.h">
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\memory.h">
+				</File>
+				<File
+					RelativePath=".\Mupen64plusHLE\ucodes.h">
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Xbox Additions"
+			Filter="">
+			<File
+				RelativePath="..\3rd Party\XBox\xbox_depp.cpp">
 			</File>
 			<File
 				RelativePath="..\3rd Party\XBox\xbox_depp.h">
