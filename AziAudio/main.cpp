@@ -27,7 +27,6 @@
 	#include <ios>
 #endif
 
-using namespace std;
 
 SoundDriverInterface *snd = NULL;
 
@@ -101,7 +100,7 @@ EXPORT Boolean CALL InitiateAudio(AUDIO_INFO Audio_Info) {
 		delete snd;
 	}
 
-	snd = SoundDriverFactory::CreateSoundDriver(SoundDriverType::SND_DRIVER_XA2L);
+	snd = SoundDriverFactory::CreateSoundDriver(SND_DRIVER_DS8);
 
 #ifdef USE_PRINTF
 	RedirectIOToConsole();
